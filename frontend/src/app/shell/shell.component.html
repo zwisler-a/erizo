@@ -1,0 +1,9 @@
+<nav>
+  <button mat-button [routerLink]="['/']">Home</button>
+  <span class="spacer"></span>
+  <button mat-icon-button [routerLink]="['/add-contact']"><mat-icon>add_circle</mat-icon></button>
+  <button mat-icon-button [routerLink]="['/identity']"><mat-icon>person</mat-icon></button>
+</nav>
+<main>
+  <router-outlet></router-outlet>
+</main>

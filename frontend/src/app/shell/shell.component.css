@@ -1,0 +1,20 @@
+nav {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 4px;
+}
+nav div {
+  padding: 8px;
+  cursor: pointer;
+}
+nav .spacer {
+  flex: 1 1 auto;
+}
+
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

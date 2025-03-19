@@ -1,0 +1,17 @@
+<ngx-kjua
+  *ngIf="ownPublicKey.length"
+  [text]="ownPublicKey"
+  [ecLevel]="'M'"
+  [size]="400"
+  [fill]="'#000'"
+></ngx-kjua>
+<div *ngIf="ownHash">Own short hash: {{ ownHash }}</div>
+<h3>Share Identity</h3>
+<button mat-button (click)="shareIdentity()">Share Identity</button>
+
+<h3>Generate Identity</h3>
+<button mat-button (click)="generateIdentity()">Generate new Identity</button>
+<h3>Save and Restore Identity</h3>
+<button mat-button (click)="downloadIdentity()">Download Identity</button>
+<button mat-button color="primary" (click)="fileInput.click()">Upload Identity</button>
+<input #fileInput type="file" hidden (change)="uploadIdentity($event)"/>

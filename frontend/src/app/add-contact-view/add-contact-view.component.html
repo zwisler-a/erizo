@@ -1,0 +1,18 @@
+<div *ngIf="scanning">
+  <ngx-scanner-qrcode
+    #scanner="scanner"
+    [config]="{isBeep:false, unScan:false}"
+    [constraints]="constraints"
+    [isMasked]="true"
+    (event)="scannerResult($event)"></ngx-scanner-qrcode>
+</div>
+<div class="alias-input" *ngIf="!scanning">
+  <h3>Adding Identity</h3>
+  <div>Identity: {{ scannedHash }}</div>
+
+  <mat-form-field>
+    <mat-label>Alias</mat-label>
+    <input [(ngModel)]="aliasInput" matInput>
+  </mat-form-field>
+  <button mat-button (click)="save()">Save</button>
+</div>
