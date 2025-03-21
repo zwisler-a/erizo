@@ -75,7 +75,7 @@ export class IdentityViewComponent {
   }
 
   async shareIdentity() {
-    const url = `${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
+    const url = `Hey, connect with me on erizo! \n ${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
     if (navigator.share) {
       navigator.share({
         url: url
