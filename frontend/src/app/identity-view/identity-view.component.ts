@@ -79,8 +79,7 @@ export class IdentityViewComponent {
     if (navigator.share) {
       navigator.share({
         url: url,
-        title: `Hey, connect with me on erizo!`,
-        text: `https://${window.location.origin}${url}`
+        title: `Hey, connect with me on erizo!`
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(url).then(() => {
