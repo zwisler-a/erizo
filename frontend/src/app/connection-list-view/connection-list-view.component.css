@@ -1,0 +1,31 @@
+:host {
+  width: 100%;
+}
+
+a {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+}
+
+.spacer {
+  flex: 1 1 100%;
+  min-width: 32px;
+  display: inline-block;
+}
+
+.list-content {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.list-content > span {
+  line-height: 0px;
+}
+.list-content > mat-icon {
+  transform: scale(2);
+}

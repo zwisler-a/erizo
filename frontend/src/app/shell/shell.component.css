@@ -3,11 +3,20 @@ nav {
   flex-direction: row;
   gap: 16px;
   padding: 4px;
+  position: fixed;
+  width: 100vw;
+  top: 0;
+  padding-top: 8px;
+  box-sizing: border-box;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+  z-index: 999;
 }
+
 nav div {
   padding: 8px;
   cursor: pointer;
 }
+
 nav .spacer {
   flex: 1 1 auto;
 }
@@ -17,4 +26,21 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 64px;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-family: "Rubik Lines", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 32px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.active {
+  color: #410055;
 }

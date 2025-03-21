@@ -3,9 +3,11 @@
   bottom: 16px;
   right: 16px;
 }
+
 :host {
   padding-bottom: 64px;
 }
+
 .images {
   display: flex;
   flex-direction: column;
@@ -17,7 +19,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0;
-  box-shadow: 0px 10px 10px -8px rgba(0,0,0,0.5);
+  box-shadow: 0px 10px 10px -8px rgba(0, 0, 0, 0.5);
 }
 
 .loader {
@@ -26,4 +28,29 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
+}
+
+.image-header {
+  padding: 4px 16px 4px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.image-header .date {
+  font-size: 10px;
+}
+
+.image-header .user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+.no-images {
+  margin-top: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }

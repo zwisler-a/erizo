@@ -1,0 +1,31 @@
+.logo {
+  font-family: "Rubik Lines", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 32px;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 16px;
+}
+.explanation {
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.explanation > div:first-child {
+  font-size: 16px;
+  font-weight: bold;
+}

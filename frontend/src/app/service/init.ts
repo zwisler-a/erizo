@@ -1,19 +1,18 @@
 import {KeyService} from './key.service';
-import {ContactService} from './contact.service';
 import {inject} from '@angular/core';
-import {ApiService} from './api.service';
+import {UserService} from './user.service';
+import {Router} from '@angular/router';
 
 export function initIdentity() {
   return async () => {
     const keyService: KeyService = inject(KeyService);
-    const contactService: ContactService = inject(ContactService);
-    const apiService = inject(ApiService);
-    const currentKey = await contactService.getOwnKey();
+    const userService = inject(UserService);
+    const router = inject(Router);
+    const currentKey = await keyService.getOwnKeyPair();
     if (!currentKey) {
-      console.log("Generating Identity ...");
-      const keyPair = await keyService.generateKeyPair();
-      await contactService.setOwnKey(keyPair);
+      router.navigate(['/landing']);
+    } else {
+      await userService.registerKey();
     }
-    await apiService.registerKey();
   };
 }

@@ -1,11 +1,49 @@
 import {Injectable} from '@angular/core';
+import {PersistenceService} from './persistence.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KeyService {
-  async generateKeyPair(): Promise<CryptoKeyPair> {
-    return await crypto.subtle.generateKey(
+
+  constructor(private persistenceService: PersistenceService) {
+  }
+
+  async getOwnKeyPair(): Promise<CryptoKeyPair | null> {
+    return this.persistenceService.getItem("OWN_KEY");
+  }
+
+  async setOwnKeyPair(key: CryptoKeyPair) {
+    await this.persistenceService.setItem("OWN_KEY", key);
+  }
+
+  async getOwnPrivateKey() {
+    const privateKey = await this.getOwnKeyPair().then(keyPair => keyPair?.privateKey);
+    if (!privateKey) {
+      throw new Error("No public key found.");
+    }
+    return privateKey;
+  }
+
+  async getOwnPublicKeyString(): Promise<string | null> {
+    const publicKey = await this.getOwnKeyPair().then(keyPair => keyPair?.publicKey);
+    if (!publicKey) {
+      throw new Error("No public key found.");
+    }
+    return this.keyToBase64(publicKey);
+  }
+
+  async getOwnFingerprint(): Promise<string | null> {
+    const keypair = await this.getOwnKeyPair();
+    if (!keypair) {
+      throw new Error("No key pair found.");
+    }
+    return this.generateFingerprintFromKeyPair(keypair);
+  }
+
+  async generateNewOwnKeyPair() {
+    console.log("Generating new key pair");
+    const keyPair = await crypto.subtle.generateKey(
       {
         name: 'RSA-OAEP',
         modulusLength: 4096,
@@ -15,9 +53,16 @@ export class KeyService {
       true,
       ['encrypt', 'decrypt']
     );
+    await this.setOwnKeyPair(keyPair);
+    return this.getOwnKeyPair();
   }
 
-  async generateHash(input: string): Promise<string> {
+  async generateFingerprintFromKeyPair(keyPair: CryptoKeyPair) {
+    const base = await this.keyToBase64(keyPair.publicKey);
+    return this.generateFingerprint(base)
+  }
+
+  async generateFingerprint(input: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(input);
     const hash = await crypto.subtle.digest('SHA-256', data);
@@ -37,9 +82,11 @@ export class KeyService {
     return crypto.subtle.importKey(
       keyType === 'private' ? 'pkcs8' : 'spki',
       binaryKey.buffer,
-      { name: 'RSA-OAEP', hash: 'SHA-256' },
+      {name: 'RSA-OAEP', hash: 'SHA-256'},
       true,
       keyType === 'private' ? ['decrypt'] : ['encrypt']
     );
   }
+
+
 }

@@ -6,7 +6,7 @@ export class IdentityEntity {
     id: number;
 
     @Column({ unique: true })
-    hash: string;
+    fingerprint: string;
 
     @Column()
     public_key: string;

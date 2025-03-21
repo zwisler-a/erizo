@@ -1,17 +1,22 @@
-<ngx-kjua
-  *ngIf="ownPublicKey.length"
-  [text]="ownPublicKey"
-  [ecLevel]="'M'"
-  [size]="400"
-  [fill]="'#000'"
-></ngx-kjua>
-<div *ngIf="ownHash">Own short hash: {{ ownHash }}</div>
 <h3>Share Identity</h3>
-<button mat-button (click)="shareIdentity()">Share Identity</button>
+<button mat-stroked-button (click)="shareIdentity()">Share Identity</button>
 
-<h3>Generate Identity</h3>
-<button mat-button (click)="generateIdentity()">Generate new Identity</button>
-<h3>Save and Restore Identity</h3>
-<button mat-button (click)="downloadIdentity()">Download Identity</button>
-<button mat-button color="primary" (click)="fileInput.click()">Upload Identity</button>
-<input #fileInput type="file" hidden (change)="uploadIdentity($event)"/>
+<h3></h3>
+
+<mat-accordion>
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Save and Restore Identity</mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="panel-content">
+      <button mat-stroked-button (click)="downloadIdentity()">Download Identity</button>
+      <button mat-stroked-button color="primary" (click)="fileInput.click()">Upload Identity</button>
+      <input #fileInput type="file" hidden (change)="uploadIdentity($event)"/>
+
+      <button mat-stroked-button (click)="deleteIdentity()">Delete Identity</button>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+
+
+<div style="position: fixed;bottom: 10px;right:10px">❤️ Erizo</div>

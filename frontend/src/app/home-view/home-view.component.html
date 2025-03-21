@@ -1,11 +1,26 @@
-<div class="images">
-  @for (message of messages; track message) {
-    <img class="image" [src]="message.url" alt="">
+<div class="images" *ngIf="(messages$|async)?.length != 0; else noMessages">
+  @for (message of messages$ | async; track message.id) {
+    <div>
+      <div class="image-header">
+        <div class="user">
+          <mat-icon>account_circle</mat-icon>
+          {{ message.alias }}
+        </div>
+        <span class="date">{{ message.created_at | date: "dd.MM HH:mm" }}</span></div>
+      <img class="image" [src]="message.url" alt="">
+    </div>
   }
 </div>
-<div class="loader" *ngIf="loading">
+
+<ng-template #noMessages>
+  <div class="no-images">
+    <div>No messages available</div>
+    <button mat-flat-button [routerLink]="'/identity'">Share your identity</button>
+  </div>
+</ng-template>
+
+<div class="loader" *ngIf="!(messages$|async)">
   <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
   <div>Decrypting ...</div>
 </div>
 
-<button class="add" mat-mini-fab [routerLink]="['select-contact']"><mat-icon>send</mat-icon></button>

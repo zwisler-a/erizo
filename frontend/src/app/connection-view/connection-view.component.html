@@ -1,0 +1,21 @@
+<div class="connection-header">
+  <h1 class="header">
+    <mat-icon class="icon">group</mat-icon>
+    <div>
+      {{ contact?.alias }}
+      <div class="and-you">& You</div>
+    </div>
+  </h1>
+</div>
+
+
+<div class="images">
+  @for (message of messages$ | async; track message.id) {
+    <div class="image">
+    <img [src]="message.url" alt="">
+    </div>
+  }
+</div>
+
+
+<button class="post-button" mat-flat-button (click)="sendImage()">Post new image</button>

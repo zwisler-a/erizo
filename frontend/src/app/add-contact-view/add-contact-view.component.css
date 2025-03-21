@@ -3,3 +3,18 @@
   flex-direction: column;
   gap: 16px;
 }
+
+:host {
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: space-between;
+}

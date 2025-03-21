@@ -1,10 +1,10 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ContactService} from '../service/contact.service';
+import {Contact, ContactService} from '../service/contact.service';
 import {KeyService} from '../service/key.service';
 import {MatButtonModule} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
-import {ApiService} from '../service/api.service';
+import {MessageService} from '../service/message.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {NgIf} from '@angular/common';
 
@@ -57,7 +57,7 @@ import {NgIf} from '@angular/common';
 })
 export class UploadImageViewComponent {
 
-  private contact: { alias: string; publicKey: string; hash: string } | undefined;
+  private contact: Contact | undefined;
   imageSrc: string | null = null;
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
 
@@ -66,10 +66,10 @@ export class UploadImageViewComponent {
     private router: Router,
     private contactService: ContactService,
     private keyService: KeyService,
-    private apiService: ApiService,
+    private apiService: MessageService,
     private snackBar: MatSnackBar
   ) {
-    const hash = this.route.snapshot.paramMap.get('hash')
+    const hash = this.route.snapshot.paramMap.get('fingerprint')
     if (!hash) {
       this.router.navigateByUrl("/");
     } else {
@@ -88,13 +88,8 @@ export class UploadImageViewComponent {
   }
 
 
-  private async loadContact(hash: string) {
-    const contacts = await Promise.all((await this.contactService.getContacts())
-      .map(async contact => ({
-        ...contact,
-        hash: await this.keyService.generateHash(contact.publicKey)
-      })));
-    this.contact = contacts.find(contact => contact.hash === hash);
+  private async loadContact(fingerprint: string) {
+    this.contact = await this.contactService.getContact(fingerprint);
     if (!this.contact) {
       this.router.navigateByUrl("/");
     }
@@ -102,11 +97,11 @@ export class UploadImageViewComponent {
 
   async sendImage() {
     if (this.fileInput?.nativeElement?.files?.length === 1 && this.contact) {
-      await this.apiService.sendFile(
+      await this.apiService.sendMessage(
         this.fileInput?.nativeElement?.files[0],
-        await this.keyService.base64ToKey(this.contact.publicKey)
+        this.contact
       )
-      this.snackBar.open("Send!", undefined, {duration: 2500});
+      this.snackBar.open("Image was posted successfully", undefined, {duration: 2500});
       this.router.navigateByUrl("/");
     }
   }

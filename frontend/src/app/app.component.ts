@@ -1,16 +1,16 @@
-import {Component, inject, provideAppInitializer} from '@angular/core';
+import {Component} from '@angular/core';
 import {ShellComponent} from './shell/shell.component';
-import {initIdentity} from './service/init';
-import {KeyService} from './service/key.service';
-import {ContactService} from './service/contact.service';
+import {UserService} from './service/user.service';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
   imports: [
-    ShellComponent
+    ShellComponent,
+    RouterOutlet
   ],
   providers: [
-
+    UserService,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

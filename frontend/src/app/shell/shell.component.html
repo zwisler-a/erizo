@@ -1,8 +1,26 @@
+<div clas="nav-spacer"></div>
 <nav>
-  <button mat-button [routerLink]="['/']">Home</button>
+  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="['/home']">
+    <mat-icon>home</mat-icon>
+  </button>
+  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="['/connections']">
+    <mat-icon>stream</mat-icon>
+  </button>
+
+  <div class="logo">erizo</div>
   <span class="spacer"></span>
-  <button mat-icon-button [routerLink]="['/add-contact']"><mat-icon>add_circle</mat-icon></button>
-  <button mat-icon-button [routerLink]="['/identity']"><mat-icon>person</mat-icon></button>
+  <button [matBadgeHidden]="!(notifications$ | async)?.length"
+          [matBadge]="(notifications$ | async)?.length || 0"
+          matBadgeSize="large"
+          matBadgePosition="below after"
+          [routerLink]="['/notifications']"
+          routerLinkActive="active"
+          mat-icon-button>
+    <mat-icon>notifications</mat-icon>
+  </button>
+  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="['/identity']">
+    <mat-icon>person</mat-icon>
+  </button>
 </nav>
 <main>
   <router-outlet></router-outlet>

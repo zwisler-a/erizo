@@ -1,9 +1,24 @@
 import {Injectable} from '@angular/core';
+import {KeyService} from './key.service';
+import {Contact} from './contact.service';
+import {MessageCreation} from '../types/message-creation';
+import {Message} from '../types/message';
+
+export interface DecryptedMessage {
+  data: any,
+  message: any
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EncryptionService {
+
+  private messageCache = new Map<number, DecryptedMessage>();
+
+  constructor(private keyService: KeyService) {
+  }
+
   private base64ToArrayBuffer(base64: string): ArrayBuffer {
     const binaryString = atob(base64);
     const len = binaryString.length;
@@ -26,51 +41,75 @@ export class EncryptionService {
     return window.btoa(binary);
   }
 
-  async encryptFile(file: File, publicKey: CryptoKey, ownKey: CryptoKey): Promise<{
-    encryptedData: string;
-    ownEncryptedKey: string;
-    encryptedKey: string;
-    iv: string;
-  }> {
+
+  private async generateSymmetricEncryptionKeys(contacts: Contact[]) {
     const aesKey = await crypto.subtle.generateKey(
       {name: 'AES-CBC', length: 256},
       true,
       ['encrypt', 'decrypt']
     );
-
     const iv = crypto.getRandomValues(new Uint8Array(16));
-    const fileData = await file.arrayBuffer();
+    const exportedAesKey = await crypto.subtle.exportKey('raw', aesKey);
+    const recipients = await Promise.all(contacts.map(async (contact: Contact) => {
+      const encryptedKey = await crypto.subtle.encrypt(
+        {name: 'RSA-OAEP'},
+        await this.keyService.base64ToKey(contact.publicKey),
+        exportedAesKey
+      );
+      return {
+        fingerprint: await this.keyService.generateFingerprint(contact.publicKey),
+        encryption_key: this.arrayBufferToBase64(encryptedKey),
+      };
+    }));
+    return {recipients, iv, aesKey};
+  }
 
+  async encryptImage(file: File, message: string, forContacts: Contact[], addOwnContact = true): Promise<MessageCreation> {
+    const contacts: Contact[] = [...forContacts];
+    if (addOwnContact) {
+      contacts.push({
+        fingerprint: await this.keyService.getOwnFingerprint() ?? '',
+        publicKey: await this.keyService.getOwnPublicKeyString() ?? '',
+        alias: 'me'
+      });
+    }
+    const {recipients, aesKey, iv} = await this.generateSymmetricEncryptionKeys(contacts);
+    const fileData = await file.arrayBuffer();
+    const messageData = new TextEncoder().encode(message);
     const encryptedData = await crypto.subtle.encrypt(
       {name: 'AES-CBC', iv},
       aesKey,
       fileData
     );
-
-    const exportedAesKey = await crypto.subtle.exportKey('raw', aesKey);
-    const encryptedKey = await crypto.subtle.encrypt(
-      {name: 'RSA-OAEP'},
-      publicKey,
-      exportedAesKey
-    );
-    const ownEncryptedKey = await crypto.subtle.encrypt(
-      {name: 'RSA-OAEP'},
-      ownKey,
-      exportedAesKey
+    const encryptedMessage = await crypto.subtle.encrypt(
+      {name: 'AES-CBC', iv},
+      aesKey,
+      messageData
     );
 
     return {
-      encryptedData: this.arrayBufferToBase64(encryptedData),
-      encryptedKey: this.arrayBufferToBase64(encryptedKey),
-      ownEncryptedKey: this.arrayBufferToBase64(ownEncryptedKey),
-      iv: this.arrayBufferToBase64(iv)
+      data: this.arrayBufferToBase64(encryptedData),
+      message: this.arrayBufferToBase64(encryptedMessage),
+      sender_fingerprint: await this.keyService.getOwnFingerprint() ?? '',
+      iv: this.arrayBufferToBase64(iv),
+      recipients: recipients,
     };
   }
 
-  async decryptMessage(encryptedData: string, encryptedKey: string, iv: string, privateKey: CryptoKey): Promise<ArrayBuffer> {
-    const encryptedKeyBuffer = this.base64ToArrayBuffer(encryptedKey);
-    const encryptedDataBuffer = this.base64ToArrayBuffer(encryptedData);
-    const ivBuffer = this.base64ToArrayBuffer(iv);
+  async decryptMessage(message: Message, privateKey?: CryptoKey): Promise<DecryptedMessage> {
+    if (this.messageCache.has(message.id)) {
+      const cache = this.messageCache.get(message.id);
+      if (cache) {
+        return cache;
+      }
+    }
+    if (!privateKey) {
+      privateKey = await this.keyService.getOwnPrivateKey();
+    }
+    const encryptedKeyBuffer = this.base64ToArrayBuffer(message.encrypted_key);
+    const encryptedDataBuffer = this.base64ToArrayBuffer(message.data);
+    const encryptedMessageBuffer = this.base64ToArrayBuffer(message.message);
+    const ivBuffer = this.base64ToArrayBuffer(message.iv);
 
 
     const aesKey = await crypto.subtle.decrypt(
@@ -92,12 +131,20 @@ export class EncryptionService {
       importedAesKey,
       encryptedDataBuffer
     );
-
-    return decryptedData;
-
+    const decryptedMessage = await crypto.subtle.decrypt(
+      {name: 'AES-CBC', iv: ivBuffer},
+      importedAesKey,
+      encryptedMessageBuffer
+    );
+    const decrypted = {data: decryptedData, message: decryptedMessage};
+    this.messageCache.set(message.id, decrypted)
+    return decrypted;
   }
 
-  async decryptTextMessage(privateKey: CryptoKey, message: string): Promise<string> {
+  async decryptTextMessage(message: string, privateKey?: CryptoKey): Promise<string> {
+    if (!privateKey) {
+      privateKey = await this.keyService.getOwnPrivateKey();
+    }
     const decryptedBuffer = await crypto.subtle.decrypt(
       {name: 'RSA-OAEP'},
       privateKey,
