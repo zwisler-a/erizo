@@ -36,7 +36,7 @@ import {MatInputModule} from '@angular/material/input';
       <div class="action">
         <button mat-raised-button color="primary" (click)="fileInput.click()">Take Picture</button>
         <span class="spacer"></span>
-        <button *ngIf="imageSrc" mat-flat-button color="accent" (click)="sendImage()" [disabled]="!imageSrc">
+        <button *ngIf="imageSrc" mat-flat-button color="accent" (click)="sendImage()" [disabled]="!imageSrc || disableSend">
           Send
         </button>
       </div>
@@ -91,6 +91,7 @@ export class UploadImageViewComponent {
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
   daysToLive?: number;
   message?: string;
+  disableSend: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -126,6 +127,7 @@ export class UploadImageViewComponent {
   }
 
   async sendImage() {
+    this.disableSend = true;
     if (this.fileInput?.nativeElement?.files?.length === 1 && this.contact) {
       await this.apiService.sendMessage(
         this.fileInput?.nativeElement?.files[0],
@@ -136,5 +138,6 @@ export class UploadImageViewComponent {
       this.snackBar.open("Image was posted successfully", undefined, {duration: 2500});
       this.router.navigateByUrl("/");
     }
+    this.disableSend = false;
   }
 }
