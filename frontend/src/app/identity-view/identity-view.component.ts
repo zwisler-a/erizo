@@ -75,10 +75,12 @@ export class IdentityViewComponent {
   }
 
   async shareIdentity() {
-    const url = `Hey, connect with me on erizo! \n ${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
+    const url = `${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
     if (navigator.share) {
       navigator.share({
-        url: url
+        url: url,
+        title: `Hey, connect with me on erizo!`,
+        text: `https://${window.location.origin}${url}`
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(url).then(() => {
