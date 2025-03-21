@@ -21,7 +21,7 @@ import {LinkRequestEntity} from "./persistance/link-request.entity";
     imports: [
         TypeOrmModule.forRoot({
             type: "sqlite",
-            database: "db",
+            database: "db.sql",
             synchronize: true,
             entities: [MessageEntity, IdentityEntity, LinkRequestEntity],
         }),
