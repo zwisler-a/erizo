@@ -10,7 +10,7 @@ export class FilePointer {
 
 @Injectable()
 export class FileService {
-    private storageDir = path.join(__dirname, "..", "storage");
+    private storageDir = path.join("storage");
 
     constructor() {
         if (!fs.existsSync(this.storageDir)) {

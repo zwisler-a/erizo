@@ -8,6 +8,17 @@ export function initIdentity() {
     const keyService: KeyService = inject(KeyService);
     const userService = inject(UserService);
     const router = inject(Router);
+
+    const html = document.querySelector("html");
+    if(html) {
+      if ( localStorage.getItem("light") == "true") {
+        html.style.colorScheme = "light";
+      } else {
+        html.style.colorScheme = "dark";
+      }
+    }
+
+
     const currentKey = await keyService.getOwnKeyPair();
     if (!currentKey) {
       router.navigate(['/landing']);

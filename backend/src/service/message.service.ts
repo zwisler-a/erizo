@@ -26,7 +26,8 @@ export class MessageService {
                 message: message.message,
                 iv: message.iv,
                 sender_fingerprint: message.sender_fingerprint,
-                file_path: file.relativePath
+                file_path: file.relativePath,
+                days_to_live: message.days_to_live
             });
             await this.messageRepository.save(messageEntity);
         }
@@ -38,7 +39,8 @@ export class MessageService {
     }
 
     public async fetchMessagesForFingerprint(fingerprint: string) {
-        return this.messageRepository.find({where: {recipient_fingerprint: fingerprint}})
+        const messages = await this.messageRepository.find({where: {recipient_fingerprint: fingerprint}})
+        return messages.filter(msg => !msg.days_to_live || ((msg.created_at + (60 * 60 * 1000 * 24 * msg.days_to_live)) > Date.now()))
     }
 
 }

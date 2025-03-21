@@ -34,4 +34,8 @@ export class MessageEntity {
     @ApiProperty()
     @Column({default: () => new Date().getTime()})
     created_at: number;
+
+    @ApiProperty()
+    @Column({nullable: true})
+    days_to_live: number;
 }

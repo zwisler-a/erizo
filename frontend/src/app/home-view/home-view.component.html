@@ -1,13 +1,14 @@
 <div class="images" *ngIf="(messages$|async)?.length != 0; else noMessages">
   @for (message of messages$ | async; track message.id) {
-    <div>
+    <div class="message-container">
       <div class="image-header">
-        <div class="user">
-          <mat-icon>account_circle</mat-icon>
+        <div class="user" [routerLink]="['/connection', message.sender_fingerprint]">
+          <mat-icon>{{message.days_to_live ? 'schedule' : 'account_circle'}}</mat-icon>
           {{ message.alias }}
         </div>
         <span class="date">{{ message.created_at | date: "dd.MM HH:mm" }}</span></div>
       <img class="image" [src]="message.url" alt="">
+      <div *ngIf="message.message" class="message"><b>{{ message.alias }}</b> | {{message.message}}</div>
     </div>
   }
 </div>

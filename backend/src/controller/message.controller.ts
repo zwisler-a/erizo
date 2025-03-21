@@ -2,9 +2,7 @@ import {Body, Controller, HttpException, HttpStatus, Post, UseGuards} from '@nes
 import {ChallengeValidationGuard} from "../util/challenge-validation.guard";
 import {MessageService} from "../service/message.service";
 import {MessageCreationDto} from "../dto/message-creation.dto";
-import {ValidatedChallenge} from "../dto/validated-challenge.dto";
 import {ApiOkResponse} from "@nestjs/swagger";
-import {MessageEntity} from "../persistance/message.entity";
 import {ChallengeBodyDto} from "../dto/challenge-body.dto";
 import {FilePointer, FileService} from "../service/file.service";
 import {MessageDto} from "../dto/message.dto";

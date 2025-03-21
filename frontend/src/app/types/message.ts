@@ -6,5 +6,6 @@ export interface Message {
   data: string,
   encrypted_key: string,
   iv: string,
-  created_at: number
+  created_at: number,
+  days_to_live: number,
 }

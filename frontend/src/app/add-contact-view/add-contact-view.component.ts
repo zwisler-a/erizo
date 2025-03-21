@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {NgxScannerQrcodeModule} from 'ngx-scanner-qrcode';
-import {NgIf} from '@angular/common';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
@@ -12,7 +10,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 @Component({
   selector: 'app-add-contact-view',
   imports: [
-    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

@@ -136,7 +136,7 @@ export class EncryptionService {
       importedAesKey,
       encryptedMessageBuffer
     );
-    const decrypted = {data: decryptedData, message: decryptedMessage};
+    const decrypted = {data: decryptedData, message: new TextDecoder().decode(decryptedMessage)};
     this.messageCache.set(message.id, decrypted)
     return decrypted;
   }

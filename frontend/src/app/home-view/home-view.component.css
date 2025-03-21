@@ -19,7 +19,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0;
-  box-shadow: 0px 10px 10px -8px rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
 }
 
 .loader {
@@ -48,9 +48,18 @@
   align-items: center;
   gap: 6px;
 }
+
 .no-images {
   margin-top: 64px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.message {
+  padding: 12px 16px 16px 16px;
+}
+
+.message-container {
+  border-bottom: solid 1px  var(--mat-sys-surface-container);
 }

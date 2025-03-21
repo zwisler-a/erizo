@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
-import {ContactService} from '../service/contact.service';
 import {KeyService} from '../service/key.service';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MessageService} from '../service/message.service';
 import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
 import {PersistenceService} from '../service/persistence.service';
 import {Router} from '@angular/router';
@@ -92,5 +90,21 @@ export class IdentityViewComponent {
   async deleteIdentity() {
     await this.persistenceService.clear();
     this.router.navigate(['/landing']);
+  }
+
+  switchTheme() {
+    const isLight = localStorage.getItem("light") == "true";
+    const html = document.querySelector("html");
+    if (html) {
+      if (!isLight) {
+        localStorage.setItem("light", "true");
+        html.style.colorScheme = "light";
+        console.log(html);
+      } else {
+        localStorage.setItem("light", "false");
+        html.style.colorScheme = "dark";
+        console.log(html);
+      }
+    }
   }
 }

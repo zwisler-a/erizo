@@ -1,24 +1,13 @@
 import {Injectable} from '@angular/core';
 import {DecryptedMessage, EncryptionService} from './encryption.service';
-import {KeyService} from './key.service';
-import {
-  BehaviorSubject,
-  finalize,
-  from,
-  map,
-  mergeMap,
-  Observable,
-  OperatorFunction,
-  scan,
-  shareReplay,
-  switchMap
-} from 'rxjs';
+import {BehaviorSubject, map, mergeMap, Observable, OperatorFunction, shareReplay, switchMap} from 'rxjs';
 import {BASE_PATH} from './constants';
 import {HttpClient} from '@angular/common/http';
 import {ChallengeService} from './challenge.service';
 import {Contact, ContactService} from './contact.service';
 import {Message} from '../types/message';
 import {DomSanitizer} from '@angular/platform-browser';
+import imageCompression from 'browser-image-compression';
 
 export type CompleteMessage = Message & DecryptedMessage & { alias: string } & { url: any };
 
@@ -60,10 +49,16 @@ export class MessageService {
     );
   }
 
-  async sendMessage(file: File, contact: Contact) {
-    const message = await this.encryptionService.encryptImage(file, "", [contact]);
+  async sendMessage(file: File, contact: Contact, textMessage?: string, daysToLive?: number) {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    }
+    const compressedFile = await imageCompression(file, options);
+    const message = await this.encryptionService.encryptImage(compressedFile, textMessage ?? '', [contact]);
     this.challengeService.getChallengeToken().pipe(
-      switchMap(token => this.http.post(`${BASE_PATH}/upload`, {...token, ...message}))
+      switchMap(token => this.http.post(`${BASE_PATH}/upload`, {...token, ...message, days_to_live: daysToLive}))
     ).subscribe(() => {
       this.reloadMessages.next();
     })
@@ -78,7 +73,7 @@ export class MessageService {
         mergeMap(async messages => {
           const mapped = messages.map(async message => ({
               ...message,
-              alias: (await this.contactService.getContact(message.sender_fingerprint))?.alias ?? 'Me'
+              alias: (await this.contactService.getContact(message.sender_fingerprint))?.alias ?? 'You'
             })
           );
           return Promise.all(mapped);

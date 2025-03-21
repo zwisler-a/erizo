@@ -19,4 +19,6 @@ export class MessageCreationDto extends ChallengeRequestDto {
     recipients: RecipientList[];
     @ApiProperty()
     sender_fingerprint: string;
+    @ApiProperty()
+    days_to_live?: number;
 }
