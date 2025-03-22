@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {IdentityEntity} from "./identity.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -7,11 +7,11 @@ export class LinkRequestEntity {
     @PrimaryGeneratedColumn()
     id: number;
     @ApiProperty()
-    @OneToOne(() => IdentityEntity, {onDelete: 'NO ACTION'})
+    @ManyToOne(() => IdentityEntity, {onDelete: 'NO ACTION'})
     @JoinColumn()
     requester: IdentityEntity;
 
-    @OneToOne(() => IdentityEntity, {onDelete: 'NO ACTION'})
+    @ManyToOne(() => IdentityEntity, {onDelete: 'NO ACTION'})
     @JoinColumn()
     requested: IdentityEntity;
 
