@@ -1,130 +1,87 @@
-import {Injectable} from '@angular/core';
-import {PersistenceService} from './persistence.service';
-import {KeyService} from './key.service';
-import {HttpClient} from '@angular/common/http';
-import {BASE_PATH} from './constants';
-import {catchError, switchMap, tap, throwError} from 'rxjs';
-import {ChallengeService} from './challenge.service';
-import {NotificationService} from './notification.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { Injectable } from '@angular/core';
+import { PersistenceService } from './persistence.service';
+import { map, Observable, OperatorFunction, switchMap } from 'rxjs';
+import { NotificationService } from './notification.service';
+import { ApiConnectionService } from '../api/services/api-connection.service';
+import { ConnectionEntity } from '../api/models/connection-entity';
 
 const CONTACTS_STORE = 'CONTACTS_STORE';
 
-export interface Contact {
-  alias: string;
-  fingerprint: string;
-  publicKey: string;
-  state?: 'pending' | 'rejected' | 'connected';
-}
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ContactService {
 
-  private readonly key = "CONTACTS_STORE";
-  private registeredRequestFingerprints: string[] = [];
-
   constructor(
-    private persistenceService: PersistenceService,
-    private challengeService: ChallengeService,
+    private connectionApi: ApiConnectionService,
     private notificationService: NotificationService,
-    private http: HttpClient,
-    private snackBar: MatSnackBar,
+    private persistenceService: PersistenceService,
   ) {
   }
 
-
-  async addContact(contact: Contact): Promise<void> {
-    const contacts = (await this.persistenceService.getItem<Contact[]>(this.key)) ?? []
-    contacts.push(contact)
-    await this.persistenceService.setItem(CONTACTS_STORE, contacts);
+  requestContactConnection(fingerprint: string) {
+    return this.connectionApi.request({ body: { partner_fingerprint: fingerprint } });
   }
 
-  requestContactConnection(alias: string, fingerprint: string) {
-    return this.challengeService.getChallengeToken().pipe(
-      switchMap(token => this.http.post(`${BASE_PATH}/link-request`, {...token, partner_fingerprint: fingerprint})),
-      catchError(err => {
-        this.snackBar.open("Something went wrong: " + err.error.message, undefined, {duration: 2000});
-        throw err;
+  getOpenRequests() {
+    return this.connectionApi.openRequest();
+  }
+
+  showOpenRequestsInNotifications() {
+    this.getOpenRequests().subscribe((openRequests) => {
+      openRequests.forEach((openRequest) => {
+        this.notificationService.addNotification({
+          icon: 'account_circle',
+          title: 'Someone like you',
+          description: 'Someone want to be connection with you :)',
+          link: `/accept-contact/` + openRequest.owner.fingerprint,
+        });
+      });
+    });
+  }
+
+  getContacts(): Observable<(ConnectionEntity & { alias: string })[]> {
+    return this.connectionApi.getConnections().pipe(
+      this.addAliasPipe(),
+    );
+  }
+
+  getContact(fingerprint: string) {
+    return this.getContacts().pipe(
+      map((contacts) => contacts.find(contact => contact.connectedWith.fingerprint === fingerprint)),
+    );
+  }
+
+  acceptContactRequest(fingerprint: string) {
+    return this.getOpenRequests().pipe(
+      map((openRequests) => openRequests.find(request => request.owner.fingerprint === fingerprint)),
+      map((openRequest) => {
+        if (!openRequest) throw new Error('Could not accept contact request');
+        return openRequest;
       }),
-      tap(_ =>
-        this.addContact({
-          alias,
-          fingerprint,
-          publicKey: 'unset',
-          state: 'pending'
-        })
-      )
+      switchMap((openRequest) => this.connectionApi.acceptRequest({ body: { requestId: openRequest.id } })),
     );
   }
 
-  async syncContacts() {
-    this.getConfirmedConnections().subscribe((connections: any) => {
-      connections.forEach(async (connection: any) => {
-        const conFp = connection.requester.fingerprint;
-        const con = await this.updateIfExisting(conFp, "connected", connection.requester.public_key);
-        if (!con) return;
-        this.notificationService.addNotification({
-          title: `${con?.alias} like you too`,
-          description: `You are now connected with ${con?.alias} 🪅`,
-          icon: "account_circle",
-          link: '/connection/' + connection.requester.fingerprint,
-        });
-      })
-    })
-    this.getConnectionRequests().subscribe((connection: any) => {
-      connection.forEach(async (connection: any) => {
-        if (this.registeredRequestFingerprints.includes(connection.requester.fingerprint)) return;
-        this.registeredRequestFingerprints.push(connection.requester.fingerprint);
-        this.notificationService.addNotification({
-          title: "Someone likes you",
-          description: "Someone wants to add you to your contacts 😊",
-          icon: "account_circle",
-          link: '/add-contact/' + connection.requester.fingerprint,
-        });
-      })
-
-    })
-
+  private addAliasPipe(): OperatorFunction<ConnectionEntity[], (ConnectionEntity & { alias: string })[]> {
+    return source => {
+      return source.pipe(
+        switchMap(vals => Promise.all(vals.map(async val => ({
+          ...val,
+          alias: (await this.getAlias(val.connectedWith.fingerprint) ?? val.connectedWith.fingerprint),
+        })))),
+      );
+    };
   }
 
-  private async updateIfExisting(conFp: string, state: "pending" | "rejected" | "connected", publicKey: string) {
-    const contacts = await this.getContacts();
-
-    const con = contacts.find(contact => contact.fingerprint === conFp);
-    if (!con || con.state != 'pending') return;
-    con.state = state;
-    con.publicKey = publicKey;
-
-    await this.persistenceService.setItem(CONTACTS_STORE, contacts);
-    return con;
+  async addAlias(fingerprint: string, alias: string) {
+    if (!alias && !fingerprint) return;
+    const aliases = (await this.persistenceService.getItem('alias') ?? {}) as Record<string, string>;
+    aliases[fingerprint] = alias;
+    await this.persistenceService.setItem('alias', aliases);
   }
 
-  getConnectionRequests() {
-    return this.challengeService.getChallengeToken().pipe(
-      switchMap(token => this.http.post(`${BASE_PATH}/link-request/open`, {...token}))
-    );
-  }
-
-  getConfirmedConnections() {
-    return this.challengeService.getChallengeToken().pipe(
-      switchMap(token => this.http.post(`${BASE_PATH}/link-request/confirmed`, {...token}))
-    );
-  }
-
-  async getContacts(): Promise<Contact[]> {
-    return (await this.persistenceService.getItem<Contact[]>(this.key)) ?? [];
-  }
-
-  async getContact(fingerprint: string) {
-    const contacts = await this.getContacts();
-    return contacts.find(contact => contact.fingerprint == fingerprint);
-  }
-
-
-  async deleteContact(contact: Contact) {
-    const contacts = await this.persistenceService.getItem<Contact[]>(CONTACTS_STORE);
-    if (!contacts) return;
-    const updatedContacts = contacts.filter(c => c.fingerprint !== contact.fingerprint);
-    await this.persistenceService.setItem(CONTACTS_STORE, updatedContacts);
+  async getAlias(fingerprint: string): Promise<string | null> {
+    const aliases = (await this.persistenceService.getItem('alias') ?? {}) as Record<string, string>;
+    return aliases[fingerprint];
   }
 }

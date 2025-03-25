@@ -1,27 +1,7 @@
-import {ApiProperty} from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
+import { MessageEntity } from '../persistance/message.entity';
 
-export class MessageDto {
-    @ApiProperty()
-    id: number;
-
-    @ApiProperty()
-    sender_fingerprint: string;
-
-    @ApiProperty()
-    recipient_fingerprint: string;
-
-    @ApiProperty()
-    message: string;
-
-    @ApiProperty()
-    data: string;
-
-    @ApiProperty()
-    encrypted_key: string;
-
-    @ApiProperty()
-    iv: string;
-
-    @ApiProperty()
-    created_at: number;
+export class MessageDto extends MessageEntity {
+  @ApiProperty()
+  data: string;
 }

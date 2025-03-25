@@ -1,0 +1,10 @@
+<div>{{ fingerprint }} like you!</div>
+<div>Would you like to connect?</div>
+<br>
+<mat-form-field>
+  <mat-label>Alias</mat-label>
+  <input [(ngModel)]="alias" matInput>
+</mat-form-field>
+<br>
+<button mat-flat-button [disabled]="alias == ''" (click)="accept()">Accept</button>
+<button mat-button>Deny</button>

@@ -1,84 +1,78 @@
-import {Injectable} from '@angular/core';
-import {DecryptedMessage, EncryptionService} from './encryption.service';
-import {BehaviorSubject, map, mergeMap, Observable, OperatorFunction, shareReplay, switchMap} from 'rxjs';
-import {BASE_PATH} from './constants';
-import {HttpClient} from '@angular/common/http';
-import {ChallengeService} from './challenge.service';
-import {Contact, ContactService} from './contact.service';
-import {Message} from '../types/message';
-import {DomSanitizer} from '@angular/platform-browser';
+import { Injectable } from '@angular/core';
+import { DecryptedMessage, EncryptionService } from './encryption.service';
+import { BehaviorSubject, map, mergeMap, Observable, OperatorFunction, shareReplay } from 'rxjs';
+import { ContactService } from './contact.service';
+import { DomSanitizer } from '@angular/platform-browser';
 import imageCompression from 'browser-image-compression';
+import { ApiMessageService } from '../api/services/api-message.service';
+import { MessageDto } from '../api/models/message-dto';
+import { UserEntity } from '../api/models/user-entity';
 
-export type CompleteMessage = Message & DecryptedMessage & { alias: string } & { url: any };
+export type CompleteMessage = MessageDto & DecryptedMessage & { alias: string } & { url: any };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MessageService {
 
   private reloadMessages = new BehaviorSubject<void>(void 0);
   private encryptedMessages = this.reloadMessages.pipe(
-    mergeMap(() => this.challengeService.getChallengeToken()),
-    mergeMap(token => this.http.post<Message[]>(`${BASE_PATH}/messages`, token)),
+    mergeMap(() => this.messageApi.getMessages({})),
     map(messages => messages.sort((a, b) => b.created_at - a.created_at)),
-    shareReplay(1)
+    shareReplay(1),
   );
 
   constructor(
     private encryptionService: EncryptionService,
-    private challengeService: ChallengeService,
     private contactService: ContactService,
-    private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private messageApi: ApiMessageService,
   ) {
   }
 
 
   getAllMessages(): Observable<CompleteMessage[]> {
     return this.encryptedMessages.pipe(
-      this.messageDecryptionPipe()
+      this.messageDecryptionPipe(),
     );
   }
 
-  getAllMessagesFor(fingerprint: string[]): Observable<CompleteMessage[]> {
-    return this.encryptedMessages.pipe(
-      map(messages => messages
-        .filter(message => fingerprint.includes(message.sender_fingerprint))
-      ),
-      this.messageDecryptionPipe()
+  getAllMessagesFor(chatId: number): Observable<CompleteMessage[]> {
+    return this.reloadMessages.pipe(
+      mergeMap(() => this.messageApi.getChatMessages({ chatId: chatId })),
+      map(messages => messages.sort((a, b) => b.created_at - a.created_at)),
+      this.messageDecryptionPipe(),
     );
   }
 
-  async sendMessage(file: File, contact: Contact, textMessage?: string, daysToLive?: number) {
+  async sendMessage(file: File, chatId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number) {
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
       useWebWorker: true,
-    }
+    };
     const compressedFile = await imageCompression(file, options);
-    const message = await this.encryptionService.encryptImage(compressedFile, textMessage ?? '', [contact]);
-    this.challengeService.getChallengeToken().pipe(
-      switchMap(token => this.http.post(`${BASE_PATH}/upload`, {...token, ...message, days_to_live: daysToLive}))
-    ).subscribe(() => {
+    const message = await this.encryptionService.encryptImage(compressedFile, textMessage ?? '', contacts);
+    this.messageApi.send({ body: { ...message, days_to_live: daysToLive, chat_id: chatId } }).subscribe(() => {
       this.reloadMessages.next();
-    })
+    });
   }
 
-  private messageDecryptionPipe(): OperatorFunction<Message[], CompleteMessage[]> {
+  private messageDecryptionPipe(): OperatorFunction<MessageDto[], CompleteMessage[]> {
     return (source) => {
       return source.pipe(
         mergeMap(async messages =>
-          Promise.all(messages.map(async message => ({...message, ...(await this.encryptionService.decryptMessage(message))})))
+          Promise.all(messages.map(async message => ({ ...message, ...(await this.encryptionService.decryptMessage(message)) }))),
         ),
         mergeMap(async messages => {
           const mapped = messages.map(async message => ({
               ...message,
-              alias: (await this.contactService.getContact(message.sender_fingerprint))?.alias ?? 'You'
-            })
+              alias: await this.contactService.getAlias(message.sender_fingerprint) ?? message.sender_fingerprint,
+            }),
           );
           return Promise.all(mapped);
         }),
-        this.createUrlPipe()
+        this.createUrlPipe(),
       );
     };
   }
@@ -92,11 +86,11 @@ export class MessageService {
             const binary = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
             const base64String = window.btoa(binary);
             const url = this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${base64String}`);
-            return ({...msg, url} as any);
+            return ({ ...msg, url } as any);
           });
-        })
-      )
-    }
+        }),
+      );
+    };
   }
 
 

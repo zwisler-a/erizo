@@ -1,0 +1,13 @@
+<h1>Connect with</h1>
+<div>
+  <b>Identity</b>: <span>{{ fingerprint }}</span>
+</div>
+<br>
+<mat-form-field>
+  <mat-label>Alias</mat-label>
+  <input [(ngModel)]="alias" matInput>
+</mat-form-field>
+<div class="actions">
+  <button mat-button [routerLink]="['/']">Cancel</button>
+  <button mat-flat-button (click)="connectToIdentity()">Connect</button>
+</div>

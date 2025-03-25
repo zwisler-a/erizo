@@ -6,7 +6,8 @@
     "start": "ng serve --ssl --proxy-config proxy.config.json --host 0.0.0.0",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate:api": "ng-openapi-gen"
   },
   "private": true,
   "dependencies": {
@@ -30,6 +31,7 @@
     "@angular-devkit/build-angular": "^19.1.5",
     "@angular/cli": "^19.1.5",
     "@angular/compiler-cli": "^19.1.0",
+    "@openapitools/openapi-generator-cli": "^2.18.4",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
@@ -37,6 +39,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-openapi-gen": "^0.52.0",
     "typescript": "~5.7.2"
   }
 }
