@@ -14,19 +14,30 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { ErrorHandlerInterceptor } from './http-interceptors/http-error.interceptor';
 import { ApiModule } from './api/api.module';
 import { AuthenticationInterceptor } from './http-interceptors/authentication.interceptor';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    importProvidersFrom(ApiModule.forRoot({rootUrl: ''})),
+    importProvidersFrom(ApiModule.forRoot({ rootUrl: '' })),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptorsFromDi()),
     provideAppInitializer(initIdentity()),
+    provideFirebaseApp(() => initializeApp({
+      apiKey: 'AIzaSyCKAJptxgeraB0OvlX5dq5g4Bw18M0g-SU',
+      authDomain: 'erizo-3e72a.firebaseapp.com',
+      projectId: 'erizo-3e72a',
+      storageBucket: 'erizo-3e72a.firebasestorage.app',
+      messagingSenderId: '1074541584385',
+      appId: '1:1074541584385:web:fe2c9505356e139e332000',
+    })),
+    provideMessaging(() => getMessaging()),
     { provide: HTTP_INTERCEPTORS, useClass: ErrorHandlerInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
-    provideServiceWorker('ngsw-worker.js', {
+    provideServiceWorker('/firebase-messaging-sw.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000',
+      registrationStrategy: 'registerImmediately',
     })],
 };

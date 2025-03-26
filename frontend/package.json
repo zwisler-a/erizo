@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --ssl --proxy-config proxy.config.json --host 0.0.0.0",
+    "start": "ng serve --proxy-config proxy.config.json --host 0.0.0.0",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -23,6 +23,7 @@
     "@angular/router": "^19.1.0",
     "@angular/service-worker": "^19.1.5",
     "browser-image-compression": "^2.0.2",
+    "@angular/fire": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

@@ -11,6 +11,7 @@ import {NotificationsComponent} from './components/notifications/notifications.c
 import {
   AcceptConnectionRequestComponent
 } from './components/accept-connection-request/accept-connection-request.component';
+import { ConnectionRequestViewComponent } from './components/connection-request-view/connection-request-view.component';
 
 export const routes: Routes = [
   {path: 'landing', component: LandingPageComponent},
@@ -23,6 +24,7 @@ export const routes: Routes = [
       {path: 'add-contact/:fingerprint', component: AddContactViewComponent},
       {path: 'accept-contact/:fingerprint', component: AcceptConnectionRequestComponent},
       {path: 'connections', component: ConnectionListViewComponent},
+      {path: 'connections/open', component: ConnectionRequestViewComponent},
       {path: 'connection/:fingerprint', component: ConnectionViewComponent},
       {path: 'upload/:fingerprint', component: UploadImageViewComponent},
       {path: '**', redirectTo: 'home'}

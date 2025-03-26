@@ -20,7 +20,7 @@ export class ConnectionEntity {
   connectedWith: UserEntity;
 
   @ApiProperty({ required: false })
-  @ManyToOne(() => ChatEntity, { onDelete: 'NO ACTION', nullable: true })
+  @ManyToOne(() => ChatEntity, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn()
   chat: ChatEntity;
 

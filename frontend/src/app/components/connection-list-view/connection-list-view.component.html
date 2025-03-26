@@ -1,20 +1,28 @@
-<mat-nav-list>
-  @for (contact of contacts$|async; track contact) {
+<mat-nav-list *ngIf="(connections$ | async)?.length; else noMessages">
+  @for (connection of connections$|async; track connection) {
     <mat-list-item
-      [disabled]="contact.state == 'PENDING'"
-      [routerLink]="['/connection', contact.state == 'PENDING' ? '' : contact.connectedWith.fingerprint]">
+      [disabled]="connection.state == 'PENDING'"
+      [routerLink]="['/connection', connection.state == 'PENDING' ? '' : connection.connectedWith.fingerprint]">
       <div class="list-content">
         <span><mat-icon>account_circle</mat-icon></span>
-        <span>{{ contact.alias }}</span>
+        <span>{{ connection.alias }}</span>
         <span class="spacer"></span>
-        <span *ngIf="contact.state == 'PENDING'">Pending Request</span>
+        <span *ngIf="connection.state == 'PENDING'">Pending Request</span>
         <button (click)="$event.stopImmediatePropagation()" [matMenuTriggerFor]="menu" mat-icon-button>
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <!--          <button mat-menu-item (click)="deleteContact(contact)">Delete</button>-->
+          <button mat-menu-item (click)="changeAlias(connection)">Rename</button>
+          <button mat-menu-item (click)="deleteConnection(connection.id)">Delete</button>
         </mat-menu>
       </div>
     </mat-list-item>
   }
 </mat-nav-list>
+
+<ng-template #noMessages>
+  <div class="no-contacts">
+    <div>No connections yet</div>
+    <button mat-flat-button [routerLink]="['/identity']" >Share your identity</button>
+  </div>
+</ng-template>

@@ -6,6 +6,7 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
+import { ApiUserService } from './services/api-user.service';
 import { ApiMessageService } from './services/api-message.service';
 import { ApiAuthenticationService } from './services/api-authentication.service';
 import { ApiConnectionService } from './services/api-connection.service';
@@ -18,6 +19,7 @@ import { ApiConnectionService } from './services/api-connection.service';
   exports: [],
   declarations: [],
   providers: [
+    ApiUserService,
     ApiMessageService,
     ApiAuthenticationService,
     ApiConnectionService,

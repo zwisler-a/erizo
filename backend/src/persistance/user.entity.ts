@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { DeviceEntity } from './device.entity';
 
 @Entity()
 export class UserEntity {
@@ -10,4 +11,7 @@ export class UserEntity {
   @ApiProperty()
   @Column()
   public_key: string;
+
+  @OneToMany((type) => DeviceEntity, (device) => device.user)
+  devices: DeviceEntity[];
 }

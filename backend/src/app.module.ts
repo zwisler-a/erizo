@@ -23,6 +23,9 @@ import { DecryptionKeyEntity } from './persistance/decryption-key.entity';
 import { AuthGuard } from './util/auth.guard';
 import { UserService } from './service/user.service';
 import { ConnectionController } from './controller/connection.controller';
+import { DeviceEntity } from './persistance/device.entity';
+import { MessagingService } from './service/messaging.service';
+import { NotificationService } from './service/notification.service';
 
 @Module({
   imports: [
@@ -30,7 +33,7 @@ import { ConnectionController } from './controller/connection.controller';
       type: 'sqlite',
       database: 'db/db.sql',
       synchronize: true,
-      entities: [MessageEntity, UserEntity, ConnectionEntity, ChatEntity, DecryptionKeyEntity],
+      entities: [MessageEntity, UserEntity, ConnectionEntity, ChatEntity, DecryptionKeyEntity, DeviceEntity],
     }),
     PersistenceModule,
     ServeStaticModule.forRoot({
@@ -44,6 +47,8 @@ import { ConnectionController } from './controller/connection.controller';
   ],
   controllers: [AppController, UserController, MessageController, ChallengesController, ConnectionController],
   providers: [
+    NotificationService,
+    MessagingService,
     CryptoService,
     ConnectionService,
     ChallengeService,

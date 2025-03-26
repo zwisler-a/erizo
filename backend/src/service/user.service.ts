@@ -6,11 +6,13 @@ import { UserEntity } from '../persistance/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadDto } from '../dto/jwt-payload.dto';
+import { DeviceEntity } from '../persistance/device.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
+    @InjectRepository(DeviceEntity) private deviceRepo: Repository<DeviceEntity>,
     private challengeService: ChallengeService,
     private cryptoService: CryptoService,
     private jwtService: JwtService,
@@ -34,5 +36,20 @@ export class UserService {
 
   async getUserOrFailByKey(public_key: string) {
     return this.userRepo.findOneOrFail({ where: { public_key: public_key } });
+  }
+
+  async registerDevice(user: UserEntity, fcmToken: string) {
+    const existing = await this.deviceRepo.exists({
+      where: { user: user, fcmToken: fcmToken },
+      relations: { user: true },
+    });
+    if (existing) return false;
+
+    const device = this.deviceRepo.create({
+      fcmToken: fcmToken,
+      user: user,
+    });
+    await this.deviceRepo.save(device);
+    return true;
   }
 }

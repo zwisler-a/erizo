@@ -4,8 +4,9 @@
 <div class="explanation">
   <div>Looks like you are new. Lets get you started!</div>
   <div>You can either generate a new identity or upload one.</div>
-  <div>An identity is somewhat like a user account, but serves as means to encrypt everything that happens here</div>
+  <div>An identity is somewhat like a user account, but serves as means to encrypt everything that happens here.</div>
 </div>
+<br>
 <button mat-flat-button (click)="generateIdentity()">Generate Identity</button>
 <button mat-button color="primary" (click)="fileInput.click()">Upload Identity</button>
 <input #fileInput type="file" hidden (change)="uploadIdentity($event)"/>

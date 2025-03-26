@@ -1,10 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConnectionRequestDto } from '../dto/connection-request.dto';
+import { ConnectionRequestDto } from '../dto/connection/connection-request.dto';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../persistance/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConnectionEntity } from '../persistance/connection.entity';
 import { ChatEntity } from '../persistance/chat.entity';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class ConnectionService {
@@ -12,6 +13,7 @@ export class ConnectionService {
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(ConnectionEntity) private connectionRepo: Repository<ConnectionEntity>,
     @InjectRepository(ChatEntity) private chatRepo: Repository<ChatEntity>,
+    private notificationService: NotificationService,
   ) {}
 
   async createRequest(request: ConnectionRequestDto, user: UserEntity) {
@@ -33,6 +35,10 @@ export class ConnectionService {
       state: 'PENDING',
     });
     await this.connectionRepo.save(connectionRequest);
+    this.notificationService.notify(connectWith, 'Someone likes you', 'Someone wants to connect with you', {
+      icon: 'account_circle',
+      link: '/accept-contact/' + user.fingerprint,
+    });
   }
 
   async getOpenRequests(user: UserEntity) {
@@ -46,7 +52,10 @@ export class ConnectionService {
   }
 
   async getConnections(user: UserEntity) {
-    return await this.connectionRepo.find({ where: { owner: user }, relations: ['owner', 'connectedWith', 'chat', 'chat.participants'] });
+    return await this.connectionRepo.find({
+      where: { owner: user },
+      relations: ['owner', 'connectedWith', 'chat', 'chat.participants'],
+    });
   }
 
   async acceptConnectionRequest(user: UserEntity, requestId: number) {
@@ -68,5 +77,26 @@ export class ConnectionService {
     request.chat = directChat;
     otherSide.chat = directChat;
     await this.connectionRepo.save([request, otherSide]);
+    this.notificationService.notify(request.owner, 'You are connected!', 'You are not connected! (Sorry, i dont know the name)', {
+      icon: 'account_circle',
+      link: '/connection/' + user.fingerprint,
+    });
+  }
+
+  async delete(user: UserEntity, connectionId: number) {
+    const connection = await this.connectionRepo.findOneOrFail({
+      where: { owner: user, id: connectionId },
+      relations: { chat: true },
+    });
+    const otherSide = await this.connectionRepo.findOneOrFail({
+      where: {
+        connectedWith: user,
+        owner: connection.connectedWith,
+      },
+    });
+    await this.chatRepo.delete(connection.chat);
+    await this.connectionRepo.delete(connection);
+    await this.connectionRepo.delete(otherSide);
+    return true;
   }
 }

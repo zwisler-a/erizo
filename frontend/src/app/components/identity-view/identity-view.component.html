@@ -1,12 +1,13 @@
 <h3>Share Identity</h3>
 <button mat-stroked-button (click)="shareIdentity()">Share Identity</button>
 <button mat-stroked-button (click)="shareIdentity()">My fingerprint: {{ ownFingerprint }}</button>
+<button mat-stroked-button [routerLink]="['/connections', 'open']">Open connection requests</button>
 <h3>Preferences</h3>
 <button mat-stroked-button (click)="switchTheme()">
   <mat-icon>dark_mode</mat-icon>
   Switch theme
 </button>
-
+<button mat-stroked-button (click)="enableNotifications()">Enable Notifications</button>
 <br>
 
 <mat-accordion>

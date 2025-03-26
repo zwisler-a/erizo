@@ -1,11 +1,12 @@
-import { Controller, Get, HttpException, HttpStatus, Logger, Post, Request, UseGuards } from '@nestjs/common';
-import { ConnectionRequestDto } from '../dto/connection-request.dto';
+import { Controller, Delete, Get, HttpException, HttpStatus, Logger, Post, Request, UseGuards } from '@nestjs/common';
+import { ConnectionRequestDto } from '../dto/connection/connection-request.dto';
 import { ConnectionService } from '../service/connection.service';
 import { UserEntity } from '../persistance/user.entity';
-import { AcceptConnectionRequestDto } from '../dto/connection-request-accept.dto';
+import { AcceptConnectionRequestDto } from '../dto/connection/connection-request-accept.dto';
 import { AuthGuard } from '../util/auth.guard';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ConnectionEntity } from '../persistance/connection.entity';
+import { DeleteConnectionRequestDto } from '../dto/connection/delete-connection-request.dto';
 
 @Controller('connection')
 export class ConnectionController {
@@ -69,6 +70,21 @@ export class ConnectionController {
     try {
       const user: UserEntity = req.user;
       return this.connectionService.getOpenRequests(user);
+    } catch (e) {
+      this.logger.error(e);
+      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ operationId: 'delete-connection' })
+  @ApiBody({ type: DeleteConnectionRequestDto })
+  async deleteConnection(@Request() req: any) {
+    try {
+      const user: UserEntity = req.user;
+      const body: DeleteConnectionRequestDto = req.body;
+      return this.connectionService.delete(user, body.connectionId);
     } catch (e) {
       this.logger.error(e);
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);

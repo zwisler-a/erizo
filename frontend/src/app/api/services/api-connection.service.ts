@@ -14,6 +14,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { acceptRequest } from '../fn/connection/accept-request';
 import { AcceptRequest$Params } from '../fn/connection/accept-request';
 import { ConnectionEntity } from '../models/connection-entity';
+import { deleteConnection } from '../fn/connection/delete-connection';
+import { DeleteConnection$Params } from '../fn/connection/delete-connection';
 import { getConnections } from '../fn/connection/get-connections';
 import { GetConnections$Params } from '../fn/connection/get-connections';
 import { openRequest } from '../fn/connection/open-request';
@@ -49,6 +51,31 @@ export class ApiConnectionService extends BaseService {
   getConnections(params?: GetConnections$Params, context?: HttpContext): Observable<Array<ConnectionEntity>> {
     return this.getConnections$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<ConnectionEntity>>): Array<ConnectionEntity> => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteConnection()` */
+  static readonly DeleteConnectionPath = '/api/connection';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteConnection()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteConnection$Response(params: DeleteConnection$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteConnection(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteConnection$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deleteConnection(params: DeleteConnection$Params, context?: HttpContext): Observable<void> {
+    return this.deleteConnection$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

@@ -1,10 +1,12 @@
 import {Component} from '@angular/core';
 import {MatListModule} from '@angular/material/list';
-import {Notification, NotificationService} from '../../service/notification.service';
+import {NotificationService} from '../../service/notification.service';
 import {Observable} from 'rxjs';
-import {AsyncPipe} from '@angular/common';
+import { AsyncPipe, JsonPipe, NgIf } from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
 import {RouterLink} from '@angular/router';
+import { MessagePayload } from '@angular/fire/messaging';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-notifications',
@@ -12,20 +14,23 @@ import {RouterLink} from '@angular/router';
     MatListModule,
     AsyncPipe,
     MatIcon,
-    RouterLink
+    RouterLink,
+    JsonPipe,
+    MatButton,
+    NgIf,
   ],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.css'
 })
 export class NotificationsComponent {
 
-  notifications$: Observable<Notification[]>;
+  notifications$: Observable<MessagePayload[]>;
 
   constructor(private notificationService: NotificationService) {
     this.notifications$ = notificationService.getNotifications();
   }
 
-  notificationClicked(notification: Notification) {
-    this.notificationService.removeNotification(notification.id);
+  notificationClicked(notification: MessagePayload) {
+    this.notificationService.removeNotification(notification.messageId);
   }
 }

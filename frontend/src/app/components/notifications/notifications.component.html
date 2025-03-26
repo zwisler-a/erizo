@@ -1,9 +1,15 @@
-<mat-list role="list">
-  @for (notification of notifications$ | async; track notification.id) {
-    <mat-list-item [routerLink]="notification.link" (click)="notificationClicked(notification)">
-      <mat-icon matListItemIcon>{{notification.icon}}</mat-icon>
-      <div matListItemTitle>{{ notification.title }}</div>
-      <div matListItemLine>{{ notification.description }}</div>
+<mat-list role="list" *ngIf="(notifications$ | async)?.length; else noMessages">
+  @for (notification of notifications$ | async; track notification.messageId) {
+    <mat-list-item [routerLink]="notification.data ? notification.data['link']:''"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>{{ notification.data ? notification.data['icon'] : 'info' }}</mat-icon>
+      <div matListItemTitle>{{ notification.notification?.title }}</div>
+      <div matListItemLine>{{ notification.notification?.body }}</div>
     </mat-list-item>
   }
 </mat-list>
+<ng-template #noMessages>
+  <div class="no-notifications">
+    <div>Nothing new</div>
+  </div>
+</ng-template>

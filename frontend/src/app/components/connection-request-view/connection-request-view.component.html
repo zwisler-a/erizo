@@ -1,0 +1,13 @@
+<mat-nav-list>
+  @for (connection of connections$|async; track connection) {
+    <mat-list-item
+      [routerLink]="['/accept-contact', connection.owner.fingerprint]">
+      <div class="list-content">
+        <span><mat-icon>account_circle</mat-icon></span>
+        <span>{{ connection.owner.fingerprint }}</span>
+        <span class="spacer"></span>
+        <span *ngIf="connection.state == 'PENDING'">Pending Request</span>
+      </div>
+    </mat-list-item>
+  }
+</mat-nav-list>

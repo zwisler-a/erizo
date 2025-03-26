@@ -1,35 +1,72 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, concat, Observable } from 'rxjs';
+import { getToken, Messaging, onMessage } from '@angular/fire/messaging';
+import { ApiUserService } from '../api/services/api-user.service';
+import { MessagePayload } from '@angular/fire/messaging';
+import { NotificationPersistenceService } from './notification-persistance.service';
 
-export interface Notification {
-  id: string;
-  title: string;
-  icon: string;
-  description: string;
-  link?: string;
-}
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private notifications: Notification[] = [];
-  private notifications$ = new BehaviorSubject<Notification[]>([]);
+  private notifications$ = new BehaviorSubject<MessagePayload[]>([]);
+  private fcmMessages$ = concat(
+    this.getAllBackgroundNotifications(),
+    new Observable<MessagePayload>((sub) => onMessage(this.msg, (msg) => sub.next(msg))),
+  );
 
-  addNotification(notification: Omit<Notification, 'id'>) {
-    const newNotification = {...notification, id: this.generateId()};
-    this.notifications.push(newNotification);
-    this.notifications$.next([...this.notifications]);
+  constructor(
+    private msg: Messaging,
+    private userApi: ApiUserService,
+    private persistenceService: NotificationPersistenceService,
+  ) {
+    this.fcmMessages$.subscribe((msg) => {
+      this.addNotification(msg);
+    });
+    this.refreshNotifications();
   }
 
-  removeNotification(id: string) {
-    this.notifications = this.notifications.filter(n => n.id !== id);
-    this.notifications$.next([...this.notifications]);
+  async addNotification(payload: MessagePayload) {
+    await this.persistenceService.saveNotification(payload);
+    this.refreshNotifications();
+  }
+
+  async removeNotification(id: string) {
+    await this.persistenceService.deleteNotification(id);
+    this.refreshNotifications();
   }
 
   getNotifications() {
     return this.notifications$.asObservable();
   }
 
-  private generateId(): string {
-    return crypto.randomUUID();
+  async enableNotifications() {
+    const serviceWorkerRegistration = await navigator.serviceWorker
+      .register('/firebase-messaging-sw.js', {
+        type: 'module',
+      });
+
+    const notificationPermissions = await Notification.requestPermission();
+    if (notificationPermissions === 'denied') {
+      return false;
+    }
+    const fcmToken = await getToken(this.msg, { serviceWorkerRegistration });
+    this.userApi.registerDevice({ body: { fcmToken } }).subscribe();
+    return true;
+  }
+
+  private getAllBackgroundNotifications(): Observable<MessagePayload> {
+    return new Observable((observer) => {
+      this.persistenceService.getAllNotifications().then(notifications => {
+        notifications.forEach((notification) => observer.next(notification));
+      }).finally(() => observer.complete());
+    });
+  }
+
+  private async refreshNotifications() {
+    try {
+      const notifications = await this.persistenceService.getAllNotifications();
+      this.notifications$.next(notifications);
+    } catch (error) {
+      console.error('Error refreshing notifications', error);
+    }
   }
 }

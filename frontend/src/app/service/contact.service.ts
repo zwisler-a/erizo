@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PersistenceService } from './persistence.service';
-import { map, Observable, OperatorFunction, switchMap } from 'rxjs';
+import { map, Observable, OperatorFunction, switchMap, tap } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { ApiConnectionService } from '../api/services/api-connection.service';
 import { ConnectionEntity } from '../api/models/connection-entity';
@@ -24,19 +24,6 @@ export class ContactService {
 
   getOpenRequests() {
     return this.connectionApi.openRequest();
-  }
-
-  showOpenRequestsInNotifications() {
-    this.getOpenRequests().subscribe((openRequests) => {
-      openRequests.forEach((openRequest) => {
-        this.notificationService.addNotification({
-          icon: 'account_circle',
-          title: 'Someone like you',
-          description: 'And this someone want to be connection with you 💖',
-          link: `/accept-contact/` + openRequest.owner.fingerprint,
-        });
-      });
-    });
   }
 
   getContacts(): Observable<(ConnectionEntity & { alias: string })[]> {
@@ -67,7 +54,7 @@ export class ContactService {
       return source.pipe(
         switchMap(vals => Promise.all(vals.map(async val => ({
           ...val,
-          alias: (await this.getAlias(val.connectedWith.fingerprint) ?? val.connectedWith.fingerprint ),
+          alias: (await this.getAlias(val.connectedWith.fingerprint) ?? val.connectedWith.fingerprint),
         })))),
       );
     };
@@ -85,5 +72,9 @@ export class ContactService {
     const aliases = (await this.persistenceService.getItem('alias') ?? {}) as Record<string, string>;
 
     return aliases[fingerprint];
+  }
+
+  delete(id: number) {
+    return this.connectionApi.deleteConnection({ body: { connectionId: id } });
   }
 }

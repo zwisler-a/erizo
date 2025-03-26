@@ -22,5 +22,6 @@
   "name": "Erizo",
   "short_name": "Erizo",
   "start_url": "/",
-  "scope": "/"
+  "scope": "/",
+  "gcm_sender_id": "103953800507"
 }

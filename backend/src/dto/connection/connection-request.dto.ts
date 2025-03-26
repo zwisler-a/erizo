@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {ChallengeBodyDto} from "./challenge/challenge-body.dto";
+import {ChallengeBodyDto} from "../challenge/challenge-body.dto";
 
 export class ConnectionRequestDto {
     @ApiProperty()

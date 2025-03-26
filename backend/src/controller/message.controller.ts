@@ -71,7 +71,8 @@ export class MessageController {
   async upload(@Request() req: any) {
     try {
       const body = req.body as MessageCreationDto;
-      await this.messageService.create(body);
+      const user = req.user as UserEntity;
+      await this.messageService.create(body, user);
       return { success: true };
     } catch (error) {
       this.logger.error(error);

@@ -29,11 +29,3 @@ a {
 .list-content > mat-icon {
   transform: scale(2);
 }
-.no-contacts {
-  margin: 64px auto;
-  display: flex;
-  flex-direction: column;
-  max-width: 320px;
-  text-align: center;
-  gap: 16px;
-}

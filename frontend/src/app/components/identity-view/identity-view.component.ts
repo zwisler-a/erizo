@@ -4,8 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { PersistenceService } from '../../service/persistence.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { NotificationService } from '../../service/notification.service';
 
 @Component({
   selector: 'app-identity-view',
@@ -14,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatExpansionModule,
     MatAccordion,
     MatIconModule,
+    RouterLink,
   ],
   templateUrl: './identity-view.component.html',
   styleUrl: './identity-view.component.css',
@@ -27,6 +29,7 @@ export class IdentityViewComponent {
     private snackBar: MatSnackBar,
     private persistenceService: PersistenceService,
     private router: Router,
+    private notificationService: NotificationService,
   ) {
     this.keyService.getOwnFingerprint().then(fp => {
       this.ownFingerprint = fp;
@@ -111,5 +114,20 @@ export class IdentityViewComponent {
         console.log(html);
       }
     }
+  }
+
+  async enableNotifications() {
+    try {
+      const success = await this.notificationService.enableNotifications();
+      if (success) {
+        this.snackBar.open('Notifications are enabled ', '', { duration: 2000 });
+      } else {
+        this.snackBar.open('Could not enable notifications', '', { duration: 2000 });
+      }
+    } catch (e) {
+      console.log(e);
+      this.snackBar.open('Could not enable notifications', '', { duration: 2000 });
+    }
+
   }
 }

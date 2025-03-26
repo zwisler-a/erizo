@@ -6,17 +6,20 @@ import { FileService } from './file.service';
 import { CryptoService } from './crypto.service';
 import { MessageCreationDto } from '../dto/message-creation.dto';
 import { ChatEntity } from '../persistance/chat.entity';
+import { NotificationService } from './notification.service';
+import { UserEntity } from '../persistance/user.entity';
 
 @Injectable()
 export class MessageService {
   constructor(
     private cryptoService: CryptoService,
+    private notificationService: NotificationService,
     @InjectRepository(ChatEntity) private chatRepository: ChatEntity,
     @InjectRepository(MessageEntity) private messageRepository: Repository<MessageEntity>,
     private fileService: FileService,
   ) {}
 
-  public async create(message: MessageCreationDto): Promise<void> {
+  public async create(message: MessageCreationDto, user: UserEntity): Promise<void> {
     const file = this.fileService.store(message.data);
     const messageEntity = this.messageRepository.create({
       decryptionKeys: message.recipients.map((recipient) => ({
@@ -26,11 +29,21 @@ export class MessageService {
       chat: { id: message.chat_id },
       message: message.message,
       iv: message.iv,
-      sender_fingerprint: message.sender_fingerprint,
+      sender_fingerprint: user.fingerprint,
       file_path: file.relativePath,
       days_to_live: message.days_to_live,
     });
     await this.messageRepository.save(messageEntity);
+    for (let recipient of message.recipients) {
+      if (recipient.fingerprint !== user.fingerprint) {
+        await this.notificationService.notify(
+          { fingerprint: recipient.fingerprint },
+          'You got Mail',
+          'There is something waiting for you :)',
+          { icon: 'mail', link: '/' },
+        );
+      }
+    }
   }
 
   public async fetchMessagesForPublicKey(key: string) {
