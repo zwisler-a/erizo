@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable({providedIn: 'root'})
 export class PersistenceService {
-  private dbName = 'elerizo';
+  private dbName = 'elerizo_v1';
   private storeName = 'store';
   private db!: IDBDatabase;
   private doneInitializing!: () => void;

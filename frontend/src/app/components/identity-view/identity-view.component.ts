@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
-import {KeyService} from '../../service/key.service';
-import {MatButtonModule} from '@angular/material/button';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
-import {PersistenceService} from '../../service/persistence.service';
-import {Router} from '@angular/router';
+import { Component } from '@angular/core';
+import { KeyService } from '../../service/key.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { PersistenceService } from '../../service/persistence.service';
+import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-identity-view',
@@ -12,21 +13,24 @@ import {Router} from '@angular/router';
     MatButtonModule,
     MatExpansionModule,
     MatAccordion,
+    MatIconModule,
   ],
   templateUrl: './identity-view.component.html',
-  styleUrl: './identity-view.component.css'
+  styleUrl: './identity-view.component.css',
 })
 export class IdentityViewComponent {
 
-  ownPublicKey: string = '';
-  ownHash: string = '';
+  ownFingerprint: string | null = '';
 
   constructor(
     private keyService: KeyService,
     private snackBar: MatSnackBar,
     private persistenceService: PersistenceService,
-    private router: Router
+    private router: Router,
   ) {
+    this.keyService.getOwnFingerprint().then(fp => {
+      this.ownFingerprint = fp;
+    });
   }
 
   async downloadIdentity() {
@@ -36,7 +40,7 @@ export class IdentityViewComponent {
       publicKey: await this.keyService.keyToBase64(pair.publicKey),
       privateKey: await this.keyService.keyToBase64(pair.privateKey),
     });
-    const blob = new Blob([identityData], {type: 'application/json'});
+    const blob = new Blob([identityData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -60,15 +64,15 @@ export class IdentityViewComponent {
         if (identity.publicKey && identity.privateKey) {
           await this.keyService.setOwnKeyPair({
             publicKey: await this.keyService.base64ToKey(identity.publicKey),
-            privateKey: await this.keyService.base64ToKey(identity.privateKey, "private"),
-          })
-          this.snackBar.open('Identity uploaded successfully', '', {duration: 2000});
+            privateKey: await this.keyService.base64ToKey(identity.privateKey, 'private'),
+          });
+          this.snackBar.open('Identity uploaded successfully', '', { duration: 2000 });
 
         } else {
-          this.snackBar.open('Identity upload failed', '', {duration: 2000});
+          this.snackBar.open('Identity upload failed', '', { duration: 2000 });
         }
       } catch (error) {
-        this.snackBar.open('Identity upload failed', '', {duration: 2000});
+        this.snackBar.open('Identity upload failed', '', { duration: 2000 });
       }
     };
     reader.readAsText(file);
@@ -79,11 +83,11 @@ export class IdentityViewComponent {
     if (navigator.share) {
       navigator.share({
         url: url,
-        title: `Hey, connect with me on erizo!`
+        title: `Hey, connect with me on erizo!`,
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(url).then(() => {
-        this.snackBar.open("Copied to clipboard!", "", {duration: 2000});
+        this.snackBar.open('Copied to clipboard!', '', { duration: 2000 });
       }).catch(console.error);
     }
   }
@@ -94,16 +98,16 @@ export class IdentityViewComponent {
   }
 
   switchTheme() {
-    const isLight = localStorage.getItem("light") == "true";
-    const html = document.querySelector("html");
+    const isLight = localStorage.getItem('light') == 'true';
+    const html = document.querySelector('html');
     if (html) {
       if (!isLight) {
-        localStorage.setItem("light", "true");
-        html.style.colorScheme = "light";
+        localStorage.setItem('light', 'true');
+        html.style.colorScheme = 'light';
         console.log(html);
       } else {
-        localStorage.setItem("light", "false");
-        html.style.colorScheme = "dark";
+        localStorage.setItem('light', 'false');
+        html.style.colorScheme = 'dark';
         console.log(html);
       }
     }

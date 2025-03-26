@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContactService } from '../../service/contact.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,7 +36,7 @@ import { ConnectionEntity } from '../../api/models/connection-entity';
         </mat-form-field>
       </div>
       <div class="action">
-        <button mat-raised-button color="primary" (click)="fileInput.click()">Take Picture</button>
+        <button mat-raised-button color="primary" (click)="fileInput.click()">Try again</button>
         <span class="spacer"></span>
         <button *ngIf="imageSrc" mat-flat-button color="accent" (click)="sendImage()"
                 [disabled]="!imageSrc || disableSend">
@@ -87,7 +87,7 @@ import { ConnectionEntity } from '../../api/models/connection-entity';
     }
   `],
 })
-export class UploadImageViewComponent {
+export class UploadImageViewComponent implements AfterViewInit {
 
   private contact: (ConnectionEntity & { alias: string }) | undefined;
   imageSrc: string | null = null;
@@ -109,6 +109,10 @@ export class UploadImageViewComponent {
     } else {
       this.loadContact(hash);
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.fileInput.nativeElement.click();
   }
 
 

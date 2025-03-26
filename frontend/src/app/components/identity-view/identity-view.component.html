@@ -1,8 +1,13 @@
 <h3>Share Identity</h3>
-<button mat-stroked-button (click)="switchTheme()">Switch theme</button>
 <button mat-stroked-button (click)="shareIdentity()">Share Identity</button>
+<button mat-stroked-button (click)="shareIdentity()">My fingerprint: {{ ownFingerprint }}</button>
+<h3>Preferences</h3>
+<button mat-stroked-button (click)="switchTheme()">
+  <mat-icon>dark_mode</mat-icon>
+  Switch theme
+</button>
 
-<h3></h3>
+<br>
 
 <mat-accordion>
   <mat-expansion-panel hideToggle>
@@ -12,7 +17,7 @@
     <div class="panel-content">
       <button mat-stroked-button (click)="downloadIdentity()">Download Identity</button>
       <button mat-stroked-button color="primary" (click)="fileInput.click()">Upload Identity</button>
-      <input #fileInput type="file" hidden (change)="uploadIdentity($event)"/>
+      <input #fileInput type="file" hidden (change)="uploadIdentity($event)" />
 
       <button mat-stroked-button (click)="deleteIdentity()">Delete Identity</button>
     </div>

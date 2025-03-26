@@ -1,20 +1,15 @@
-.alias-input {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 :host {
-  padding: 16px;
-  width: 100%;
-  box-sizing: border-box;
+  margin-top: 20%;
+  justify-content: center;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1rem;
+  align-items: stretch;
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+  text-align: center;
 }
-
-.actions {
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: space-between;
+.subtext {
+  font-size: 11px;
 }
