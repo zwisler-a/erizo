@@ -6,10 +6,11 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { AsyncPipe, DatePipe, NgIf, NgOptimizedImage } from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {Observable} from 'rxjs';
+import { LightboxDirective } from '../connection-view/lighbox.directive';
 
 @Component({
   selector: 'app-home-view',
-  imports: [MatButtonModule, RouterLink, MatProgressSpinnerModule, NgIf, MatIconModule, DatePipe, AsyncPipe, NgOptimizedImage],
+  imports: [MatButtonModule, RouterLink, MatProgressSpinnerModule, NgIf, MatIconModule, DatePipe, AsyncPipe, NgOptimizedImage, LightboxDirective],
   templateUrl: './home-view.component.html',
   styleUrl: './home-view.component.css'
 })

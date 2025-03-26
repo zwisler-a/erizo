@@ -12,7 +12,11 @@
 <div class="images">
   @for (message of messages$ | async; track message.id) {
     <div class="image">
-      <img appLightbox [src]="message.url" alt="">
+      <img appLightbox [appLightboxInfo]="infoTemplate" [src]="message.url" alt="">
+      <ng-template #infoTemplate>
+           <div class="lightbox-info"><b>{{ message.alias }}
+           </b> &#64; {{message.created_at | date: 'dd.MM HH:ss'}} | {{ message.message }}</div>
+      </ng-template>
     </div>
   }
 </div>

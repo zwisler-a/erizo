@@ -7,6 +7,7 @@ import imageCompression from 'browser-image-compression';
 import { ApiMessageService } from '../api/services/api-message.service';
 import { MessageDto } from '../api/models/message-dto';
 import { UserEntity } from '../api/models/user-entity';
+import { NotificationService } from './notification.service';
 
 export type CompleteMessage = MessageDto & DecryptedMessage & { alias: string } & { url: any };
 
@@ -27,7 +28,13 @@ export class MessageService {
     private contactService: ContactService,
     private sanitizer: DomSanitizer,
     private messageApi: ApiMessageService,
+    private notificationService: NotificationService,
   ) {
+
+    // Hack to reload messages when new ones arrive
+    this.notificationService.getNotifications().subscribe(_ => {
+      this.reloadMessages.next();
+    });
   }
 
 

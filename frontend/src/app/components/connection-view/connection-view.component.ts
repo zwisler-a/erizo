@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContactService } from '../../service/contact.service';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CompleteMessage, MessageService } from '../../service/message.service';
@@ -18,6 +18,7 @@ import { LightboxDirective } from './lighbox.directive';
     MatIcon,
     AsyncPipe,
     LightboxDirective,
+    DatePipe,
   ],
   templateUrl: './connection-view.component.html',
   styleUrl: './connection-view.component.css',
