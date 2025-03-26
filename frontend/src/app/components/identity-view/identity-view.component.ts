@@ -7,6 +7,7 @@ import { PersistenceService } from '../../service/persistence.service';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { NotificationService } from '../../service/notification.service';
+import { ConfirmationService } from '../../service/confirmation.service';
 
 @Component({
   selector: 'app-identity-view',
@@ -30,6 +31,7 @@ export class IdentityViewComponent {
     private persistenceService: PersistenceService,
     private router: Router,
     private notificationService: NotificationService,
+    private confirmation: ConfirmationService,
   ) {
     this.keyService.getOwnFingerprint().then(fp => {
       this.ownFingerprint = fp;
@@ -96,8 +98,13 @@ export class IdentityViewComponent {
   }
 
   async deleteIdentity() {
-    await this.persistenceService.clear();
-    this.router.navigate(['/landing']);
+    this.confirmation.confirm('Are your sure? You will lose everything, if you did not download your identity!')
+      .subscribe(async (confirmed) => {
+        if (!confirmed) return;
+        await this.persistenceService.clear();
+        this.router.navigate(['/landing']);
+      });
+
   }
 
   switchTheme() {

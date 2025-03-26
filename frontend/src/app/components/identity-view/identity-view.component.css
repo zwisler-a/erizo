@@ -13,3 +13,9 @@
   flex-direction: column;
   gap: 16px;
 }
+h3 {
+  margin-top: 48px;
+}
+.info-text{
+  margin: 8px 0;
+}

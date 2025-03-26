@@ -77,7 +77,7 @@ export class ConnectionService {
     request.chat = directChat;
     otherSide.chat = directChat;
     await this.connectionRepo.save([request, otherSide]);
-    this.notificationService.notify(request.owner, 'You are connected!', 'You are not connected! (Sorry, i dont know the name)', {
+    this.notificationService.notify(request.owner, 'You are connected!', 'You are now connected, yey :D', {
       icon: 'account_circle',
       link: '/connection/' + user.fingerprint,
     });
