@@ -9,6 +9,7 @@ import { CompleteMessage, MessageService } from '../../service/message.service';
 import { firstValueFrom, Observable } from 'rxjs';
 import { KeyService } from '../../service/key.service';
 import { ConnectionEntity } from '../../api/models/connection-entity';
+import { LightboxDirective } from './lighbox.directive';
 
 @Component({
   selector: 'app-connection-view',
@@ -16,6 +17,7 @@ import { ConnectionEntity } from '../../api/models/connection-entity';
     MatButton,
     MatIcon,
     AsyncPipe,
+    LightboxDirective,
   ],
   templateUrl: './connection-view.component.html',
   styleUrl: './connection-view.component.css',

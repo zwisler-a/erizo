@@ -12,7 +12,7 @@
 <div class="images">
   @for (message of messages$ | async; track message.id) {
     <div class="image">
-    <img [src]="message.url" alt="">
+      <img appLightbox [src]="message.url" alt="">
     </div>
   }
 </div>
