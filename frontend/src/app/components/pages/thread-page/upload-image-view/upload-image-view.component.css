@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   width: 100vw;
+  max-width: 480px;
   gap: 10px;
 }
 
