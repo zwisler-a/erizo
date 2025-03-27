@@ -92,9 +92,10 @@ export class BlurDirective implements AfterViewInit {
     }
   }
 
-  @HostListener('mousedown')
-  @HostListener('touchstart')
-  onPress() {
+  @HostListener('mousedown', ['$event'])
+  @HostListener('touchstart', ['$event'])
+  onPress(event: Event) {
+    event.preventDefault(); // Prevent long press
     this.removeBlur();
   }
 
