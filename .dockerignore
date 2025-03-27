@@ -1,3 +1,6 @@
 node_modules
 **/node_modules
 **/dist
+**/storage
+**/db
+backend/erizo_fcm_cred.json
