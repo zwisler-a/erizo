@@ -95,7 +95,6 @@ export class BlurDirective implements AfterViewInit {
   @HostListener('mousedown', ['$event'])
   @HostListener('touchstart', ['$event'])
   onPress(event: Event) {
-    event.preventDefault(); // Prevent long press
     this.removeBlur();
   }
 
@@ -103,5 +102,10 @@ export class BlurDirective implements AfterViewInit {
   @HostListener('touchend')
   onRelease() {
     this.applyBlur();
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  onContextMenu(event: MouseEvent) {
+    event.preventDefault(); // Prevent the context menu from appearing
   }
 }
