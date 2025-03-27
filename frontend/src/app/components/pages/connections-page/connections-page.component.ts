@@ -14,6 +14,7 @@ import { URLS } from '../../../app.routes';
 import { UserService } from '../../../service/user.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ConnectionOptionsComponent } from './connection-options/connection-options.component';
+import { ThreadEntity } from '../../../api/models/thread-entity';
 
 @Component({
   selector: 'app-connections-page',
@@ -24,6 +25,7 @@ import { ConnectionOptionsComponent } from './connection-options/connection-opti
 export class ConnectionsPageComponent {
   connections$: Observable<(ConnectionEntity & { alias: string })[]>;
   openRequests$: Observable<(ConnectionEntity)[]>;
+  threads$: Observable<ThreadEntity[]>;
 
   constructor(
     private contactService: ContactService,
@@ -32,6 +34,7 @@ export class ConnectionsPageComponent {
     private bottomSheet: MatBottomSheet,
   ) {
     this.connections$ = this.contactService.getContacts();
+    this.threads$ = this.contactService.getThreads();
     this.openRequests$ = contactService.getOpenRequests();
   }
 
@@ -65,4 +68,16 @@ export class ConnectionsPageComponent {
   }
 
   protected readonly URLS = URLS;
+
+  deleteThread(id: number) {
+    this.confirmationService.confirm('Delete???').subscribe(
+      result => {
+        if (result) {
+          this.contactService.deleteThread(id).subscribe(() => {
+            this.threads$ = this.contactService.getThreads();
+          });
+        }
+      },
+    );
+  }
 }

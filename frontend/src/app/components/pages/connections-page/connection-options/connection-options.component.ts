@@ -4,7 +4,7 @@ import { MatLine } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { UserService } from '../../../../service/user.service';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { URLS } from '../../../../app.routes';
 
 @Component({
@@ -13,12 +13,13 @@ import { URLS } from '../../../../app.routes';
     MatListModule,
     MatIcon,
     MatLine,
+    RouterLink,
   ],
   templateUrl: './connection-options.component.html',
   styleUrl: './connection-options.component.css',
 })
 export class ConnectionOptionsComponent {
-  private _bottomSheetRef =
+  _bottomSheetRef =
     inject<MatBottomSheetRef<ConnectionOptionsComponent>>(MatBottomSheetRef);
 
   constructor(
@@ -45,4 +46,6 @@ export class ConnectionOptionsComponent {
       console.error('Failed to read clipboard content: ', err);
     });
   }
+
+  protected readonly URLS = URLS;
 }

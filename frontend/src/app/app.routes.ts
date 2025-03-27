@@ -14,6 +14,9 @@ import {
   AcceptConnectionViewComponent,
 } from './components/pages/connections-page/accept-connection-view/accept-connection-view.component';
 import { PostViewComponent } from './components/pages/thread-page/post-view/post-view.component';
+import {
+  CreateThreadViewComponent
+} from './components/pages/connections-page/create-thread-view/create-thread-view.component';
 
 export const URLS = {
   HOME: 'home',
@@ -21,16 +24,18 @@ export const URLS = {
   CONNECTIONS: 'connections',
   IDENTITY: 'identity',
   LANDING: 'landing',
+  CREATE_THREAD: 'thread/create',
   ADD_CONNECTION: 'add-contact/:fingerprint',
   ADD_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ADD_CONNECTION.replace(':fingerprint', fingerprint),
   ACCEPT_CONNECTION: 'accept-contact/:fingerprint',
   ACCEPT_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ACCEPT_CONNECTION.replace(':fingerprint', fingerprint),
-  THREAD: 'tread/:id',
+  THREAD: 'thread/:id',
   THREAD_FN: (id: number | string) => '/' + URLS.THREAD.replace(':id', id.toString()),
   UPLOAD_IMAGE: 'upload/:threadId',
   UPLOAD_IMAGE_FN: (threadId: string) => '/' + URLS.UPLOAD_IMAGE.replace(':threadId', threadId),
   VIEW_POST: 'post/:postId',
   VIEW_POST_FN: (postId: number | string) => '/' + URLS.VIEW_POST.replace(':postId', postId.toString()),
+
 };
 
 export const routes: Routes = [
@@ -39,6 +44,7 @@ export const routes: Routes = [
     path: '', component: ShellComponent, children: [
       { path: URLS.HOME, component: HomePageComponent },
       { path: URLS.IDENTITY, component: UserPageComponent },
+      { path: URLS.CREATE_THREAD, component: CreateThreadViewComponent },
       { path: URLS.NOTIFICATIONS, component: NotificationPageComponent },
       { path: URLS.CONNECTIONS, component: ConnectionsPageComponent },
       { path: URLS.ADD_CONNECTION, component: AddContactViewComponent },

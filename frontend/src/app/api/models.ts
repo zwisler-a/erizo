@@ -10,6 +10,7 @@ export { ChallengeVerifyDto } from './models/challenge-verify-dto';
 export { ConnectionEntity } from './models/connection-entity';
 export { ConnectionRequestDto } from './models/connection-request-dto';
 export { CreatePostDto } from './models/create-post-dto';
+export { CreateThreadRequest } from './models/create-thread-request';
 export { DecryptionKeyEntity } from './models/decryption-key-entity';
 export { DeleteConnectionRequestDto } from './models/delete-connection-request-dto';
 export { PostDto } from './models/post-dto';

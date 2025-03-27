@@ -1,0 +1,20 @@
+<h3>Participants</h3>
+<div class="users">
+  <mat-selection-list #contacts>
+    @for (contact of contacts$ | async; track contact.id) {
+      <mat-list-option
+        [value]="contact.connectedWith.fingerprint">{{ contact.connectedWith.fingerprint | alias | async }}
+      </mat-list-option>
+    }
+  </mat-selection-list>
+</div>
+<h3>Infos</h3>
+<div class="inputs">
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input [(ngModel)]="name" matInput>
+  </mat-form-field>
+
+  <button mat-flat-button (click)="createThread(contacts)">Create</button>
+  <button mat-button [routerLink]="['/' + URLS.CONNECTIONS]">Cancel</button>
+</div>

@@ -4,6 +4,7 @@ import { map, Observable, OperatorFunction, switchMap } from 'rxjs';
 import { ApiConnectionService } from '../api/services/api-connection.service';
 import { ConnectionEntity } from '../api/models/connection-entity';
 import { KeyService } from './key.service';
+import { ApiThreadService } from '../api/services/api-thread.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +14,7 @@ export class ContactService {
     private connectionApi: ApiConnectionService,
     private persistenceService: PersistenceService,
     private keyService: KeyService,
+    private threadApi: ApiThreadService,
   ) {
   }
 
@@ -30,9 +32,9 @@ export class ContactService {
     );
   }
 
-  getContact(fingerprint: string) {
-    return this.getContacts().pipe(
-      map((contacts) => contacts.find(contact => contact.connectedWith.fingerprint === fingerprint)),
+  getThreads() {
+    return this.threadApi.getThreads().pipe(
+      map(threads => threads.filter(t => !!t.owner)),
     );
   }
 
@@ -74,5 +76,9 @@ export class ContactService {
 
   delete(id: number) {
     return this.connectionApi.deleteConnection({ body: { connectionId: id } });
+  }
+
+  deleteThread(id: number) {
+    return this.threadApi.deleteThread({ threadId: id });
   }
 }

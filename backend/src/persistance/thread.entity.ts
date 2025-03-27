@@ -22,7 +22,7 @@ export class ThreadEntity {
   @Column({ nullable: true })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: UserEntity })
   @ManyToOne(() => UserEntity, { onDelete: 'NO ACTION', nullable: true })
   @JoinColumn()
   owner: UserEntity;
@@ -32,6 +32,6 @@ export class ThreadEntity {
   @JoinTable()
   participants: UserEntity[];
 
-  @OneToMany(() => PostEntity, (message) => message.chat, { onDelete: 'NO ACTION' })
+  @OneToMany(() => PostEntity, (message) => message.chat, { onDelete: 'CASCADE' })
   messages: PostEntity[];
 }

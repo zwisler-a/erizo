@@ -1,17 +1,17 @@
-import {Component} from '@angular/core';
-import {MatButton} from '@angular/material/button';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {KeyService} from '../../../service/key.service';
-import {Router} from '@angular/router';
-import {UserService} from '../../../service/user.service';
+import { Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { KeyService } from '../../../service/key.service';
+import { Router } from '@angular/router';
+import { UserService } from '../../../service/user.service';
 
 @Component({
   selector: 'app-landing-page',
   imports: [
-    MatButton
+    MatButton,
   ],
   templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.css'
+  styleUrl: './landing-page.component.css',
 })
 export class LandingPageComponent {
 
@@ -30,15 +30,17 @@ export class LandingPageComponent {
         if (identity.publicKey && identity.privateKey) {
           await this.keyService.setOwnKeyPair({
             publicKey: await this.keyService.base64ToKey(identity.publicKey),
-            privateKey: await this.keyService.base64ToKey(identity.privateKey, "private"),
-          })
-          this.snackBar.open('Identity uploaded successfully', '', {duration: 2000});
-          this.router.navigate(['/']);
+            privateKey: await this.keyService.base64ToKey(identity.privateKey, 'private'),
+          });
+          this.snackBar.open('Identity uploaded successfully', '', { duration: 2000 });
+          this.router.navigate(['/']).then(() => {
+            window.location.reload();
+          });
         } else {
-          this.snackBar.open('Identity upload failed', '', {duration: 2000});
+          this.snackBar.open('Identity upload failed', '', { duration: 2000 });
         }
       } catch (error) {
-        this.snackBar.open('Identity upload failed', '', {duration: 2000});
+        this.snackBar.open('Identity upload failed', '', { duration: 2000 });
       }
     };
     reader.readAsText(file);
@@ -47,7 +49,7 @@ export class LandingPageComponent {
   async generateIdentity() {
     await this.keyService.generateNewOwnKeyPair();
     await this.userService.registerKey();
-    this.snackBar.open('Happy to have you here!', '', {duration: 4000});
+    this.snackBar.open('Happy to have you here!', '', { duration: 4000 });
     this.router.navigateByUrl('/');
   }
 }

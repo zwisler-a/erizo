@@ -80,7 +80,7 @@ export class ConnectionService {
     this.notificationService.notify(request.owner, {
       type: NotificationType.CONNECTION_ADDED,
       fingerprint: user.fingerprint,
-      thread_id: directThread.id.toString()
+      thread_id: directThread.id.toString(),
     });
   }
 
@@ -99,5 +99,16 @@ export class ConnectionService {
     await this.connectionRepo.delete(connection);
     await this.connectionRepo.delete(otherSide);
     return true;
+  }
+
+  async hasConnection(fromFingerprint: string, toFingerprint: string) {
+    const connection = await this.connectionRepo.findOne({
+      where: {
+        owner: { fingerprint: fromFingerprint },
+        connectedWith: { fingerprint: toFingerprint },
+        state: 'CONFIRMED',
+      },
+    });
+    return !!connection;
   }
 }

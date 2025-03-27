@@ -1,3 +1,27 @@
+<ng-container *ngIf="threads$ | async as threads">
+  <mat-nav-list *ngIf="threads.length;">
+    @for (thread of threads; track thread.id) {
+      <mat-list-item
+        [routerLink]="URLS.THREAD_FN(thread.id)">
+        <div class="list-content">
+          <div>
+            <mat-icon>group</mat-icon>
+          </div>
+          <span>{{ thread.name }}</span>
+
+          <span class="spacer"></span>
+          <button (click)="$event.stopImmediatePropagation()" [matMenuTriggerFor]="menu" mat-icon-button>
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button [disabled]="true" mat-menu-item (click)="deleteThread(thread.id)">Delete</button>
+          </mat-menu>
+        </div>
+      </mat-list-item>
+    }
+  </mat-nav-list>
+</ng-container>
+
 <ng-container *ngIf="connections$ | async as connections; else loading">
   <mat-nav-list *ngIf="connections.length; else noMessages">
     @for (connection of connections; track connection) {
