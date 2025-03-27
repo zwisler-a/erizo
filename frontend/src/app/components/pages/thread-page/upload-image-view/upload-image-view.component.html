@@ -1,0 +1,29 @@
+<div class="container">
+  <input type="file" #fileInput accept="image/*;capture=camera" (change)="onFileSelected($event)" hidden>
+  <div *ngIf="imageSrc" class="preview">
+    <img [src]="imageSrc" alt="Preview" />
+  </div>
+  <div class="settings" *ngIf="imageSrc">
+    <mat-form-field>
+      <mat-label>Message</mat-label>
+      <input maxlength="100" matInput [(ngModel)]="message">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Delete after days</mat-label>
+      <input type="number" min="1" matInput [(ngModel)]="daysToLive">
+      <mat-icon matSuffix matTooltip="The message gets removed from the server after the given number of days">
+        info
+      </mat-icon>
+    </mat-form-field>
+    <mat-checkbox [(ngModel)]="nsfw" >Not save for work</mat-checkbox>
+
+  </div>
+  <div class="action">
+    <button mat-button color="primary" (click)="fileInput.click()">Take another Photo</button>
+    <span class="spacer"></span>
+    <button *ngIf="imageSrc" mat-flat-button color="accent" (click)="sendImage()"
+            [disabled]="!imageSrc || disableSend">
+      Post
+    </button>
+  </div>
+</div>

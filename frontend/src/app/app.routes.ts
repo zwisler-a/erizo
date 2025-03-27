@@ -1,34 +1,53 @@
-import {Routes} from '@angular/router';
-import {IdentityViewComponent} from './components/identity-view/identity-view.component';
-import {HomeViewComponent} from './components/home-view/home-view.component';
-import {AddContactViewComponent} from './components/add-contact-view/add-contact-view.component';
-import {ConnectionListViewComponent} from './components/connection-list-view/connection-list-view.component';
-import {UploadImageViewComponent} from './components/upload-image-view/upload-image-view.component';
-import {ConnectionViewComponent} from './components/connection-view/connection-view.component';
-import {LandingPageComponent} from './components/landing-page/landing-page.component';
-import {ShellComponent} from './components/shell/shell.component';
-import {NotificationsComponent} from './components/notifications/notifications.component';
+import { Routes } from '@angular/router';
+import { UserPageComponent } from './components/pages/user-page/user-page.component';
+import { HomePageComponent } from './components/pages/home-page/home-page.component';
 import {
-  AcceptConnectionRequestComponent
-} from './components/accept-connection-request/accept-connection-request.component';
-import { ConnectionRequestViewComponent } from './components/connection-request-view/connection-request-view.component';
+  AddContactViewComponent,
+} from './components/pages/connections-page/request-connection-view/add-contact-view.component';
+import { ConnectionsPageComponent } from './components/pages/connections-page/connections-page.component';
+import { UploadImageViewComponent } from './components/pages/thread-page/upload-image-view/upload-image-view.component';
+import { ThreadPageComponent } from './components/pages/thread-page/thread-page.component';
+import { LandingPageComponent } from './components/pages/landing-page/landing-page.component';
+import { ShellComponent } from './components/shell/shell.component';
+import { NotificationPageComponent } from './components/pages/notification-page/notification-page.component';
+import {
+  AcceptConnectionViewComponent,
+} from './components/pages/connections-page/accept-connection-view/accept-connection-view.component';
+import { PostViewComponent } from './components/pages/thread-page/post-view/post-view.component';
+
+export const URLS = {
+  HOME: 'home',
+  NOTIFICATIONS: 'notifications',
+  CONNECTIONS: 'connections',
+  IDENTITY: 'identity',
+  LANDING: 'landing',
+  ADD_CONNECTION: 'add-contact/:fingerprint',
+  ADD_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ADD_CONNECTION.replace(':fingerprint', fingerprint),
+  ACCEPT_CONNECTION: 'accept-contact/:fingerprint',
+  ACCEPT_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ACCEPT_CONNECTION.replace(':fingerprint', fingerprint),
+  THREAD: 'tread/:id',
+  THREAD_FN: (id: number | string) => '/' + URLS.THREAD.replace(':id', id.toString()),
+  UPLOAD_IMAGE: 'upload/:threadId',
+  UPLOAD_IMAGE_FN: (threadId: string) => '/' + URLS.UPLOAD_IMAGE.replace(':threadId', threadId),
+  VIEW_POST: 'post/:postId',
+  VIEW_POST_FN: (postId: number | string) => '/' + URLS.VIEW_POST.replace(':postId', postId.toString()),
+};
 
 export const routes: Routes = [
-  {path: 'landing', component: LandingPageComponent},
+  { path: 'landing', component: LandingPageComponent },
   {
     path: '', component: ShellComponent, children: [
-      {path: 'home', component: HomeViewComponent},
-      {path: 'identity', component: IdentityViewComponent},
-      {path: 'notifications', component: NotificationsComponent},
-      {path: 'add-contact', component: AddContactViewComponent},
-      {path: 'add-contact/:fingerprint', component: AddContactViewComponent},
-      {path: 'accept-contact/:fingerprint', component: AcceptConnectionRequestComponent},
-      {path: 'connections', component: ConnectionListViewComponent},
-      {path: 'connections/open', component: ConnectionRequestViewComponent},
-      {path: 'connection/:fingerprint', component: ConnectionViewComponent},
-      {path: 'upload/:fingerprint', component: UploadImageViewComponent},
-      {path: '**', redirectTo: 'home'}
-    ]
+      { path: URLS.HOME, component: HomePageComponent },
+      { path: URLS.IDENTITY, component: UserPageComponent },
+      { path: URLS.NOTIFICATIONS, component: NotificationPageComponent },
+      { path: URLS.CONNECTIONS, component: ConnectionsPageComponent },
+      { path: URLS.ADD_CONNECTION, component: AddContactViewComponent },
+      { path: URLS.ACCEPT_CONNECTION, component: AcceptConnectionViewComponent },
+      { path: URLS.THREAD, component: ThreadPageComponent },
+      { path: URLS.VIEW_POST, component: PostViewComponent },
+      { path: URLS.UPLOAD_IMAGE, component: UploadImageViewComponent },
+      { path: '**', redirectTo: URLS.HOME },
+    ],
   },
-
 ];
+

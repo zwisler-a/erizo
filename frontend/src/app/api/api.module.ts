@@ -7,9 +7,10 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { ApiUserService } from './services/api-user.service';
-import { ApiMessageService } from './services/api-message.service';
+import { ApiPostService } from './services/api-post.service';
 import { ApiAuthenticationService } from './services/api-authentication.service';
 import { ApiConnectionService } from './services/api-connection.service';
+import { ApiThreadService } from './services/api-thread.service';
 
 /**
  * Module that provides all services and configuration.
@@ -20,9 +21,10 @@ import { ApiConnectionService } from './services/api-connection.service';
   declarations: [],
   providers: [
     ApiUserService,
-    ApiMessageService,
+    ApiPostService,
     ApiAuthenticationService,
     ApiConnectionService,
+    ApiThreadService,
     ApiConfiguration
   ],
 })

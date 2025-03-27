@@ -20,8 +20,8 @@ const openDatabase = () => {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      if (!db.objectStoreNames.contains('notifications')) {
-        db.createObjectStore('notifications', { keyPath: 'id', autoIncrement: true });
+      if (!db.objectStoreNames.contains('notification-page')) {
+        db.createObjectStore('notification-page', { keyPath: 'id', autoIncrement: true });
       }
     };
 
@@ -44,19 +44,67 @@ const storeNotification = async (payload) => {
   }
 };
 
+/**
+ *   NEW_POST = 'NEW_POST',
+ *   DEVICE_ADDED = 'DEVICE_ADDED',
+ *   CONNECTION_ADDED = 'CONNECTION_ADDED',
+ *   CONNECTION_REQUEST = 'CONNECTION_REQUEST',
+ */
+
+
+function handleNewPostNotification(payload) {
+  if (payload.data['type'] !== 'NEW_POST') return;
+
+  self.registration.showNotification(
+    'You got Mail',
+    {
+      body: 'Someone sent something for you, want to take a look?',
+      icon: '/icon512_maskable.png',
+    },
+  );
+}
+function handleLikedPostNotification(payload) {
+  if (payload.data['type'] !== 'LIKE_POST') return;
+
+  self.registration.showNotification(
+    'Someone likes what you are doing',
+    {
+      body: 'Someone liked your post. Want to see who and what?',
+      icon: '/icon512_maskable.png',
+    },
+  );
+}
+
+function handleConnectionAddedNotification(payload) {
+  if (payload.data['type'] !== 'CONNECTION_ADDED') return;
+
+  self.registration.showNotification(
+    'Your new new connection is there now',
+    {
+      body: 'Someone just accepted your connection request!',
+      icon: '/icon512_maskable.png',
+    },
+  );
+}
+
+function handleConnectionRequestNotification(payload) {
+  if (payload.data['type'] !== 'CONNECTION_REQUEST') return;
+
+  self.registration.showNotification(
+    'You have a new connection request',
+    {
+      body: 'Someone likes you! Do you want to connect?',
+      icon: '/icon512_maskable.png',
+    },
+  );
+}
+
 onBackgroundMessage(messaging, (payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-
-  // Customize notification
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/icon512_maskable.png',
-  };
-
-  // Store notification payload in IndexedDB
+  handleNewPostNotification(payload);
+  handleConnectionAddedNotification(payload);
+  handleConnectionRequestNotification(payload);
+  handleLikedPostNotification(payload);
   storeNotification(payload);
 
-  // Show the notification
-  self.registration.showNotification(notificationTitle, notificationOptions);
 });

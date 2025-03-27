@@ -1,7 +1,8 @@
-import {KeyService} from './key.service';
-import {inject} from '@angular/core';
-import {UserService} from './user.service';
-import {Router} from '@angular/router';
+import { KeyService } from './key.service';
+import { inject } from '@angular/core';
+import { UserService } from './user.service';
+import { Router } from '@angular/router';
+import { URLS } from '../app.routes';
 
 export function initIdentity() {
   return async () => {
@@ -9,19 +10,19 @@ export function initIdentity() {
     const userService = inject(UserService);
     const router = inject(Router);
 
-    const html = document.querySelector("html");
-    if(html) {
-      if ( localStorage.getItem("light") == "true") {
-        html.style.colorScheme = "light";
+    const html = document.querySelector('html');
+    if (html) {
+      if (localStorage.getItem('light') == 'true') {
+        html.style.colorScheme = 'light';
       } else {
-        html.style.colorScheme = "dark";
+        html.style.colorScheme = 'dark';
       }
     }
 
 
     const currentKey = await keyService.getOwnKeyPair();
     if (!currentKey) {
-      router.navigate(['/landing']);
+      router.navigate([URLS.LANDING]);
     } else {
       await userService.registerKey();
     }

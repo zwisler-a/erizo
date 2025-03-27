@@ -1,0 +1,51 @@
+<ng-container *ngIf="notification && notification.data">
+
+  <ng-container [ngSwitch]="notification.data ? notification.data['type'] : ''">
+
+    <mat-list-item *ngSwitchCase="'NEW_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['id'])"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>mail</mat-icon>
+      <div matListItemTitle>You got Mail</div>
+      <div matListItemLine>{{ notification.data['fingerprint'] | alias | async }} send you something :) want to have a look?
+      </div>
+    </mat-list-item>
+
+    <mat-list-item *ngSwitchCase="'LIKE_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['id'])"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>favorite</mat-icon>
+      <div matListItemTitle>{{ notification.data['fingerprint'] | alias | async }} loves your post</div>
+      <div matListItemLine>There is a new post waiting for you</div>
+    </mat-list-item>
+
+    <mat-list-item *ngSwitchCase="'DEVICE_ADDED'"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>smartphone</mat-icon>
+      <div matListItemTitle>Device added</div>
+      <div matListItemLine>A new device was registered under your name</div>
+    </mat-list-item>
+
+    <mat-list-item *ngSwitchCase="'CONNECTION_ADDED'"
+                   [routerLink]="notification.data ? URLS.THREAD_FN(notification.data['thread_id']) : ''"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>account_circle</mat-icon>
+      <div matListItemTitle>{{ notification.data['fingerprint'] | alias | async }} like you too</div>
+      <div matListItemLine>Someone just accepted your connection request!</div>
+    </mat-list-item>
+
+    <mat-list-item *ngSwitchCase="'CONNECTION_REQUEST'"
+                   [routerLink]="notification.data ? URLS.ACCEPT_CONNECTION_FN(notification.data['fingerprint']) : ''"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>person</mat-icon>
+      <div matListItemTitle>You have a new connection request</div>
+      <div matListItemLine>Someone likes you! Do you want to connect?</div>
+    </mat-list-item>
+
+    <mat-list-item *ngSwitchDefault [routerLink]=""
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon></mat-icon>
+      <div matListItemTitle></div>
+      <div matListItemLine></div>
+    </mat-list-item>
+
+  </ng-container>
+</ng-container>

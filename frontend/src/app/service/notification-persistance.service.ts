@@ -30,13 +30,15 @@ export class NotificationPersistenceService {
         const request = store.add(payload);
 
         request.onsuccess = () => resolve();
-        request.onerror = (event) => reject((event.target as IDBRequest).error);
+        request.onerror = (event) => {
+          console.error(event);
+          reject((event.target as IDBRequest).error)
+        };
       }).catch(reject);
     });
   }
 
   deleteNotification(id: string): Promise<void> {
-    console.log('delet', id)
     return new Promise((resolve, reject) => {
       this.openDatabase().then((db) => {
         const transaction = db.transaction(this.storeName, 'readwrite');

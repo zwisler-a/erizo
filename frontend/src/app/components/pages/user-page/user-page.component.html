@@ -1,0 +1,17 @@
+<h3>Identity</h3>
+<div class="info-text">My fingerprint: {{ ownFingerprint }}</div>
+<button mat-stroked-button (click)="shareIdentity()">Share Identity</button>
+<button mat-stroked-button (click)="downloadIdentity()">Download Identity</button>
+<button mat-stroked-button (click)="deleteIdentity()">Delete/Logout Identity</button>
+
+<h3>Preferences</h3>
+<button mat-stroked-button (click)="switchTheme()">
+  <mat-icon>dark_mode</mat-icon>
+  Switch Theme
+</button>
+<button mat-stroked-button (click)="enableNotifications()">Enable Notifications</button>
+
+<!--<h3>Dev</h3>-->
+
+
+<div style="position: fixed;bottom: 15px;right:15px">❤️ Erizo</div>

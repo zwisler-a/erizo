@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { KeyService } from './key.service';
 import { MessageCreation } from '../types/message-creation';
-import { MessageDto } from '../api/models/message-dto';
 import { UserEntity } from '../api/models/user-entity';
+import { PostDto } from '../api/models/post-dto';
 
-export interface DecryptedMessage {
+export interface DecryptedPost {
   data: any,
   message: any
 }
@@ -14,7 +14,7 @@ export interface DecryptedMessage {
 })
 export class EncryptionService {
 
-  private messageCache = new Map<number, DecryptedMessage>();
+  private messageCache = new Map<number, DecryptedPost>();
 
   constructor(private keyService: KeyService) {
   }
@@ -69,7 +69,7 @@ export class EncryptionService {
     if (addOwnContact) {
       contacts.push({
         fingerprint: await this.keyService.getOwnFingerprint() ?? '',
-        public_key: await this.keyService.getOwnPublicKeyString() ?? ''
+        public_key: await this.keyService.getOwnPublicKeyString() ?? '',
       });
     }
     const { recipients, aesKey, iv } = await this.generateSymmetricEncryptionKeys(contacts);
@@ -95,7 +95,7 @@ export class EncryptionService {
     };
   }
 
-  async decryptMessage(message: MessageDto, privateKey?: CryptoKey): Promise<DecryptedMessage> {
+  async decryptMessage(message: PostDto, privateKey?: CryptoKey): Promise<DecryptedPost> {
     if (this.messageCache.has(message.id)) {
       const cache = this.messageCache.get(message.id);
       if (cache) {

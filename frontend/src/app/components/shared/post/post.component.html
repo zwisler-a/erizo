@@ -1,0 +1,30 @@
+<div class="post-container" *ngIf="post">
+  <div class="post-header">
+    <div class="user" [routerLink]="[URLS.THREAD_FN(post.chat.id)]">
+      <mat-icon>{{ post.days_to_live ? 'schedule' : 'account_circle' }}</mat-icon>
+      {{ post.alias }}
+    </div>
+
+    <mat-icon class="menu" *ngIf="isOwn | async" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="deletePost()">Delete</button>
+    </mat-menu>
+  </div>
+  <div class="post-image-container">
+    <img class="post-image" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.url" alt="">
+  </div>
+  <div class="post-message">
+    <div>
+      <div>
+        <b>{{ post.alias }} </b> <span class="message" *ngIf="post.message">{{ post.message }}</span>
+      </div>
+      <span class="date">{{ post.created_at | date: "dd.MM HH:mm" }}</span>
+    </div>
+    <button *ngIf="!(isOwn|async)" mat-icon-button (click)="likePost()">
+      <mat-icon>{{ isLiked ? 'favorite' : 'favorite_outline' }}</mat-icon>
+    </button>
+  </div>
+</div>
+<ng-template #blurry>
+  <mat-icon>local_fire_department</mat-icon>
+</ng-template>

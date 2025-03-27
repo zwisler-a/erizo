@@ -1,6 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { MessageEntity } from './message.entity';
+import { PostEntity } from './post.entity';
 
 @Entity()
 export class DecryptionKeyEntity {
@@ -8,9 +8,9 @@ export class DecryptionKeyEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => MessageEntity)
+  @ManyToOne(() => PostEntity)
   @JoinColumn()
-  message: MessageEntity;
+  message: PostEntity;
 
   @ApiProperty()
   @Column()

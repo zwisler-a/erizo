@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PersistenceService } from './persistence.service';
-import { map, Observable, OperatorFunction, switchMap, tap } from 'rxjs';
-import { NotificationService } from './notification.service';
+import { map, Observable, OperatorFunction, switchMap } from 'rxjs';
 import { ApiConnectionService } from '../api/services/api-connection.service';
 import { ConnectionEntity } from '../api/models/connection-entity';
 import { KeyService } from './key.service';
@@ -12,7 +11,6 @@ export class ContactService {
 
   constructor(
     private connectionApi: ApiConnectionService,
-    private notificationService: NotificationService,
     private persistenceService: PersistenceService,
     private keyService: KeyService,
   ) {

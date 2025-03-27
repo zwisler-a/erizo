@@ -52,4 +52,9 @@ export class UserService {
     await this.deviceRepo.save(device);
     return true;
   }
+
+  async removeDevice(fcmToken: string) {
+    await this.deviceRepo.delete({ fcmToken: fcmToken });
+    return true;
+  }
 }

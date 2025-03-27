@@ -1,0 +1,34 @@
+<div class="connection-header">
+  <h1 class="header">
+    <mat-icon class="icon">group</mat-icon>
+    <div *ngIf="thread$ | async as thread" class="names">
+      <ng-container *ngIf="!thread.name">
+        <span *ngFor="let participant of thread.participants; let last = last; let first = first">
+          <span><span>{{ participant.fingerprint | alias | async }}</span><span *ngIf="!last"> & </span></span>
+        </span>
+      </ng-container>
+    </div>
+  </h1>
+</div>
+
+
+<div class="images">
+  @for (post of posts$ | async; track post.id) {
+    <div class="image">
+      <img [appBlur]="post.nsfw"
+           [appBlurAlways]="true"
+           [appBlurOverlay]="blurry"
+           [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
+           [src]="post.url"
+           alt="">
+    </div>
+  }
+</div>
+
+<ng-template #blurry>
+  <mat-icon>local_fire_department</mat-icon>
+</ng-template>
+
+<button *ngIf="thread$ | async as thread" class="post-button" mat-flat-button (click)="sendImage(thread.id)">Post new
+  image
+</button>

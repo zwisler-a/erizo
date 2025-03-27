@@ -1,19 +1,26 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessageEntity } from './message.entity';
+import { PostEntity } from './post.entity';
 import { UserEntity } from './user.entity';
 import { ConnectionEntity } from './connection.entity';
-import { ChatEntity } from './chat.entity';
+import { ThreadEntity } from './thread.entity';
 import { DecryptionKeyEntity } from './decryption-key.entity';
 import { DeviceEntity } from './device.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db/db.sql',
+      synchronize: true,
+      logging: false,
+      entities: [PostEntity, UserEntity, ConnectionEntity, ThreadEntity, DecryptionKeyEntity, DeviceEntity],
+    }),
     TypeOrmModule.forFeature([
-      MessageEntity,
+      PostEntity,
       UserEntity,
       ConnectionEntity,
-      ChatEntity,
+      ThreadEntity,
       DecryptionKeyEntity,
       DeviceEntity,
     ]),
@@ -22,10 +29,10 @@ import { DeviceEntity } from './device.entity';
   providers: [],
   exports: [
     TypeOrmModule.forFeature([
-      MessageEntity,
+      PostEntity,
       UserEntity,
       ConnectionEntity,
-      ChatEntity,
+      ThreadEntity,
       DecryptionKeyEntity,
       DeviceEntity,
     ]),

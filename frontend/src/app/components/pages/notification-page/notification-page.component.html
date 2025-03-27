@@ -1,0 +1,10 @@
+<mat-list role="list" *ngIf="(notifications$ | async)?.length; else noMessages">
+  @for (notification of notifications$ | async; track notification.messageId) {
+    <app-notification [notification]="notification"></app-notification>
+  }
+</mat-list>
+<ng-template #noMessages>
+  <div class="no-notifications">
+    <div>Nothing new</div>
+  </div>
+</ng-template>

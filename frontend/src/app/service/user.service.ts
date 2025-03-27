@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { KeyService } from './key.service';
-import { BASE_PATH } from './constants';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 import { ApiAuthenticationService } from '../api/services/api-authentication.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -11,6 +9,7 @@ export class UserService {
   constructor(
     private keyService: KeyService,
     private authService: ApiAuthenticationService,
+    private snackBar: MatSnackBar,
   ) {
   }
 
@@ -25,6 +24,20 @@ export class UserService {
         public_key,
       },
     }).subscribe();
+  }
+
+  async shareIdentity() {
+    const url = `${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
+    if (navigator.share) {
+      navigator.share({
+        url: url,
+        title: `Hey, connect with me on erizo!`,
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        this.snackBar.open('Copied to clipboard!', '', { duration: 2000 });
+      }).catch(console.error);
+    }
   }
 
 }

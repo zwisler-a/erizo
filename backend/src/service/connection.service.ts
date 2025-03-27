@@ -4,15 +4,15 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../persistance/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConnectionEntity } from '../persistance/connection.entity';
-import { ChatEntity } from '../persistance/chat.entity';
-import { NotificationService } from './notification.service';
+import { ThreadEntity } from '../persistance/thread.entity';
+import { NotificationService, NotificationType } from './notification.service';
 
 @Injectable()
 export class ConnectionService {
   constructor(
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(ConnectionEntity) private connectionRepo: Repository<ConnectionEntity>,
-    @InjectRepository(ChatEntity) private chatRepo: Repository<ChatEntity>,
+    @InjectRepository(ThreadEntity) private threadRepo: Repository<ThreadEntity>,
     private notificationService: NotificationService,
   ) {}
 
@@ -35,9 +35,9 @@ export class ConnectionService {
       state: 'PENDING',
     });
     await this.connectionRepo.save(connectionRequest);
-    this.notificationService.notify(connectWith, 'Someone likes you', 'Someone wants to connect with you', {
-      icon: 'account_circle',
-      link: '/accept-contact/' + user.fingerprint,
+    this.notificationService.notify(connectWith, {
+      type: NotificationType.CONNECTION_REQUEST,
+      fingerprint: user.fingerprint,
     });
   }
 
@@ -70,16 +70,17 @@ export class ConnectionService {
       state: 'CONFIRMED',
     });
 
-    const chat = this.chatRepo.create({
+    const chat = this.threadRepo.create({
       participants: [user, request.owner],
     });
-    const directChat = await this.chatRepo.save(chat);
-    request.chat = directChat;
-    otherSide.chat = directChat;
+    const directThread = await this.threadRepo.save(chat);
+    request.chat = directThread;
+    otherSide.chat = directThread;
     await this.connectionRepo.save([request, otherSide]);
-    this.notificationService.notify(request.owner, 'You are connected!', 'You are now connected, yey :D', {
-      icon: 'account_circle',
-      link: '/connection/' + user.fingerprint,
+    this.notificationService.notify(request.owner, {
+      type: NotificationType.CONNECTION_ADDED,
+      fingerprint: user.fingerprint,
+      thread_id: directThread.id.toString()
     });
   }
 
@@ -94,7 +95,7 @@ export class ConnectionService {
         owner: connection.connectedWith,
       },
     });
-    await this.chatRepo.delete(connection.chat);
+    await this.threadRepo.delete(connection.chat);
     await this.connectionRepo.delete(connection);
     await this.connectionRepo.delete(otherSide);
     return true;

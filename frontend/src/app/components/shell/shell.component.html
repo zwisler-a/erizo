@@ -1,9 +1,9 @@
 <div class="nav-spacer"></div>
 <nav>
-  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="['/home']">
+  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="[URLS.HOME]">
     <mat-icon>home</mat-icon>
   </button>
-  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="['/connections']">
+  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="[URLS.CONNECTIONS]">
     <mat-icon>stream</mat-icon>
   </button>
 
@@ -13,12 +13,12 @@
           [matBadge]="(notifications$ | async)?.length || 0"
           matBadgeSize="large"
           matBadgePosition="below after"
-          [routerLink]="['/notifications']"
+          [routerLink]="[URLS.NOTIFICATIONS]"
           routerLinkActive="active"
           mat-icon-button>
     <mat-icon>notifications</mat-icon>
   </button>
-  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="['/identity']">
+  <button mat-icon-button [routerLinkActive]="'active'" [routerLink]="[URLS.IDENTITY]">
     <mat-icon>person</mat-icon>
   </button>
 </nav>

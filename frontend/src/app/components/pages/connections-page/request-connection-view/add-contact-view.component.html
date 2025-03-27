@@ -1,0 +1,11 @@
+<h3>You would like to connect? 🔥</h3>
+<div>Send them a connection request!</div>
+<span class="subtext">Fingerprint: {{ fingerprint }}</span>
+
+<br>
+<mat-form-field>
+  <mat-label>Alias</mat-label>
+  <input [(ngModel)]="alias" matInput>
+</mat-form-field>
+<button mat-flat-button (click)="connectToIdentity()">Connect</button>
+<button mat-button [routerLink]="'/' + URLS.HOME">Cancel</button>

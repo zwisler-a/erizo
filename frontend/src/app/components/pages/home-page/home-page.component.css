@@ -1,0 +1,11 @@
+
+:host {
+  padding-bottom: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+app-post {
+  border-bottom: solid 1px var(--mat-sys-surface-container);
+}

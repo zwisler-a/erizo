@@ -25,9 +25,14 @@ export class NotificationService {
   }
 
   async addNotification(payload: MessagePayload) {
-    await this.persistenceService.saveNotification(payload);
+    try {
+      await this.persistenceService.saveNotification(payload);
+    } catch (e) {
+      console.error(e);
+    }
     this.refreshNotifications();
   }
+
 
   async removeNotification(id: string) {
     await this.persistenceService.deleteNotification(id);
@@ -66,7 +71,7 @@ export class NotificationService {
       const notifications = await this.persistenceService.getAllNotifications();
       this.notifications$.next(notifications);
     } catch (error) {
-      console.error('Error refreshing notifications', error);
+      console.error('Error refreshing notification-page', error);
     }
   }
 }

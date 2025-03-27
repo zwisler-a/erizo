@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { ChatEntity } from './chat.entity';
+import { ThreadEntity } from './thread.entity';
 
 @Entity()
 export class ConnectionEntity {
@@ -20,9 +20,9 @@ export class ConnectionEntity {
   connectedWith: UserEntity;
 
   @ApiProperty({ required: false })
-  @ManyToOne(() => ChatEntity, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => ThreadEntity, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn()
-  chat: ChatEntity;
+  chat: ThreadEntity;
 
   @ApiProperty()
   @Column({ default: 'PENDING', enum: ['PENDING', 'CONFIRMED', 'REJECTED'] })

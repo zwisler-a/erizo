@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ContactService } from '../../service/contact.service';
 import { NotificationService } from '../../service/notification.service';
 import { MatBadge } from '@angular/material/badge';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
-import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { AsyncPipe } from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { URLS } from '../../app.routes';
 
 @Component({
   selector: 'app-shell',
@@ -24,7 +25,7 @@ import { MatMenu, MatMenuModule } from '@angular/material/menu';
   styleUrl: './shell.component.css',
 })
 export class ShellComponent {
-
+  protected readonly URLS = URLS;
   notifications$;
 
   constructor(public contactService: ContactService, notificationService: NotificationService) {
