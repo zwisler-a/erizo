@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, HostListener} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { CompletePost, PostService } from '../../../service/post.service';
-import { Observable } from 'rxjs';
+import {CompletePost, PostFeed, PostService} from '../../../service/post.service';
+import {Observable, shareReplay} from 'rxjs';
 import { ApiThreadService } from '../../../api/services/api-thread.service';
 import { ThreadEntity } from '../../../api/models/thread-entity';
 import { AliasPipePipe } from '../../shared/alias-pipe/alias.pipe';
@@ -27,7 +27,7 @@ import { BlurDirective } from '../../shared/blur-directive/blur.directive';
   styleUrl: './thread-page.component.css',
 })
 export class ThreadPageComponent {
-  posts$?: Observable<CompletePost[]>;
+  posts?: PostFeed;
   thread$?: Observable<ThreadEntity>;
 
   constructor(
@@ -35,6 +35,7 @@ export class ThreadPageComponent {
     private router: Router,
     private postService: PostService,
     private threadApi: ApiThreadService,
+    private el: ElementRef
   ) {
     const threadId = this.route.snapshot.paramMap.get('id');
     if (!threadId) {
@@ -51,8 +52,22 @@ export class ThreadPageComponent {
 
 
   async initImages(threadId: number) {
-    this.thread$ = this.threadApi.getThread({ threadId: threadId.toString() });
-    this.posts$ = this.postService.getAllPostsFor(threadId);
+    this.thread$ = this.threadApi.getThread({ threadId: threadId.toString() }).pipe(shareReplay(1));
+    this.posts = this.postService.getAllPostsFor(threadId);
+    this.posts.next();
+  }
+
+  @HostListener('window:scroll', [])
+  async onScroll() {
+    const element = this.el.nativeElement;
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const threshold = element.offsetTop + element.clientHeight - 100;
+
+    if (scrollPosition >= threshold) {
+      if (!this.posts?.loading$ && !this.posts?.endOfFeed$) {
+        this.posts?.next();
+      }
+    }
   }
 
   protected readonly URLS = URLS;

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { CompletePost, PostService } from '../../../service/post.service';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { Observable } from 'rxjs';
-import { PostComponent } from '../../shared/post/post.component';
+import {Component, ElementRef, HostListener} from '@angular/core';
+import {MatButtonModule} from '@angular/material/button';
+import {CompletePost, PostFeed, PostService} from '../../../service/post.service';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {AsyncPipe, NgIf} from '@angular/common';
+import {MatIconModule} from '@angular/material/icon';
+import {firstValueFrom, Observable} from 'rxjs';
+import {PostComponent} from '../../shared/post/post.component';
 
 @Component({
   selector: 'app-home-page',
@@ -14,12 +14,27 @@ import { PostComponent } from '../../shared/post/post.component';
   styleUrl: './home-page.component.css'
 })
 export class HomePageComponent {
-  posts$: Observable<CompletePost[]>;
+  feed: PostFeed;
 
   constructor(
-    private postService: PostService
+    private postService: PostService,
+    private el: ElementRef
   ) {
-    this.posts$ = this.postService.getAllPosts();
+    this.feed = this.postService.homeFeed;
+    this.postService.homeFeed.next();
+  }
+
+  @HostListener('window:scroll', [])
+  async onScroll() {
+    const element = this.el.nativeElement;
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const threshold = element.offsetTop + element.clientHeight - 100;
+
+    if (scrollPosition >= threshold) {
+      if (!this.postService.homeFeed.loading$.value && !this.postService.homeFeed.endOfFeed$.value) {
+        this.postService.homeFeed.next();
+      }
+    }
   }
 
 }

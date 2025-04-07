@@ -16,7 +16,7 @@
 
 
 <div class="images">
-  @for (post of posts$ | async; track post.id) {
+  @for (post of posts?.feed$ | async; track post.id) {
     <div class="image">
       <img [appBlur]="post.nsfw"
            [appBlurAlways]="true"
@@ -27,6 +27,8 @@
     </div>
   }
 </div>
+
+
 
 <ng-template #blurry>
   <mat-icon>local_fire_department</mat-icon>

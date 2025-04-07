@@ -20,6 +20,7 @@ import { ConnectionController } from './controller/connection.controller';
 import { NotificationService } from './service/notification.service';
 import { ThreadController } from './controller/thread.controller';
 import { ThreadService } from './service/thread.service';
+import { LoggerController } from './controller/logger.controller';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ThreadService } from './service/thread.service';
     ChallengesController,
     ConnectionController,
     ThreadController,
+    LoggerController,
   ],
   providers: [
     ThreadService,

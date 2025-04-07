@@ -7,3 +7,4 @@ export { ApiPostService } from './services/api-post.service';
 export { ApiAuthenticationService } from './services/api-authentication.service';
 export { ApiConnectionService } from './services/api-connection.service';
 export { ApiThreadService } from './services/api-thread.service';
+export { ApiLoggerService } from './services/api-logger.service';

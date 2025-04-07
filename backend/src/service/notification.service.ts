@@ -15,8 +15,11 @@ export enum NotificationType {
   LIKE_POST = 'LIKE_POST',
 }
 
-export interface NotificationPayload extends Record<string, string> {
+export interface NotificationPayload {
   type: NotificationType;
+  thread_id?: string;
+  post_id?: string;
+  fingerprint?: string;
 }
 
 @Injectable()
@@ -44,11 +47,20 @@ export class NotificationService {
     await Promise.all(proms);
   }
 
+  private removeEmpty = (obj: any) => {
+    let newObj = {};
+    Object.keys(obj).forEach((key) => {
+      if (obj[key] === Object(obj[key])) newObj[key] = this.removeEmpty(obj[key]);
+      else if (obj[key] !== undefined) newObj[key] = obj[key];
+    });
+    return newObj;
+  };
+
   private async sendMessage(token: string, data: NotificationPayload) {
     try {
       const message: Message = {
         token,
-        data,
+        data: this.removeEmpty(data),
       };
       return await admin.messaging().send(message);
     } catch (error) {

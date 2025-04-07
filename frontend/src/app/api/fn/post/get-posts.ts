@@ -10,14 +10,14 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PostDto } from '../../models/post-dto';
 
-export interface GetPostsInThread$Params {
-  threadId: any;
+export interface GetPosts$Params {
+  ids: Array<number>;
 }
 
-export function getPostsInThread(http: HttpClient, rootUrl: string, params: GetPostsInThread$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PostDto>>> {
-  const rb = new RequestBuilder(rootUrl, getPostsInThread.PATH, 'get');
+export function getPosts(http: HttpClient, rootUrl: string, params: GetPosts$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PostDto>>> {
+  const rb = new RequestBuilder(rootUrl, getPosts.PATH, 'get');
   if (params) {
-    rb.query('threadId', params.threadId, {});
+    rb.query('ids', params.ids, {});
   }
 
   return http.request(
@@ -30,4 +30,4 @@ export function getPostsInThread(http: HttpClient, rootUrl: string, params: GetP
   );
 }
 
-getPostsInThread.PATH = '/api/post/thread';
+getPosts.PATH = '/api/post';

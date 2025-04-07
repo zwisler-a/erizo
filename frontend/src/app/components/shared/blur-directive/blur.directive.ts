@@ -36,7 +36,7 @@ export class BlurDirective implements AfterViewInit {
 
   private applyBlur() {
     if (this.isEnabled || this.isEnabled === '') {
-      this.renderer.setStyle(this.el.nativeElement, 'filter', 'blur(50px) brightness(50%)');
+      this.renderer.setStyle(this.el.nativeElement, 'filter', 'blur(35px) brightness(50%)');
       this.addOverlay();
     }
   }

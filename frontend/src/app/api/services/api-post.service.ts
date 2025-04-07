@@ -11,12 +11,16 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { CreatePostResponseDto } from '../models/create-post-response-dto';
 import { delete$ } from '../fn/post/delete';
 import { Delete$Params } from '../fn/post/delete';
-import { getAllPosts } from '../fn/post/get-all-posts';
-import { GetAllPosts$Params } from '../fn/post/get-all-posts';
-import { getPostsInThread } from '../fn/post/get-posts-in-thread';
-import { GetPostsInThread$Params } from '../fn/post/get-posts-in-thread';
+import { getAllPostIds } from '../fn/post/get-all-post-ids';
+import { GetAllPostIds$Params } from '../fn/post/get-all-post-ids';
+import { getPostIdsInThread } from '../fn/post/get-post-ids-in-thread';
+import { GetPostIdsInThread$Params } from '../fn/post/get-post-ids-in-thread';
+import { getPosts } from '../fn/post/get-posts';
+import { GetPosts$Params } from '../fn/post/get-posts';
+import { IdsPage } from '../models/ids-page';
 import { like } from '../fn/post/like';
 import { Like$Params } from '../fn/post/like';
 import { PostDto } from '../models/post-dto';
@@ -29,103 +33,78 @@ export class ApiPostService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getAllPosts()` */
-  static readonly GetAllPostsPath = '/api/post/all';
+  /** Path part for operation `getAllPostIds()` */
+  static readonly GetAllPostIdsPath = '/api/post/all/ids';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAllPosts()` instead.
+   * To access only the response body, use `getAllPostIds()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAllPosts$Response(params?: GetAllPosts$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PostDto>>> {
-    return getAllPosts(this.http, this.rootUrl, params, context);
+  getAllPostIds$Response(params: GetAllPostIds$Params, context?: HttpContext): Observable<StrictHttpResponse<IdsPage>> {
+    return getAllPostIds(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAllPosts$Response()` instead.
+   * To access the full response (for headers, for example), `getAllPostIds$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAllPosts(params?: GetAllPosts$Params, context?: HttpContext): Observable<Array<PostDto>> {
-    return this.getAllPosts$Response(params, context).pipe(
+  getAllPostIds(params: GetAllPostIds$Params, context?: HttpContext): Observable<IdsPage> {
+    return this.getAllPostIds$Response(params, context).pipe(
+      map((r: StrictHttpResponse<IdsPage>): IdsPage => r.body)
+    );
+  }
+
+  /** Path part for operation `getPostIdsInThread()` */
+  static readonly GetPostIdsInThreadPath = '/api/post/thread/ids';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getPostIdsInThread()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPostIdsInThread$Response(params: GetPostIdsInThread$Params, context?: HttpContext): Observable<StrictHttpResponse<IdsPage>> {
+    return getPostIdsInThread(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getPostIdsInThread$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPostIdsInThread(params: GetPostIdsInThread$Params, context?: HttpContext): Observable<IdsPage> {
+    return this.getPostIdsInThread$Response(params, context).pipe(
+      map((r: StrictHttpResponse<IdsPage>): IdsPage => r.body)
+    );
+  }
+
+  /** Path part for operation `getPosts()` */
+  static readonly GetPostsPath = '/api/post';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getPosts()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPosts$Response(params: GetPosts$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PostDto>>> {
+    return getPosts(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getPosts$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPosts(params: GetPosts$Params, context?: HttpContext): Observable<Array<PostDto>> {
+    return this.getPosts$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<PostDto>>): Array<PostDto> => r.body)
-    );
-  }
-
-  /** Path part for operation `getPostsInThread()` */
-  static readonly GetPostsInThreadPath = '/api/post/thread';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getPostsInThread()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getPostsInThread$Response(params: GetPostsInThread$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PostDto>>> {
-    return getPostsInThread(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getPostsInThread$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getPostsInThread(params: GetPostsInThread$Params, context?: HttpContext): Observable<Array<PostDto>> {
-    return this.getPostsInThread$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<PostDto>>): Array<PostDto> => r.body)
-    );
-  }
-
-  /** Path part for operation `publish()` */
-  static readonly PublishPath = '/api/post/publish';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `publish()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  publish$Response(params: Publish$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return publish(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `publish$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  publish(params: Publish$Params, context?: HttpContext): Observable<void> {
-    return this.publish$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
-  }
-
-  /** Path part for operation `like()` */
-  static readonly LikePath = '/api/post/like';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `like()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  like$Response(params: Like$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return like(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `like$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  like(params: Like$Params, context?: HttpContext): Observable<void> {
-    return this.like$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
@@ -150,6 +129,56 @@ export class ApiPostService extends BaseService {
    */
   delete(params: Delete$Params, context?: HttpContext): Observable<void> {
     return this.delete$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `publish()` */
+  static readonly PublishPath = '/api/post/publish';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `publish()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  publish$Response(params: Publish$Params, context?: HttpContext): Observable<StrictHttpResponse<CreatePostResponseDto>> {
+    return publish(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `publish$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  publish(params: Publish$Params, context?: HttpContext): Observable<CreatePostResponseDto> {
+    return this.publish$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CreatePostResponseDto>): CreatePostResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `like()` */
+  static readonly LikePath = '/api/post/like';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `like()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  like$Response(params: Like$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return like(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `like$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  like(params: Like$Params, context?: HttpContext): Observable<void> {
+    return this.like$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

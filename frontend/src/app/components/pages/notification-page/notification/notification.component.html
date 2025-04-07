@@ -2,7 +2,7 @@
 
   <ng-container [ngSwitch]="notification.data ? notification.data['type'] : ''">
 
-    <mat-list-item *ngSwitchCase="'NEW_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['id'])"
+    <mat-list-item *ngSwitchCase="'NEW_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['post_id'])"
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon>mail</mat-icon>
       <div matListItemTitle>You got Mail</div>
@@ -10,7 +10,7 @@
       </div>
     </mat-list-item>
 
-    <mat-list-item *ngSwitchCase="'LIKE_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['id'])"
+    <mat-list-item *ngSwitchCase="'LIKE_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['post_id'])"
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon>favorite</mat-icon>
       <div matListItemTitle>{{ notification.data['fingerprint'] | alias | async }} loves your post</div>

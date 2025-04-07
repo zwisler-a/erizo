@@ -22,6 +22,9 @@ export class AuthenticationInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 || error.status === 403) {
           return this.authService.getAuthToken().pipe(
+            catchError(err => {
+              throw new Error('Could not authenticate user ...')
+            }),
             switchMap(newToken => {
               return from(this.store.setItem('jwtToken', newToken)).pipe(
                 switchMap(() => {

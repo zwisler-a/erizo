@@ -8,24 +8,26 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PostDto } from '../../models/post-dto';
+import { Error } from '../../models/error';
 
-export interface GetAllPosts$Params {
+export interface Log$Params {
+      body: Error
 }
 
-export function getAllPosts(http: HttpClient, rootUrl: string, params?: GetAllPosts$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PostDto>>> {
-  const rb = new RequestBuilder(rootUrl, getAllPosts.PATH, 'post');
+export function log(http: HttpClient, rootUrl: string, params: Log$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, log.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<PostDto>>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }
 
-getAllPosts.PATH = '/api/post/all';
+log.PATH = '/api/log';

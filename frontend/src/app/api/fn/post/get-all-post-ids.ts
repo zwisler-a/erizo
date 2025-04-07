@@ -8,17 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CreatePostDto } from '../../models/create-post-dto';
-import { CreatePostResponseDto } from '../../models/create-post-response-dto';
+import { IdsPage } from '../../models/ids-page';
 
-export interface Publish$Params {
-      body: CreatePostDto
+export interface GetAllPostIds$Params {
+  page: number;
+  limit: number;
 }
 
-export function publish(http: HttpClient, rootUrl: string, params: Publish$Params, context?: HttpContext): Observable<StrictHttpResponse<CreatePostResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, publish.PATH, 'post');
+export function getAllPostIds(http: HttpClient, rootUrl: string, params: GetAllPostIds$Params, context?: HttpContext): Observable<StrictHttpResponse<IdsPage>> {
+  const rb = new RequestBuilder(rootUrl, getAllPostIds.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.query('page', params.page, {});
+    rb.query('limit', params.limit, {});
   }
 
   return http.request(
@@ -26,9 +27,9 @@ export function publish(http: HttpClient, rootUrl: string, params: Publish$Param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<CreatePostResponseDto>;
+      return r as StrictHttpResponse<IdsPage>;
     })
   );
 }
 
-publish.PATH = '/api/post/publish';
+getAllPostIds.PATH = '/api/post/all/ids';

@@ -57,9 +57,9 @@ export class ThreadService {
   async deleteThread(user: UserEntity, threadId: number) {
     const thread = await this.threadRepo.findOneOrFail({ where: { id: threadId }, relations: { owner: true } });
     if (thread.owner.fingerprint !== user.fingerprint) throw new UnauthorizedException();
-    const posts = await this.postService.fetchPosts(user.fingerprint, threadId);
+    const posts = await this.postService.fetchPostIds(user.fingerprint, threadId, 0, Number.MAX_VALUE);
     console.log('deleted posts', posts);
-    const promises = posts.map((post) => this.postService.delete(post.id!, user));
+    const promises = posts.map((post) => this.postService.delete(post, user));
     await Promise.all(promises);
     return this.threadRepo.delete({ owner: user, id: threadId });
   }

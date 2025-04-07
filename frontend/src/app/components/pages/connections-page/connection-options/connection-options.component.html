@@ -1,12 +1,12 @@
 <mat-nav-list>
   <a mat-list-item (click)="_bottomSheetRef.dismiss()" [routerLink]="['/' + URLS.CREATE_THREAD]">
     <mat-icon matListItemIcon>add</mat-icon>
-    <span matLine>Create a Thread</span>
+    <span matLine>Create a new Hilo</span>
   </a>
   <mat-divider></mat-divider>
   <a mat-list-item (click)="share()">
     <mat-icon matListItemIcon>share</mat-icon>
-    <span matLine>Share an invitiation link</span>
+    <span matLine>Share your invitation link</span>
   </a>
 
   <a mat-list-item (click)="paste()">

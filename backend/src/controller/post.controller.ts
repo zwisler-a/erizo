@@ -1,10 +1,24 @@
-import { Controller, Delete, Get, HttpException, HttpStatus, Logger, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Logger,
+  ParseArrayPipe,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { PostService } from '../service/post.service';
 import { CreatePostDto } from '../dto/post/create-post.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { PostDto } from '../dto/post/post.dto';
 import { AuthGuard } from '../util/auth.guard';
 import { UserEntity } from '../persistance/user.entity';
+import { IdsPage } from '../dto/page.dto';
+import {CreatePostResponseDto} from "../dto/post/create-post-response.dto";
 
 @Controller('post')
 export class PostController {
@@ -12,38 +26,66 @@ export class PostController {
 
   constructor(private postService: PostService) {}
 
-  @Post('/all')
+  @Get('/all/ids')
   @ApiOkResponse({
-    type: PostDto,
-    isArray: true,
+    type: IdsPage,
   })
   @UseGuards(AuthGuard)
-  @ApiOperation({ operationId: 'get-all-posts' })
-  async getAllPosts(@Request() req: any) {
+  @ApiOperation({ operationId: 'get-all-post-ids' })
+  @ApiQuery({ name: 'page' })
+  @ApiQuery({ name: 'limit' })
+  async getAllPostIds(@Request() req: any, @Query('page') page: number, @Query('limit') limit: number) {
     try {
       const user: UserEntity = req.user;
-      this.logger.debug(`Getting all posts for user: ${user.fingerprint}`);
-      return await this.postService.fetchPostsFor(user.fingerprint);
+      this.logger.debug(`Getting all posts for user: ${user.fingerprint}, page ${page}, limit: ${limit}`);
+      const ids = await this.postService.fetchPostIdsFor(user.fingerprint, page, limit);
+      return new IdsPage(page, limit, ids);
     } catch (error) {
       this.logger.error(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Get('thread')
+  @Get('thread/ids')
+  @ApiOkResponse({
+    type: IdsPage,
+  })
+  @UseGuards(AuthGuard)
+  @ApiOperation({ operationId: 'get-post-ids-in-thread' })
+  @ApiQuery({ name: 'threadId' })
+  @ApiQuery({ name: 'page' })
+  @ApiQuery({ name: 'limit' })
+  async getPostIdsForThread(
+    @Request() req: any,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('threadId') threadId: number,
+  ) {
+    try {
+      const user: UserEntity = req.user;
+      this.logger.debug(`Getting all posts for thread: ${threadId} ${user.fingerprint}, page ${page}, limit: ${limit}`);
+      const ids = await this.postService.fetchPostIds(user.fingerprint, threadId, page, limit);
+      return new IdsPage(page, limit, ids);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('')
   @ApiOkResponse({
     type: PostDto,
     isArray: true,
   })
   @UseGuards(AuthGuard)
-  @ApiOperation({ operationId: 'get-posts-in-thread' })
-  @ApiQuery({ name: 'threadId' })
-  async getPostsForThread(@Request() req: any) {
+  @ApiOperation({ operationId: 'get-posts' })
+  @ApiQuery({ name: 'ids', isArray: true, type: Number })
+  async getPosts(@Request() req: any, @Query('ids', new ParseArrayPipe({ items: Number })) ids: number[]) {
     try {
       const user: UserEntity = req.user;
-      const chatId = req.query.chatId;
-      this.logger.debug(`Getting all posts for thread: ${chatId} ${user.fingerprint}`);
-      return await this.postService.fetchPosts(user.fingerprint, chatId);
+      if (!ids) return [];
+      this.logger.debug(`Getting posts for user: ${user.fingerprint}, page [${ids.join(',')}]`);
+      return await this.postService.fetchPosts(user.fingerprint, ids);
     } catch (error) {
       this.logger.error(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,16 +96,17 @@ export class PostController {
   @UseGuards(AuthGuard)
   @ApiOperation({ operationId: 'publish' })
   @ApiBody({ type: CreatePostDto })
-  async upload(@Request() req: any) {
+  @ApiOkResponse({type: CreatePostResponseDto})
+  async upload(@Request() req: any): Promise<CreatePostResponseDto> {
     try {
       const body = req.body as CreatePostDto;
       const user = req.user as UserEntity;
       this.logger.debug(`Creating post from user ${user.fingerprint} ${body.chat_id}`);
-      await this.postService.create(body, user);
-      return { success: true };
+      const entity = await this.postService.create(body, user);
+      return {post_id: entity.id};
     } catch (error) {
       this.logger.error(error);
-      return { error: error.message };
+      throw error;
     }
   }
 

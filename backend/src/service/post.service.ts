@@ -1,12 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from '../persistance/post.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { FilePointer, FileService } from './file.service';
 import { CreatePostDto } from '../dto/post/create-post.dto';
 import { NotificationService, NotificationType } from './notification.service';
 import { UserEntity } from '../persistance/user.entity';
 import { DecryptionKeyEntity } from '../persistance/decryption-key.entity';
+import { PostDto } from '../dto/post/post.dto';
 
 @Injectable()
 export class PostService {
@@ -17,7 +18,7 @@ export class PostService {
     private fileService: FileService,
   ) {}
 
-  public async create(post: CreatePostDto, user: UserEntity): Promise<void> {
+  public async create(post: CreatePostDto, user: UserEntity): Promise<PostEntity> {
     const file = this.fileService.store(post.data);
     const postEntity = this.postRepo.create({
       decryptionKeys: post.recipients.map((recipient) => ({
@@ -32,35 +33,50 @@ export class PostService {
       days_to_live: post.days_to_live,
       nsfw: post.nsfw ?? false,
     });
-    await this.postRepo.save(postEntity);
+    const savedEntity = await this.postRepo.save(postEntity);
     for (let recipient of post.recipients) {
       if (recipient.fingerprint !== user.fingerprint) {
         await this.notificationService.notify(
           { fingerprint: recipient.fingerprint },
           {
             type: NotificationType.NEW_POST,
-            id: postEntity.id.toString(),
+            post_id: postEntity.id.toString(),
             fingerprint: user.fingerprint,
           },
         );
       }
     }
+    return savedEntity;
   }
 
-  public async fetchPostsFor(fingerprint: string) {
+  public async fetchPostIdsFor(fingerprint: string, page: number, limit: number) {
     const posts = await this.postRepo.find({
       where: { decryptionKeys: { recipient_fingerprint: fingerprint } },
+      skip: page * limit,
+      take: limit,
+      order: { id: 'DESC' },
+      relations: { decryptionKeys: true },
+    });
+    return this.mapToIds(posts);
+  }
+
+  public async fetchPosts(fingerprint: string, ids: number[]) {
+    const posts = await this.postRepo.find({
+      where: { decryptionKeys: { recipient_fingerprint: fingerprint }, id: In(ids) },
       relations: { decryptionKeys: true, chat: true },
     });
     return this.mapPosts(posts);
   }
 
-  async fetchPosts(fingerprint: string, chatId: number) {
+  async fetchPostIds(fingerprint: string, chatId: number, page: number, limit: number) {
     const posts = await this.postRepo.find({
       where: { decryptionKeys: { recipient_fingerprint: fingerprint }, chat: { id: chatId } },
       relations: { decryptionKeys: true, chat: true },
+      skip: page * limit,
+      take: limit,
+      order: { id: 'DESC' },
     });
-    return this.mapPosts(posts);
+    return this.mapToIds(posts);
   }
 
   private mapPosts(posts: PostEntity[]): Partial<PostEntity>[] {
@@ -71,6 +87,12 @@ export class PostService {
         file_path: undefined,
         data: this.fileService.retrieve(new FilePointer(post.file_path)),
       }));
+  }
+
+  private mapToIds(posts: PostEntity[]): number[] {
+    return posts
+      .filter((post) => !post.days_to_live || post.created_at + 60 * 60 * 1000 * 24 * post.days_to_live > Date.now())
+      .map((post) => post.id);
   }
 
   async delete(postId: number, user: UserEntity) {
@@ -91,7 +113,7 @@ export class PostService {
       {
         fingerprint: user.fingerprint,
         type: NotificationType.LIKE_POST,
-        id: postId,
+        post_id: postId,
       },
     );
   }

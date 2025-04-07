@@ -30,6 +30,7 @@ export class ShellComponent {
 
   constructor(public contactService: ContactService, notificationService: NotificationService) {
     this.notifications$ = notificationService.getNotifications();
+    notificationService.enableNotifications();
   }
 
 
