@@ -11,6 +11,7 @@ import { ConfirmationService } from '../../../service/confirmation.service';
 import { UserService } from '../../../service/user.service';
 import {BiometricsService} from '../../../service/biometrics.service';
 import {PostService} from '../../../service/post.service';
+import {ERROR_SNACKBAR} from '../../../util/snackbar-consts';
 
 @Component({
   selector: 'app-user-page',
@@ -110,11 +111,11 @@ export class UserPageComponent {
       if (success) {
         this.snackBar.open('Notifications are enabled ', '', { duration: 2000 });
       } else {
-        this.snackBar.open('Could not enable notifications', '', { duration: 2000 });
+        this.snackBar.open('Could not enable notifications', '', ERROR_SNACKBAR);
       }
     } catch (e) {
       console.log(e);
-      this.snackBar.open('Could not enable notifications', '', { duration: 2000 });
+      this.snackBar.open('Could not enable notifications', '', ERROR_SNACKBAR);
     }
   }
 

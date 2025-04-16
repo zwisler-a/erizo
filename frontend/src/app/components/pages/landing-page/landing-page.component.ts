@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { KeyService } from '../../../service/key.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../../service/user.service';
+import {ERROR_SNACKBAR} from '../../../util/snackbar-consts';
 
 @Component({
   selector: 'app-landing-page',
@@ -37,10 +38,10 @@ export class LandingPageComponent {
             window.location.reload();
           });
         } else {
-          this.snackBar.open('Identity upload failed', '', { duration: 2000 });
+          this.snackBar.open('Identity upload failed', '', ERROR_SNACKBAR);
         }
       } catch (error) {
-        this.snackBar.open('Identity upload failed', '', { duration: 2000 });
+        this.snackBar.open('Identity upload failed', '', ERROR_SNACKBAR);
       }
     };
     reader.readAsText(file);

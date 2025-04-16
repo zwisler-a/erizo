@@ -10,6 +10,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {URLS} from '../../app.routes';
 import {BiometricsService} from '../../service/biometrics.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {ERROR_SNACKBAR} from '../../util/snackbar-consts';
 
 @Component({
   selector: 'app-shell',
@@ -63,7 +64,7 @@ export class ShellComponent {
     if (auth) {
       this.locked = false;
     } else {
-      this.snackBar.open("Could not authenticate", "Ok", {duration: 2000});
+      this.snackBar.open("Could not authenticate", "Ok", ERROR_SNACKBAR);
     }
 
   }

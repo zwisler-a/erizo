@@ -8,6 +8,7 @@
       <div matListItemTitle>You got Mail</div>
       <div matListItemLine>{{ notification.data['fingerprint'] | alias }} send you something :) want to have a look?
       </div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
     <mat-list-item *ngSwitchCase="'LIKE_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['post_id'])"
@@ -15,6 +16,7 @@
       <mat-icon matListItemIcon>favorite</mat-icon>
       <div matListItemTitle>{{ notification.data['fingerprint'] | alias }} loves your post</div>
       <div matListItemLine>There is a new post waiting for you</div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
     <mat-list-item *ngSwitchCase="'DEVICE_ADDED'"
@@ -22,6 +24,7 @@
       <mat-icon matListItemIcon>smartphone</mat-icon>
       <div matListItemTitle>Device added</div>
       <div matListItemLine>A new device was registered under your name</div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
     <mat-list-item *ngSwitchCase="'CONNECTION_ADDED'"
@@ -30,6 +33,7 @@
       <mat-icon matListItemIcon>account_circle</mat-icon>
       <div matListItemTitle>{{ notification.data['fingerprint'] | alias }} like you too</div>
       <div matListItemLine>Someone just accepted your connection request!</div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
     <mat-list-item *ngSwitchCase="'CONNECTION_REQUEST'"
@@ -38,6 +42,7 @@
       <mat-icon matListItemIcon>person</mat-icon>
       <div matListItemTitle>You have a new connection request</div>
       <div matListItemLine>Someone likes you! Do you want to connect?</div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
     <mat-list-item *ngSwitchDefault [routerLink]=""
@@ -45,6 +50,7 @@
       <mat-icon matListItemIcon></mat-icon>
       <div matListItemTitle>Not sure what happened ... but something did</div>
       <div matListItemLine>This, technically should never show</div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
   </ng-container>

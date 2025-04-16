@@ -2,11 +2,11 @@
   <h1 class="header">
     <mat-icon class="icon">group</mat-icon>
     <div class="names">
-      <ng-container *ngIf="thread.name">
+      <ng-container *ngIf="thread?.name">
         {{ thread.name }}
       </ng-container>
-      <ng-container *ngIf="!thread.name">
-        <span *ngFor="let participant of thread.participants; let last = last; let first = first">
+      <ng-container *ngIf="!thread?.name">
+        <span *ngFor="let participant of thread?.participants; let last = last; let first = first">
           <span><span>{{ participant.fingerprint | alias }}</span><span *ngIf="!last"> & </span></span>
         </span>
       </ng-container>

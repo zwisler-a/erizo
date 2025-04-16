@@ -37,7 +37,9 @@ export class ThreadPageComponent {
     private el: ElementRef
   ) {
     this.thread = this.route.snapshot.data['thread'];
-    this.initImages(this.thread.id);
+    if(this.thread) {
+      this.initImages(this.thread.id);
+    }
   }
 
 
