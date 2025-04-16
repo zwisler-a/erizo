@@ -9,9 +9,15 @@
   <mat-icon>dark_mode</mat-icon>
   Switch Theme
 </button>
+@if (!hasBiometrics) {
+  <button mat-stroked-button (click)="enableBiometrics()">Enable Biometric Authentication</button>
+} @else {
+  <button mat-stroked-button (click)="disableBiometrics()">Disable Biometric Authentication</button>
+}
 <button mat-stroked-button (click)="enableNotifications()">Enable Notifications</button>
 
-<!--<h3>Dev</h3>-->
+<h3>Dev</h3>
 
+<button mat-stroked-button (click)="clearImageCache()">Clear Image Cache</button>
 
 <div style="position: fixed;bottom: 15px;right:15px">❤️ Erizo</div>

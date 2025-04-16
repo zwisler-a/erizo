@@ -27,7 +27,7 @@ export class UploadImageViewComponent implements AfterViewInit {
   daysToLive?: number;
   message?: string;
   disableSend: boolean = false;
-  nsfw: boolean = true;
+  nsfw: boolean = false;
 
   constructor(
     private route: ActivatedRoute,

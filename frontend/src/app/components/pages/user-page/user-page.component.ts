@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { NotificationService } from '../../../service/notification.service';
 import { ConfirmationService } from '../../../service/confirmation.service';
 import { UserService } from '../../../service/user.service';
+import {BiometricsService} from '../../../service/biometrics.service';
+import {PostService} from '../../../service/post.service';
 
 @Component({
   selector: 'app-user-page',
@@ -24,6 +26,7 @@ import { UserService } from '../../../service/user.service';
 export class UserPageComponent {
 
   ownFingerprint: string | null = '';
+  protected hasBiometrics;
 
   constructor(
     private keyService: KeyService,
@@ -33,10 +36,13 @@ export class UserPageComponent {
     private notificationService: NotificationService,
     private confirmation: ConfirmationService,
     private userService: UserService,
+    private bioService: BiometricsService,
+    private postService: PostService,
   ) {
     this.keyService.getOwnFingerprint().then(fp => {
       this.ownFingerprint = fp;
     });
+    this.hasBiometrics = this.bioService.hasCredentials();
   }
 
   async downloadIdentity() {
@@ -60,6 +66,16 @@ export class UserPageComponent {
 
   async shareIdentity() {
     this.userService.shareIdentity();
+  }
+
+  enableBiometrics() {
+    this.bioService.register();
+    this.hasBiometrics = this.bioService.hasCredentials();
+  }
+
+  disableBiometrics() {
+    this.bioService.clear();
+    this.hasBiometrics = this.bioService.hasCredentials();
   }
 
   async deleteIdentity() {
@@ -100,6 +116,10 @@ export class UserPageComponent {
       console.log(e);
       this.snackBar.open('Could not enable notifications', '', { duration: 2000 });
     }
+  }
 
+  async clearImageCache() {
+    await this.postService.clearImageCache();
+    this.snackBar.open('Post cache cleared!', '', { duration: 2000 });
   }
 }

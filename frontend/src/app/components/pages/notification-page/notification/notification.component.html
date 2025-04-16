@@ -6,14 +6,14 @@
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon>mail</mat-icon>
       <div matListItemTitle>You got Mail</div>
-      <div matListItemLine>{{ notification.data['fingerprint'] | alias | async }} send you something :) want to have a look?
+      <div matListItemLine>{{ notification.data['fingerprint'] | alias }} send you something :) want to have a look?
       </div>
     </mat-list-item>
 
     <mat-list-item *ngSwitchCase="'LIKE_POST'" [routerLink]="URLS.VIEW_POST_FN(notification.data['post_id'])"
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon>favorite</mat-icon>
-      <div matListItemTitle>{{ notification.data['fingerprint'] | alias | async }} loves your post</div>
+      <div matListItemTitle>{{ notification.data['fingerprint'] | alias }} loves your post</div>
       <div matListItemLine>There is a new post waiting for you</div>
     </mat-list-item>
 
@@ -28,7 +28,7 @@
                    [routerLink]="notification.data ? URLS.THREAD_FN(notification.data['thread_id']) : ''"
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon>account_circle</mat-icon>
-      <div matListItemTitle>{{ notification.data['fingerprint'] | alias | async }} like you too</div>
+      <div matListItemTitle>{{ notification.data['fingerprint'] | alias }} like you too</div>
       <div matListItemLine>Someone just accepted your connection request!</div>
     </mat-list-item>
 

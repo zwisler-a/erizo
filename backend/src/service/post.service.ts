@@ -73,7 +73,7 @@ export class PostService {
       where: { decryptionKeys: { recipient_fingerprint: fingerprint }, chat: { id: chatId } },
       relations: { decryptionKeys: true, chat: true },
       skip: page * limit,
-      take: limit,
+      take: limit == -1 ? undefined : limit,
       order: { id: 'DESC' },
     });
     return this.mapToIds(posts);

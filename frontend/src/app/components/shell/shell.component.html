@@ -25,3 +25,11 @@
 <main>
   <router-outlet></router-outlet>
 </main>
+
+
+
+<div *ngIf="locked" class="locked">
+  <h1>Hey 🖐️</h1>
+  <p>We need to verify its you :)</p>
+  <button (click)="authenticate()" mat-flat-button>Its Me!</button>
+</div>

@@ -6,13 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ConnectionEntity } from '../persistance/connection.entity';
 import { ThreadEntity } from '../persistance/thread.entity';
 import { NotificationService, NotificationType } from './notification.service';
+import { ThreadService } from './thread.service';
 
 @Injectable()
 export class ConnectionService {
   constructor(
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(ConnectionEntity) private connectionRepo: Repository<ConnectionEntity>,
-    @InjectRepository(ThreadEntity) private threadRepo: Repository<ThreadEntity>,
+    //@InjectRepository(ThreadEntity) private threadRepo: Repository<ThreadEntity>,
+    private threadService: ThreadService,
     private notificationService: NotificationService,
   ) {}
 
@@ -70,24 +72,23 @@ export class ConnectionService {
       state: 'CONFIRMED',
     });
 
-    const chat = this.threadRepo.create({
-      participants: [user, request.owner],
-    });
-    const directThread = await this.threadRepo.save(chat);
-    request.chat = directThread;
-    otherSide.chat = directThread;
+    const thread = await this.threadService.createThread(user, {
+      participants: [user.fingerprint, request.owner.fingerprint],
+    }, true);
+    request.chat = thread;
+    otherSide.chat = thread;
     await this.connectionRepo.save([request, otherSide]);
-    this.notificationService.notify(request.owner, {
+    await this.notificationService.notify(request.owner, {
       type: NotificationType.CONNECTION_ADDED,
       fingerprint: user.fingerprint,
-      thread_id: directThread.id.toString(),
+      thread_id: thread.id.toString(),
     });
   }
 
   async delete(user: UserEntity, connectionId: number) {
     const connection = await this.connectionRepo.findOneOrFail({
       where: { owner: user, id: connectionId },
-      relations: { chat: true },
+      relations: { chat: true, connectedWith: true },
     });
     const otherSide = await this.connectionRepo.findOneOrFail({
       where: {
@@ -95,7 +96,7 @@ export class ConnectionService {
         owner: connection.connectedWith,
       },
     });
-    await this.threadRepo.delete(connection.chat);
+    await this.threadService.deleteThread(user, connection.chat.id);
     await this.connectionRepo.delete(connection);
     await this.connectionRepo.delete(otherSide);
     return true;

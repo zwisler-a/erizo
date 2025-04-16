@@ -16,7 +16,7 @@ export class ThreadService {
     @InjectRepository(ThreadEntity) private threadRepo: Repository<ThreadEntity>,
     @InjectRepository(PostEntity) private postRepo: Repository<PostEntity>,
     private postService: PostService,
-    private connectionService: ConnectionService,
+    // private connectionService: ConnectionService,
   ) {}
 
   async getThreadById(id: number, user: UserEntity): Promise<ThreadEntity | undefined> {
@@ -35,10 +35,12 @@ export class ThreadService {
     });
   }
 
-  async createThread(user: UserEntity, body: CreateThreadRequest) {
+  async createThread(user: UserEntity, body: CreateThreadRequest, directThread = false) {
     const allAreConnected = await Promise.all(
       body.participants.map((participant) => {
-        return this.connectionService.hasConnection(user.fingerprint, participant);
+        // TODO
+        // return this.connectionService.hasConnection(user.fingerprint, participant);
+        return true;
       }),
     );
     const isNotConnected = allAreConnected.some((connection) => !connection);
@@ -47,7 +49,7 @@ export class ThreadService {
       throw new UnauthorizedException();
     }
     const threadEntity = this.threadRepo.create({
-      owner: { fingerprint: user.fingerprint },
+      owner: directThread ? undefined:  { fingerprint: user.fingerprint },
       name: body.name,
       participants: [...body.participants.map((fingerprint) => ({ fingerprint })), { fingerprint: user.fingerprint }],
     });
@@ -56,9 +58,8 @@ export class ThreadService {
 
   async deleteThread(user: UserEntity, threadId: number) {
     const thread = await this.threadRepo.findOneOrFail({ where: { id: threadId }, relations: { owner: true } });
-    if (thread.owner.fingerprint !== user.fingerprint) throw new UnauthorizedException();
-    const posts = await this.postService.fetchPostIds(user.fingerprint, threadId, 0, Number.MAX_VALUE);
-    console.log('deleted posts', posts);
+    if (thread.owner != null && thread.owner.fingerprint !== user.fingerprint) throw new UnauthorizedException();
+    const posts = await this.postService.fetchPostIds(user.fingerprint, threadId, 0, -1);
     const promises = posts.map((post) => this.postService.delete(post, user));
     await Promise.all(promises);
     return this.threadRepo.delete({ owner: user, id: threadId });

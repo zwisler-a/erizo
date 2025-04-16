@@ -81,7 +81,7 @@ export class NotificationService {
 
     const notificationPermissions = await Notification.requestPermission();
     if (notificationPermissions === 'denied') {
-      return false;
+      throw new Error("Notification permissions are denied")
     }
     const fcmToken = await getToken(this.msg, {serviceWorkerRegistration});
     this.userApi.registerDevice({body: {fcmToken}}).subscribe();

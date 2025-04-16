@@ -1,25 +1,28 @@
-import { Injectable } from '@angular/core';
-import { PersistenceService } from './persistence.service';
-import { map, Observable, OperatorFunction, switchMap } from 'rxjs';
-import { ApiConnectionService } from '../api/services/api-connection.service';
-import { ConnectionEntity } from '../api/models/connection-entity';
-import { KeyService } from './key.service';
-import { ApiThreadService } from '../api/services/api-thread.service';
+import {Injectable} from '@angular/core';
+import {PersistenceService} from './persistence.service';
+import {EMPTY, map, Observable, OperatorFunction, switchMap} from 'rxjs';
+import {ApiConnectionService} from '../api/services/api-connection.service';
+import {ConnectionEntity} from '../api/models/connection-entity';
+import {KeyService} from './key.service';
+import {ApiThreadService} from '../api/services/api-thread.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {catchError} from 'rxjs/operators';
 
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ContactService {
 
   constructor(
     private connectionApi: ApiConnectionService,
     private persistenceService: PersistenceService,
     private keyService: KeyService,
+    private snackBar: MatSnackBar,
     private threadApi: ApiThreadService,
   ) {
   }
 
   requestContactConnection(fingerprint: string) {
-    return this.connectionApi.request({ body: { partner_fingerprint: fingerprint } });
+    return this.connectionApi.request({body: {partner_fingerprint: fingerprint}});
   }
 
   getOpenRequests() {
@@ -42,10 +45,14 @@ export class ContactService {
     return this.getOpenRequests().pipe(
       map((openRequests) => openRequests.find(request => request.owner.fingerprint === fingerprint)),
       map((openRequest) => {
-        if (!openRequest) throw new Error('Could not accept contact request');
+        if (!openRequest) throw new Error('No open request found! Did you already accept the request?');
         return openRequest;
       }),
-      switchMap((openRequest) => this.connectionApi.acceptRequest({ body: { requestId: openRequest.id } })),
+      switchMap((openRequest) => this.connectionApi.acceptRequest({body: {requestId: openRequest.id}})),
+      catchError((err: any) => {
+        this.snackBar.open(err.message, "Let me check");
+        return EMPTY
+      })
     );
   }
 
@@ -75,10 +82,10 @@ export class ContactService {
   }
 
   delete(id: number) {
-    return this.connectionApi.deleteConnection({ body: { connectionId: id } });
+    return this.connectionApi.deleteConnection({body: {connectionId: id}});
   }
 
   deleteThread(id: number) {
-    return this.threadApi.deleteThread({ threadId: id });
+    return this.threadApi.deleteThread({threadId: id});
   }
 }

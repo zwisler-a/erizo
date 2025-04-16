@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {ChangeDetectorRef, Pipe, PipeTransform} from '@angular/core';
 import { ContactService } from '../../../service/contact.service';
 
 @Pipe({
@@ -6,19 +6,22 @@ import { ContactService } from '../../../service/contact.service';
   pure: false,
 })
 export class AliasPipePipe implements PipeTransform {
+  private currentValue!: string;
+  private alias: string | null = null;
+  private loading = false;
 
-  private value!: string;
-  private promise!: Promise<string | null>;
+  constructor(private contactService: ContactService, private cdr: ChangeDetectorRef) {}
 
-  constructor(private contactService: ContactService) {
-  }
-
-  transform(value: string): Promise<string | null> {
-    if (this.value !== value) {
-      this.value = value;
-      this.promise = this.contactService.getAlias(value);
+  transform(value: string): string | null {
+    if (value !== this.currentValue && !this.loading) {
+      this.currentValue = value;
+      this.loading = true;
+      this.contactService.getAlias(value).then(result => {
+        this.alias = result;
+        this.loading = false;
+        this.cdr.markForCheck();
+      });
     }
-    return this.promise;
+    return this.alias || value;
   }
-
 }

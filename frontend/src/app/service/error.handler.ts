@@ -16,13 +16,13 @@ export class GlobalErrorHandler implements ErrorHandler {
     const message = error.message || 'An unexpected error occurred';
     this.logApi.log({body: {message: error.message, stack}}).subscribe({
       next: ()=>{
-        this.snackBar.open(message, 'Close', {
+        this.snackBar.open(message, 'Ups', {
           duration: 5000,
           panelClass: ['error-snackbar'],
         });
       },
       error: (err)=>{
-        this.snackBar.open(err, 'Fuck', {
+        this.snackBar.open(err, 'Ok', {
           duration: 5000,
           panelClass: ['error-snackbar'],
         });

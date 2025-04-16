@@ -64,14 +64,8 @@ export class EncryptionService {
     return { recipients, iv, aesKey };
   }
 
-  async encryptImage(file: File, message: string, forContacts: UserEntity[], addOwnContact = true): Promise<MessageCreation> {
+  async encryptImage(file: File, message: string, forContacts: UserEntity[]): Promise<MessageCreation> {
     const contacts: UserEntity[] = [...forContacts];
-    if (addOwnContact) {
-      contacts.push({
-        fingerprint: await this.keyService.getOwnFingerprint() ?? '',
-        public_key: await this.keyService.getOwnPublicKeyString() ?? '',
-      });
-    }
     const { recipients, aesKey, iv } = await this.generateSymmetricEncryptionKeys(contacts);
     const fileData = await file.arrayBuffer();
     const messageData = new TextEncoder().encode(message);

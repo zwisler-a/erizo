@@ -3,7 +3,7 @@
   <mat-selection-list #contacts>
     @for (contact of contacts$ | async; track contact.id) {
       <mat-list-option
-        [value]="contact.connectedWith.fingerprint">{{ contact.connectedWith.fingerprint | alias | async }}
+        [value]="contact.connectedWith.fingerprint">{{ contact.connectedWith.fingerprint | alias }}
       </mat-list-option>
     }
   </mat-selection-list>
