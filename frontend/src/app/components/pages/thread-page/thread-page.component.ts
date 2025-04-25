@@ -10,6 +10,7 @@ import {ThreadEntity} from '../../../api/models/thread-entity';
 import {AliasPipePipe} from '../../shared/alias-pipe/alias.pipe';
 import {URLS} from '../../../app.routes';
 import {BlurDirective} from '../../shared/blur-directive/blur.directive';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-thread-page',
@@ -23,6 +24,7 @@ import {BlurDirective} from '../../shared/blur-directive/blur.directive';
     BlurDirective,
     RouterLink,
     AliasPipePipe,
+    MatProgressSpinner,
   ],
   templateUrl: './thread-page.component.html',
   styleUrl: './thread-page.component.css',

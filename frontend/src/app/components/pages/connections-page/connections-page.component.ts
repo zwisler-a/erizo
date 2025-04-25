@@ -15,6 +15,7 @@ import { UserService } from '../../../service/user.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ConnectionOptionsComponent } from './connection-options/connection-options.component';
 import { ThreadEntity } from '../../../api/models/thread-entity';
+import {ThreadService} from '../../../service/thread.service';
 
 @Component({
   selector: 'app-connections-page',
@@ -29,12 +30,13 @@ export class ConnectionsPageComponent {
 
   constructor(
     private contactService: ContactService,
+    private threadService: ThreadService,
     private confirmationService: ConfirmationService,
     private userService: UserService,
     private bottomSheet: MatBottomSheet,
   ) {
     this.connections$ = this.contactService.getContacts();
-    this.threads$ = this.contactService.getThreads();
+    this.threads$ = this.threadService.getThreads();
     this.openRequests$ = contactService.getOpenRequests();
   }
 
@@ -73,8 +75,8 @@ export class ConnectionsPageComponent {
     this.confirmationService.confirm('Delete???').subscribe(
       result => {
         if (result) {
-          this.contactService.deleteThread(id).subscribe(() => {
-            this.threads$ = this.contactService.getThreads();
+          this.threadService.deleteThread(id).subscribe(() => {
+            this.threads$ = this.threadService.getThreads();
           });
         }
       },

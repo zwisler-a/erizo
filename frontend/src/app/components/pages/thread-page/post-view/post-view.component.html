@@ -1,6 +1,6 @@
-<div class="header">
+<div class="header" *ngIf="post$ | async as post">
   <button mat-icon-button (click)="navigateBack()">
-    <mat-icon>close</mat-icon>
+    <mat-icon>arrow_back</mat-icon>
   </button>
 </div>
 
