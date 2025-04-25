@@ -6,6 +6,10 @@ import {NotificationService} from './service/notification.service';
 import {LoadingInterceptor} from './http-interceptors/loading.interceptor';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {AsyncPipe, NgIf} from '@angular/common';
+import {SwUpdate} from '@angular/service-worker';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {take} from 'rxjs';
+import {ERROR_SNACKBAR} from './util/snackbar-consts';
 
 @Component({
   selector: 'app-root',
@@ -20,21 +24,37 @@ import {AsyncPipe, NgIf} from '@angular/common';
   ],
   template: `
     <router-outlet></router-outlet>
-    <div class="loading" *ngIf="loading$|async">
-      <mat-spinner></mat-spinner>
+    <div class="loading" *ngIf="loading$ | async">
+      <mat-spinner diameter="35"></mat-spinner>
     </div>
   `,
   styles: [`.loading {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    z-index: 99;
+    bottom: 35px;
+    left: 35px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in 0.1s forwards;
   }`]
 })
 export class AppComponent {
   loading$;
 
-  constructor(loadingInterceptor: LoadingInterceptor, private notificationService: NotificationService) {
+  constructor(loadingInterceptor: LoadingInterceptor,
+              private notificationService: NotificationService,
+              private updates: SwUpdate,
+              private snackBar: MatSnackBar
+  ) {
     this.loading$ = loadingInterceptor.loading$;
+    if (this.updates.isEnabled) {
+      this.updates.versionUpdates.subscribe(event => {
+        if (event.type === 'VERSION_READY') {
+          const snack = this.snackBar.open('Update available', 'Reload');
+          snack.onAction().pipe(take(1)).subscribe(() => {
+            this.updates.activateUpdate().then(() => document.location.reload());
+          });
+        }
+      });
+    }
   }
-
 }

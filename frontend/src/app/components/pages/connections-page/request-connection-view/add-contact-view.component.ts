@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ContactService } from '../../../../service/contact.service';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { URLS } from '../../../../app.routes';
+import {Component, OnInit} from '@angular/core';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {ContactService} from '../../../../service/contact.service';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {URLS} from '../../../../app.routes';
 
 @Component({
   selector: 'app-request-connection-view',
@@ -43,13 +43,12 @@ export class AddContactViewComponent implements OnInit {
 
   async connectToIdentity() {
     if (this.alias.length == 0) {
-      this.snackBar.open('Please enter alias', '', { duration: 2000 });
+      this.snackBar.open('Please enter alias', '', {duration: 2000});
       return;
     }
     if (!this.fingerprint) return;
-    await this.contactService.addAlias(this.fingerprint, this.alias);
-    this.contactService.requestContactConnection(this.fingerprint).subscribe(() => {
-      this.snackBar.open('Send connection request!', '', { duration: 2000 });
+    this.contactService.requestContactConnection(this.fingerprint, this.alias).subscribe(() => {
+      this.snackBar.open('Send connection request!', '', {duration: 2000});
       this.router.navigate(['/']);
     });
   }

@@ -39,6 +39,7 @@ export class PostFeed {
     private pageSize = 3
   ) {
     this.feed$ = this.feedIds$.pipe(
+      map(ids => [...new Set(ids)]),
       this.idsToPostPipe,
       this.decryptionPipe,
       map(post => post.sort((a, b) => b.created_at - a.created_at)),
@@ -63,10 +64,12 @@ export class PostFeed {
   }
 
   addPost(id: number) {
+    this.loading$.next(true);
     this.feedIds$.next([id, ...this.feedIds$.value]);
   }
 
   removePost(id: number) {
+    this.loading$.next(true);
     this.feedIds$.next([...this.feedIds$.value.filter(a => a !== id)]);
   }
 
@@ -102,6 +105,11 @@ export class PostService {
     this.notificationService.getNotifications().subscribe(
       notifications => notifications.forEach(notification => this.handleNotification(notification))
     )
+  }
+
+
+  clearImageCache() {
+    return this.postCache.clear();
   }
 
 
@@ -163,16 +171,15 @@ export class PostService {
     };
     const compressedFile = await imageCompression(file, options);
     const message = await this.encryptionService.encryptImage(compressedFile, textMessage ?? '', contacts);
-    this.postsApi.publish({
+    const response = await firstValueFrom( this.postsApi.publish({
       body: {
         ...message,
         days_to_live: daysToLive,
         chat_id: chatId,
         nsfw
       }
-    }).subscribe((response) => {
-      this.addPostToFeeds(response.post_id);
-    });
+    }));
+    this.addPostToFeeds(response.post_id);
   }
 
   private getPostsByIds(): OperatorFunction<number[], PostDto[]> {
@@ -181,6 +188,7 @@ export class PostService {
         switchMap(async ids => {
           const cachedIds = await filterAsync(ids, id => this.postCache.has(id));
           const uncachedIds = await filterAsync(ids, async id => !(await this.postCache.has(id)));
+          // console.log(cachedIds, uncachedIds, ids)
           const cachedPosts: PostDto[] = await Promise.all(cachedIds.map(id => this.postCache.get<PostDto>(id))) as any;
           if (!uncachedIds.length) return cachedPosts;
           const uncachedPosts = this.postsApi.getPosts({ids: uncachedIds}).pipe(
@@ -190,7 +198,7 @@ export class PostService {
           )
 
           return [...cachedPosts, ...(await firstValueFrom(uncachedPosts))]
-        })
+        }),
       )
   }
 

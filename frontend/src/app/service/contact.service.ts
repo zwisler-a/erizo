@@ -1,25 +1,45 @@
-import { Injectable } from '@angular/core';
-import { PersistenceService } from './persistence.service';
-import { map, Observable, OperatorFunction, switchMap } from 'rxjs';
-import { ApiConnectionService } from '../api/services/api-connection.service';
-import { ConnectionEntity } from '../api/models/connection-entity';
-import { KeyService } from './key.service';
-import { ApiThreadService } from '../api/services/api-thread.service';
+import {Injectable} from '@angular/core';
+import {PersistenceService} from './persistence.service';
+import {
+  BehaviorSubject,
+  EMPTY,
+  firstValueFrom,
+  map,
+  Observable,
+  OperatorFunction,
+  shareReplay,
+  switchMap,
+  tap
+} from 'rxjs';
+import {ApiConnectionService} from '../api/services/api-connection.service';
+import {ConnectionEntity} from '../api/models/connection-entity';
+import {KeyService} from './key.service';
+import {ApiThreadService} from '../api/services/api-thread.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {catchError} from 'rxjs/operators';
 
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ContactService {
+
+  private reloadContacts$ = new BehaviorSubject<null>(null);
+  private contracts$ = this.reloadContacts$.pipe(
+    switchMap(() => this.connectionApi.getConnections()),
+    shareReplay(1)
+  )
 
   constructor(
     private connectionApi: ApiConnectionService,
-    private persistenceService: PersistenceService,
     private keyService: KeyService,
+    private snackBar: MatSnackBar,
     private threadApi: ApiThreadService,
   ) {
   }
 
-  requestContactConnection(fingerprint: string) {
-    return this.connectionApi.request({ body: { partner_fingerprint: fingerprint } });
+  requestContactConnection(fingerprint: string, alias: string) {
+    return this.connectionApi.request({body: {partner_fingerprint: fingerprint, alias}}).pipe(
+      tap(() => this.reloadContacts$.next(null))
+    );
   }
 
   getOpenRequests() {
@@ -27,9 +47,7 @@ export class ContactService {
   }
 
   getContacts(): Observable<(ConnectionEntity & { alias: string })[]> {
-    return this.connectionApi.getConnections().pipe(
-      this.addAliasPipe(),
-    );
+    return this.contracts$;
   }
 
   getThreads() {
@@ -38,47 +56,48 @@ export class ContactService {
     );
   }
 
-  acceptContactRequest(fingerprint: string) {
+  acceptContactRequest(fingerprint: string, alias: string) {
     return this.getOpenRequests().pipe(
       map((openRequests) => openRequests.find(request => request.owner.fingerprint === fingerprint)),
       map((openRequest) => {
-        if (!openRequest) throw new Error('Could not accept contact request');
+        if (!openRequest) throw new Error('No open request found! Did you already accept the request?');
         return openRequest;
       }),
-      switchMap((openRequest) => this.connectionApi.acceptRequest({ body: { requestId: openRequest.id } })),
+      switchMap((openRequest) => this.connectionApi.acceptRequest({body: {requestId: openRequest.id, alias}})),
+      tap(() => this.reloadContacts$.next(null)),
+      catchError((err: any) => {
+        this.snackBar.open(err.message, "Let me check");
+        return EMPTY
+      })
     );
   }
 
-  private addAliasPipe(): OperatorFunction<ConnectionEntity[], (ConnectionEntity & { alias: string })[]> {
-    return source => {
-      return source.pipe(
-        switchMap(vals => Promise.all(vals.map(async val => ({
-          ...val,
-          alias: (await this.getAlias(val.connectedWith.fingerprint) ?? val.connectedWith.fingerprint),
-        })))),
-      );
-    };
+  async addAlias(id: number, alias: string) {
+    const res = await firstValueFrom(this.connectionApi.setAlias({body: {alias, id}}));
+    this.reloadContacts$.next(null);
+    return res;
   }
 
-  async addAlias(fingerprint: string, alias: string) {
-    if (!alias && !fingerprint) return;
-    const aliases = (await this.persistenceService.getItem('alias') ?? {}) as Record<string, string>;
-    aliases[fingerprint] = alias;
-    await this.persistenceService.setItem('alias', aliases);
-  }
-
-  async getAlias(fingerprint: string): Promise<string | null> {
-    if ((await this.keyService.getOwnFingerprint()) == fingerprint) return 'You';
-    const aliases = (await this.persistenceService.getItem('alias') ?? {}) as Record<string, string>;
-
-    return aliases[fingerprint];
+  getAlias(fingerprint: string): Promise<string | null> {
+    return new Promise(async resolve => {
+      if((await this.keyService.getOwnFingerprint()) == fingerprint) {
+        resolve("You");
+        return;
+      }
+      this.contracts$.subscribe(contacts => {
+        const matchingContact = contacts.find(contact => contact.connectedWith.fingerprint === fingerprint);
+        resolve(matchingContact?.alias ?? matchingContact?.connectedWith.fingerprint ?? null);
+      })
+    })
   }
 
   delete(id: number) {
-    return this.connectionApi.deleteConnection({ body: { connectionId: id } });
+    return this.connectionApi.deleteConnection({body: {connectionId: id}}).pipe(
+      tap(() => this.reloadContacts$.next(null))
+    );
   }
 
   deleteThread(id: number) {
-    return this.threadApi.deleteThread({ threadId: id });
+    return this.threadApi.deleteThread({threadId: id});
   }
 }

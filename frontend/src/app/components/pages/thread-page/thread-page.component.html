@@ -1,13 +1,13 @@
 <div class="connection-header">
   <h1 class="header">
     <mat-icon class="icon">group</mat-icon>
-    <div *ngIf="thread$ | async as thread" class="names">
-      <ng-container *ngIf="thread.name">
+    <div class="names">
+      <ng-container *ngIf="thread?.name">
         {{ thread.name }}
       </ng-container>
-      <ng-container *ngIf="!thread.name">
-        <span *ngFor="let participant of thread.participants; let last = last; let first = first">
-          <span><span>{{ participant.fingerprint | alias | async }}</span><span *ngIf="!last"> & </span></span>
+      <ng-container *ngIf="!thread?.name">
+        <span *ngFor="let participant of thread?.participants; let last = last; let first = first">
+          <span><span>{{ participant.fingerprint | alias }}</span><span *ngIf="!last"> & </span></span>
         </span>
       </ng-container>
     </div>
@@ -34,6 +34,6 @@
   <mat-icon>local_fire_department</mat-icon>
 </ng-template>
 
-<button *ngIf="thread$ | async as thread" class="post-button" mat-flat-button (click)="sendImage(thread.id)">Post new
+<button class="post-button" mat-flat-button (click)="sendImage(thread.id)">Post new
   image
 </button>

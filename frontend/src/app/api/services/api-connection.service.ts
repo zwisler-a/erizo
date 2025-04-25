@@ -22,6 +22,8 @@ import { openRequest } from '../fn/connection/open-request';
 import { OpenRequest$Params } from '../fn/connection/open-request';
 import { request } from '../fn/connection/request';
 import { Request$Params } from '../fn/connection/request';
+import { setAlias } from '../fn/connection/set-alias';
+import { SetAlias$Params } from '../fn/connection/set-alias';
 
 @Injectable({ providedIn: 'root' })
 export class ApiConnectionService extends BaseService {
@@ -76,6 +78,31 @@ export class ApiConnectionService extends BaseService {
   deleteConnection(params: DeleteConnection$Params, context?: HttpContext): Observable<void> {
     return this.deleteConnection$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `setAlias()` */
+  static readonly SetAliasPath = '/api/connection/alias';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `setAlias()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  setAlias$Response(params: SetAlias$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ConnectionEntity>>> {
+    return setAlias(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `setAlias$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  setAlias(params: SetAlias$Params, context?: HttpContext): Observable<Array<ConnectionEntity>> {
+    return this.setAlias$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<ConnectionEntity>>): Array<ConnectionEntity> => r.body)
     );
   }
 

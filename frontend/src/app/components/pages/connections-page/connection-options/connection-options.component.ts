@@ -1,11 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { MatListModule } from '@angular/material/list';
-import { MatLine } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { UserService } from '../../../../service/user.service';
-import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { Router, RouterLink } from '@angular/router';
-import { URLS } from '../../../../app.routes';
+import {Component, inject} from '@angular/core';
+import {MatListModule} from '@angular/material/list';
+import {MatLine} from '@angular/material/core';
+import {MatIcon} from '@angular/material/icon';
+import {UserService} from '../../../../service/user.service';
+import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
+import {Router, RouterLink} from '@angular/router';
+import {URLS} from '../../../../app.routes';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 
 @Component({
   selector: 'app-connection-options',
@@ -25,6 +27,7 @@ export class ConnectionOptionsComponent {
   constructor(
     private userService: UserService,
     private router: Router,
+    private snackBar: MatSnackBar
   ) {
   }
 
@@ -43,7 +46,7 @@ export class ConnectionOptionsComponent {
       }
       this.router.navigateByUrl(URLS.ADD_CONNECTION_FN(lastPart));
     }).catch(err => {
-      console.error('Failed to read clipboard content: ', err);
+      this.snackBar.open("Could not paste from clipboard. Maybe the permission was not granted? Error:" + err.message, 'Ok', ERROR_SNACKBAR);
     });
   }
 

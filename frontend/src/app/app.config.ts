@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideMessaging(() => getMessaging()),
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHandlerInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useExisting: LoadingInterceptor, multi: true},
     provideServiceWorker('/ngsw-worker.js', {
       enabled: false,
       registrationStrategy: 'registerImmediately',

@@ -20,6 +20,7 @@ export interface NotificationPayload {
   thread_id?: string;
   post_id?: string;
   fingerprint?: string;
+  timestamp?: string;
 }
 
 @Injectable()
@@ -40,6 +41,7 @@ export class NotificationService {
 
   public async notify(user: Partial<UserEntity>, data: NotificationPayload) {
     const actualUser = await this.userRepository.findOneOrFail({ where: user, relations: { devices: true } });
+    data.timestamp = new Date().getTime().toString();
     const proms = actualUser.devices.map(async (device) => {
       this.logger.debug(`Sending message ${JSON.stringify(data)}`);
       await this.sendMessage(device.fcmToken, data);

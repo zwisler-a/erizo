@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
-import { KeyService } from './key.service';
-import { ApiAuthenticationService } from '../api/services/api-authentication.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {Injectable} from '@angular/core';
+import {KeyService} from './key.service';
+import {ApiAuthenticationService} from '../api/services/api-authentication.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ERROR_SNACKBAR} from '../util/snackbar-consts';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class UserService {
 
   constructor(
@@ -35,8 +36,10 @@ export class UserService {
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(url).then(() => {
-        this.snackBar.open('Copied to clipboard!', '', { duration: 2000 });
-      }).catch(console.error);
+        this.snackBar.open('Copied to clipboard!', '', {duration: 2000});
+      }).catch((e) => {
+        this.snackBar.open('Could not copy to clipboard! Maybe the permission was not granted? Error:' + e.message, '', ERROR_SNACKBAR);
+      });
     }
   }
 

@@ -19,7 +19,7 @@ export class LoadingInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       finalize(() => {
-        this.activeRequests--;
+        this.activeRequests = this.activeRequests-1;
         if (this.activeRequests === 0) {
           this.loading$.next(false);
         }

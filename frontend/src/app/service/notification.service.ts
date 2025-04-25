@@ -6,6 +6,7 @@ import {MessagePayload} from '@angular/fire/messaging';
 import {NotificationPersistenceService} from './notification-persistance.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {map} from 'rxjs/operators';
+import {ERROR_SNACKBAR} from '../util/snackbar-consts';
 
 export enum NotificationType {
   NEW_POST = 'NEW_POST',
@@ -20,6 +21,7 @@ export interface NotificationPayload {
   thread_id?: string;
   post_id?: string;
   fingerprint?: string;
+  timestamp?: string;
 }
 
 @Injectable({providedIn: 'root'})
@@ -50,7 +52,7 @@ export class NotificationService {
         await this.refreshNotifications();
       });
     } catch (e) {
-      this.snackBar.open("For some reason notfications are not available on your device!", '', {duration: 2000});
+      this.snackBar.open("Something went wrong! Maybe enable Notifications und the User-Page?", 'Ok', ERROR_SNACKBAR);
     }
   }
 
@@ -81,7 +83,7 @@ export class NotificationService {
 
     const notificationPermissions = await Notification.requestPermission();
     if (notificationPermissions === 'denied') {
-      return false;
+      throw new Error("Notification permissions are denied")
     }
     const fcmToken = await getToken(this.msg, {serviceWorkerRegistration});
     this.userApi.registerDevice({body: {fcmToken}}).subscribe();

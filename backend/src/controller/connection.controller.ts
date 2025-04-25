@@ -7,6 +7,7 @@ import { AuthGuard } from '../util/auth.guard';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ConnectionEntity } from '../persistance/connection.entity';
 import { DeleteConnectionRequestDto } from '../dto/connection/delete-connection-request.dto';
+import {SetConnectionAliasRequest} from "../dto/connection/set-alias-request";
 
 @Controller('connection')
 export class ConnectionController {
@@ -24,6 +25,20 @@ export class ConnectionController {
   async getConnections(@Request() req: any) {
     const user = req.user as UserEntity;
     return this.connectionService.getConnections(user);
+  }
+
+  @Post('alias')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ operationId: 'set-alias' })
+  @ApiBody({ type: SetConnectionAliasRequest })
+  @ApiOkResponse({
+    type: ConnectionEntity,
+    isArray: true,
+  })
+  async setAlias(@Request() req: any) {
+    const user = req.user as UserEntity;
+    const body: SetConnectionAliasRequest = req.body;
+    return this.connectionService.setAlias(body.id, body.alias, user);
   }
 
   @Post('/request')
@@ -50,7 +65,7 @@ export class ConnectionController {
     try {
       const user: UserEntity = req.user;
       const body: AcceptConnectionRequestDto = req.body;
-      await this.connectionService.acceptConnectionRequest(user, body.requestId);
+      await this.connectionService.acceptConnectionRequest(user, body.requestId, body.alias);
       return { success: true };
     } catch (e) {
       this.logger.error(e);
