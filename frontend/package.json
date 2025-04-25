@@ -29,6 +29,7 @@
     "@capacitor/core": "^7.2.0",
     "@capacitor/ios": "^7.2.0",
     "browser-image-compression": "^2.0.2",
+    "capacitor-plugin-safe-area": "^4.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

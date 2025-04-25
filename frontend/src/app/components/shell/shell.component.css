@@ -2,12 +2,12 @@ nav {
   display: flex;
   flex-direction: row;
   gap: 16px;
-  padding: 8px 16px;
+  padding: max(env(safe-area-inset-top), 8px) 16px 8px 16px;
   position: fixed;
   width: 100vw;
   top: 0;
   box-sizing: border-box;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+  background: linear-gradient(to top, transparent, rgba(0, 0, 0, 0.6) 48px);
   z-index: 999;
 }
 
@@ -28,7 +28,7 @@ main {
   padding-top: 64px;
   box-sizing: border-box;
   max-width: 640px;
-  margin: auto;
+  margin: env(safe-area-inset-top) auto 0 auto;
 }
 
 .logo {
@@ -36,8 +36,8 @@ main {
   font-weight: 400;
   font-style: normal;
   font-size: 32px;
-  position: fixed;
-  top: 0;
+  position: absolute;
+  bottom: 0;
   left: 50%;
   transform: translate(-50%);
 }
