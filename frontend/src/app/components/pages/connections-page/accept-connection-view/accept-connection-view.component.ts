@@ -35,8 +35,7 @@ export class AcceptConnectionViewComponent implements OnInit {
   }
 
   async accept() {
-    await this.contactService.addAlias(this.fingerprint!, this.alias);
-    this.contactService.acceptContactRequest(this.fingerprint!).subscribe(() => {
+    this.contactService.acceptContactRequest(this.fingerprint!, this.alias).subscribe(() => {
       this.router.navigate(['/']);
     });
   }

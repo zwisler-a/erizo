@@ -14,7 +14,7 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
-            <button [disabled]="true" mat-menu-item (click)="deleteThread(thread.id)">Delete</button>
+            <button mat-menu-item (click)="deleteThread(thread.id)">Delete</button>
           </mat-menu>
         </div>
       </mat-list-item>

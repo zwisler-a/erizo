@@ -53,7 +53,7 @@ export class ConnectionsPageComponent {
 
   changeAlias(connection: ConnectionEntity & { alias: string }) {
     this.confirmationService.confirmWithInput('Alias', connection.connectedWith.fingerprint).subscribe(async res => {
-      await this.contactService.addAlias(connection.connectedWith.fingerprint, res);
+      await this.contactService.addAlias(connection.id, res);
       this.connections$ = this.contactService.getContacts();
     });
   }

@@ -23,5 +23,21 @@
   "short_name": "Erizo",
   "start_url": "/",
   "scope": "/",
-  "gcm_sender_id": "103953800507"
+  "gcm_sender_id": "103953800507",
+  "screenshots": [
+    {
+      "src": "screenshots/phone.png",
+      "sizes": "1290x2796",
+      "type": "image/png",
+      "platform": "ios",
+      "label": "Home View"
+    },
+    {
+      "src": "screenshots/desktop.png",
+      "sizes": "1920x917",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home View"
+    }
+  ]
 }

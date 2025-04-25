@@ -19,6 +19,10 @@ export class ConnectionEntity {
   @JoinColumn()
   connectedWith: UserEntity;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  alias: string;
+
   @ApiProperty({ required: false })
   @ManyToOne(() => ThreadEntity, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn()

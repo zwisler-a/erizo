@@ -1,8 +1,8 @@
 <div class="post-container" *ngIf="post">
   <div class="post-header">
-    <div class="user" [routerLink]="[URLS.THREAD_FN(post.chat.id)]">
+    <div class="user" [routerLink]="[URLS.THREAD_FN(post.chat?.id ?? 0)]">
       <mat-icon>{{ post.days_to_live ? 'schedule' : 'account_circle' }}</mat-icon>
-      {{ !!post.chat.name ? post.alias + ' @ ' + post.chat.name : post.alias }}
+      {{ !!post.chat?.name ? post.alias + ' @ ' + post.chat?.name : post.alias }}
     </div>
 
     <mat-icon class="menu" *ngIf="isOwn | async" [matMenuTriggerFor]="menu">more_vert</mat-icon>

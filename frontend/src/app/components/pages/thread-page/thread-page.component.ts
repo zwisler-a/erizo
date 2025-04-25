@@ -22,6 +22,7 @@ import {BlurDirective} from '../../shared/blur-directive/blur.directive';
     AliasPipePipe,
     BlurDirective,
     RouterLink,
+    AliasPipePipe,
   ],
   templateUrl: './thread-page.component.html',
   styleUrl: './thread-page.component.css',

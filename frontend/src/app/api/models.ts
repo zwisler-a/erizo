@@ -20,5 +20,6 @@ export { PostDto } from './models/post-dto';
 export { RecipientList } from './models/recipient-list';
 export { RegisterDeviceDto } from './models/register-device-dto';
 export { RegisterDto } from './models/register-dto';
+export { SetConnectionAliasRequest } from './models/set-connection-alias-request';
 export { ThreadEntity } from './models/thread-entity';
 export { UserEntity } from './models/user-entity';
