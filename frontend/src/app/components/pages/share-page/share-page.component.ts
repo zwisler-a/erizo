@@ -18,7 +18,7 @@ export class SharePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    if ('launchQueue' in window && 'files' in (window as any)) {
+    if ('launchQueue' in window) {
       (window as any).launchQueue.setConsumer(async (launchParams: any) => {
         if (!launchParams) return;
 
@@ -40,6 +40,8 @@ export class SharePageComponent implements OnInit {
           imageUrl: imageUrl
         }));
       });
+    } else {
+      throw new Error('launchQueue no available')
     }
   }
 
