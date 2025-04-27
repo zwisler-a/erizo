@@ -1,5 +1,5 @@
 import "/firebase-messaging-sw.js";
-import "/ngsw-worker.js";
+
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
