@@ -25,8 +25,9 @@ export class ThreadService {
   }
 
   deleteThread(id: number) {
-    this.reloadThreads$.next();
-    return this.threadApi.deleteThread({threadId: id});
+    return this.threadApi.deleteThread({threadId: id}).pipe(
+      tap(() => this.reloadThreads$.next())
+    );
   }
 
   createThread(param: { body: { participants: string[]; name: string } }) {

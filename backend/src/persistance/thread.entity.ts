@@ -23,15 +23,15 @@ export class ThreadEntity {
   name: string;
 
   @ApiProperty({ type: UserEntity })
-  @ManyToOne(() => UserEntity, { onDelete: 'NO ACTION', nullable: true })
+  @ManyToOne(() => UserEntity, { cascade: false, nullable: true })
   @JoinColumn()
   owner: UserEntity;
 
   @ApiProperty({ type: UserEntity, isArray: true })
-  @ManyToMany(() => UserEntity, { onDelete: 'NO ACTION' })
+  @ManyToMany(() => UserEntity, { cascade: false })
   @JoinTable()
   participants: UserEntity[];
 
-  @OneToMany(() => PostEntity, (message) => message.chat, { onDelete: 'CASCADE' })
+  @OneToMany(() => PostEntity, (message) => message.chat, { cascade: false })
   messages: PostEntity[];
 }
