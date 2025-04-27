@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, interval, map, shareReplay, switchMap} from 'rxjs';
+import {BehaviorSubject, map, shareReplay, switchMap, tap} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ApiThreadService} from '../api/services/api-thread.service';
 
@@ -27,5 +27,11 @@ export class ThreadService {
   deleteThread(id: number) {
     this.reloadThreads$.next();
     return this.threadApi.deleteThread({threadId: id});
+  }
+
+  createThread(param: { body: { participants: string[]; name: string } }) {
+    return this.threadApi.createThread(param).pipe(
+      tap(() => this.reloadThreads$.next())
+    );
   }
 }

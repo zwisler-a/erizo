@@ -3,7 +3,18 @@
     <mat-icon class="icon">group</mat-icon>
     <div class="names">
       <ng-container *ngIf="thread?.name">
-        {{ thread.name }}
+        <div>
+          {{ thread.name }}
+        </div>
+        <span class="spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>info</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngFor="let participant of thread?.participants;">
+            {{participant.fingerprint | alias}}
+          </button>
+        </mat-menu>
       </ng-container>
       <ng-container *ngIf="!thread?.name">
         <span *ngFor="let participant of thread?.participants; let last = last; let first = first">

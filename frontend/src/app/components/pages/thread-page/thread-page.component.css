@@ -51,6 +51,7 @@
   flex-wrap: wrap;
   flex-direction: row;
   gap: 8px;
+  flex: 1 1 auto;
 }
 
 .header {
@@ -60,4 +61,8 @@
   gap: 16px;
   padding-left: 16px;
   margin: 0;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }
