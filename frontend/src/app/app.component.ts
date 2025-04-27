@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {UserService} from './service/user.service';
-import {RouterOutlet} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import {ContactService} from './service/contact.service';
 import {NotificationService} from './service/notification.service';
 import {LoadingInterceptor} from './http-interceptors/loading.interceptor';
@@ -10,6 +10,7 @@ import {SwUpdate} from '@angular/service-worker';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {take} from 'rxjs';
 import {ERROR_SNACKBAR} from './util/snackbar-consts';
+import {URLS} from './app.routes';
 
 @Component({
   selector: 'app-root',
@@ -41,7 +42,7 @@ export class AppComponent {
   loading$;
 
   constructor(loadingInterceptor: LoadingInterceptor,
-              private notificationService: NotificationService,
+              private router: Router,
               private updates: SwUpdate,
               private snackBar: MatSnackBar
   ) {
@@ -56,5 +57,14 @@ export class AppComponent {
         }
       });
     }
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data?.type === 'share-target') {
+        localStorage.setItem('share', JSON.stringify({
+          link: event.data.link,
+          imageUrl: event.data.file
+        }));
+        this.router.navigateByUrl(URLS.SHARE);
+      }
+    });
   }
 }
