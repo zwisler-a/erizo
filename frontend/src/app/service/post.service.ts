@@ -39,13 +39,12 @@ export class PostFeed {
     private pageSize = 3
   ) {
     this.feed$ = this.feedIds$.pipe(
+      tap(_ => this.loading$.next(true)),
       map(ids => [...new Set(ids)]),
       this.idsToPostPipe,
       this.decryptionPipe,
       map(post => post.sort((a, b) => b.created_at - a.created_at)),
-      tap(res => {
-        this.loading$.next(false);
-      }),
+      tap(_ => this.loading$.next(false)),
       shareReplay(1)
     );
   }
@@ -64,12 +63,10 @@ export class PostFeed {
   }
 
   addPost(id: number) {
-    this.loading$.next(true);
     this.feedIds$.next([id, ...this.feedIds$.value]);
   }
 
   removePost(id: number) {
-    this.loading$.next(true);
     this.feedIds$.next([...this.feedIds$.value.filter(a => a !== id)]);
   }
 

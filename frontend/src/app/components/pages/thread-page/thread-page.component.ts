@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener} from '@angular/core';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
@@ -10,6 +10,8 @@ import {ThreadEntity} from '../../../api/models/thread-entity';
 import {AliasPipePipe} from '../../shared/alias-pipe/alias.pipe';
 import {URLS} from '../../../app.routes';
 import {BlurDirective} from '../../shared/blur-directive/blur.directive';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 
 @Component({
   selector: 'app-thread-page',
@@ -23,6 +25,11 @@ import {BlurDirective} from '../../shared/blur-directive/blur.directive';
     BlurDirective,
     RouterLink,
     AliasPipePipe,
+    MatProgressSpinner,
+    MatIconButton,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
   ],
   templateUrl: './thread-page.component.html',
   styleUrl: './thread-page.component.css',

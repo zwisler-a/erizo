@@ -18,9 +18,11 @@ import {
   CreateThreadViewComponent
 } from './components/pages/connections-page/create-thread-view/create-thread-view.component';
 import {ThreadDataResolver} from './components/pages/thread-page/thread.resolver';
+import {SharePageComponent} from './components/pages/share-page/share-page.component';
 
 export const URLS = {
   HOME: 'home',
+  SHARE: 'share',
   NOTIFICATIONS: 'notifications',
   CONNECTIONS: 'connections',
   IDENTITY: 'identity',
@@ -45,6 +47,7 @@ export const routes: Routes = [
     path: '', component: ShellComponent,
     children: [
       {path: URLS.HOME, component: HomePageComponent},
+      {path: URLS.SHARE, component: SharePageComponent},
       {path: URLS.IDENTITY, component: UserPageComponent},
       {path: URLS.CREATE_THREAD, component: CreateThreadViewComponent},
       {path: URLS.NOTIFICATIONS, component: NotificationPageComponent},

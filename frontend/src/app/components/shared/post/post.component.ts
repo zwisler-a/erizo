@@ -9,6 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { KeyService } from '../../../service/key.service';
 import { ConfirmationService } from '../../../service/confirmation.service';
 import { BlurDirective } from '../blur-directive/blur.directive';
+import {LinkPipe} from '../link-pipe/link.pipe';
 
 @Component({
   selector: 'app-post',
@@ -21,6 +22,7 @@ import { BlurDirective } from '../blur-directive/blur.directive';
     AsyncPipe,
     BlurDirective,
     MatIconButton,
+    LinkPipe,
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',

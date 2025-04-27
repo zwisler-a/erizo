@@ -12,6 +12,7 @@ import { MatButton } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { URLS } from '../../../../app.routes';
 import { ApiThreadService } from '../../../../api/services/api-thread.service';
+import {ThreadService} from '../../../../service/thread.service';
 
 @Component({
   selector: 'app-create-thread-view',
@@ -35,7 +36,11 @@ export class CreateThreadViewComponent {
   contacts$: Observable<(ConnectionEntity & { alias: string })[]>;
   name: string = '';
 
-  constructor(private contactService: ContactService, private threadApi: ApiThreadService, private router: Router) {
+  constructor(
+    private contactService: ContactService,
+    private threadService: ThreadService,
+    private router: Router
+  ) {
     this.contacts$ = this.contactService.getContacts();
   }
 
@@ -43,7 +48,7 @@ export class CreateThreadViewComponent {
 
   createThread(contactsList: MatSelectionList) {
     const participants: string[] = contactsList.selectedOptions.selected.map(s => s.value);
-    this.threadApi.createThread({ body: { participants, name: this.name } }).subscribe(() => {
+    this.threadService.createThread({ body: { participants, name: this.name } }).subscribe(() => {
       this.router.navigateByUrl('/' + URLS.CONNECTIONS);
     });
   }

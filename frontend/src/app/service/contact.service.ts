@@ -32,7 +32,6 @@ export class ContactService {
     private connectionApi: ApiConnectionService,
     private keyService: KeyService,
     private snackBar: MatSnackBar,
-    private threadApi: ApiThreadService,
   ) {
   }
 
@@ -48,12 +47,6 @@ export class ContactService {
 
   getContacts(): Observable<(ConnectionEntity & { alias: string })[]> {
     return this.contracts$;
-  }
-
-  getThreads() {
-    return this.threadApi.getThreads().pipe(
-      map(threads => threads.filter(t => !!t.owner)),
-    );
   }
 
   acceptContactRequest(fingerprint: string, alias: string) {
@@ -95,9 +88,5 @@ export class ContactService {
     return this.connectionApi.deleteConnection({body: {connectionId: id}}).pipe(
       tap(() => this.reloadContacts$.next(null))
     );
-  }
-
-  deleteThread(id: number) {
-    return this.threadApi.deleteThread({threadId: id});
   }
 }

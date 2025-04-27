@@ -3,7 +3,18 @@
     <mat-icon class="icon">group</mat-icon>
     <div class="names">
       <ng-container *ngIf="thread?.name">
-        {{ thread.name }}
+        <div>
+          {{ thread.name }}
+        </div>
+        <span class="spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>info</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngFor="let participant of thread?.participants;">
+            {{participant.fingerprint | alias}}
+          </button>
+        </mat-menu>
       </ng-container>
       <ng-container *ngIf="!thread?.name">
         <span *ngFor="let participant of thread?.participants; let last = last; let first = first">
@@ -15,7 +26,7 @@
 </div>
 
 
-<div class="images">
+<div class="images" *ngIf="(posts?.feed$ | async)?.length || (posts?.loading$|async); else noMessages">
   @for (post of posts?.feed$ | async; track post.id) {
     <div class="image">
       <img [appBlur]="post.nsfw"
@@ -27,9 +38,20 @@
     </div>
   }
 </div>
+<div *ngIf="!(posts?.loading$|async); else loading"></div>
 
 
-
+<ng-template #loading>
+  <div class="loader">
+    <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
+    <div>Decrypting ...</div>
+  </div>
+</ng-template>
+<ng-template #noMessages>
+  <div class="no-data">
+    <div>Nothing here yet ...</div>
+  </div>
+</ng-template>
 <ng-template #blurry>
   <mat-icon>local_fire_department</mat-icon>
 </ng-template>

@@ -21,6 +21,7 @@ import { NotificationService } from './service/notification.service';
 import { ThreadController } from './controller/thread.controller';
 import { ThreadService } from './service/thread.service';
 import { LoggerController } from './controller/logger.controller';
+import {ShareController} from "./controller/share.controller";
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { LoggerController } from './controller/logger.controller';
     ConnectionController,
     ThreadController,
     LoggerController,
+    ShareController
   ],
   providers: [
     ThreadService,
