@@ -29,6 +29,7 @@
   ],
   "navigationUrls": [
     "/**",
+    "/share-target/**",
     "!/**/*.*",
     "!/api/**"
   ]

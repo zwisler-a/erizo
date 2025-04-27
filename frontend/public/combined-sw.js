@@ -11,6 +11,7 @@ self.addEventListener('fetch', event => {
 
 async function handleShareTarget(event) {
   const formData = await event.request.formData();
+  console.log(formData);
   const file = formData.get('files'); // only one file
   const link = formData.get('url');   // only one link
 

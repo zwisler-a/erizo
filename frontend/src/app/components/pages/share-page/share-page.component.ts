@@ -18,31 +18,6 @@ export class SharePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    if ('launchQueue' in window) {
-      (window as any).launchQueue.setConsumer(async (launchParams: any) => {
-        if (!launchParams) return;
-
-        const formData: FormData = await launchParams.formData;
-        const title = formData.get('name') as string;
-        const text = formData.get('description') as string;
-        const link = formData.get('link') as string;
-        let imageUrl;
-        const files = launchParams.files || [];
-        for (const handle of files) {
-          const file = await handle.getFile();
-          imageUrl = URL.createObjectURL(file);
-        }
-
-        localStorage.setItem('share', JSON.stringify({
-          title: title,
-          text: text,
-          link: link,
-          imageUrl: imageUrl
-        }));
-      });
-    } else {
-      throw new Error('launchQueue no available')
-    }
   }
 
   selected(thread: ThreadEntity) {
