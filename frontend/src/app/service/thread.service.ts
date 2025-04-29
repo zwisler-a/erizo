@@ -35,4 +35,8 @@ export class ThreadService {
       tap(() => this.reloadThreads$.next())
     );
   }
+
+  getThread(threadId: number) {
+    return this.threadApi.getThread({threadId})
+  }
 }

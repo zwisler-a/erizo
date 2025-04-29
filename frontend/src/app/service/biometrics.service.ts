@@ -1,63 +1,41 @@
 import {Injectable} from '@angular/core';
+import {BiometryType, NativeBiometric} from '@capgo/capacitor-native-biometric';
 
 @Injectable({providedIn: 'root'})
 export class BiometricsService {
 
   async register(): Promise<void> {
-    const publicKey: PublicKeyCredentialCreationOptions = {
-      challenge: new TextEncoder().encode('register-challenge'),
-      rp: { name: 'Erizo' },
-      user: {
-        id: new TextEncoder().encode('user-id'),
-        name: 'erizo',
-        displayName: 'Erizo user',
-      },
-      pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-      authenticatorSelection: { userVerification: 'preferred' },
-      timeout: 60000,
-      attestation: 'none',
-    };
-
-    const cred = await navigator.credentials.create({ publicKey }) as PublicKeyCredential;
-    const rawId = btoa(String.fromCharCode(...new Uint8Array(cred.rawId)));
-
-    localStorage.setItem('credential', JSON.stringify({
-      id: cred.id,
-      rawId,
-      type: cred.type,
-    }));
-
-    alert('Registered');
+    const result = await NativeBiometric.isAvailable();
+    if (!result.isAvailable) return;
+    await NativeBiometric.setCredentials({
+      username: "doesnt",
+      password: "matter",
+      server: "erizo.zwisler.dev",
+    });
+    localStorage.setItem("bio-auth", "true");
   }
 
   async login(): Promise<boolean> {
-    const stored = localStorage.getItem('credential');
-    if (!stored) {
-      return false;
-    }
+    const result = await NativeBiometric.isAvailable();
 
-    const cred = JSON.parse(stored);
-    const rawIdBytes = Uint8Array.from(atob(cred.rawId), c => c.charCodeAt(0));
+    if (!result.isAvailable) return false;
 
-    const publicKey: PublicKeyCredentialRequestOptions = {
-      challenge: new TextEncoder().encode('login-challenge'),
-      allowCredentials: [{
-        id: rawIdBytes,
-        type: 'public-key',
-      }],
-      timeout: 60000,
-      userVerification: 'preferred',
-    };
+    const verified = await NativeBiometric.verifyIdentity({
+    })
+      .then(() => true)
+      .catch(() => false);
 
-    const assertion = await navigator.credentials.get({ publicKey });
-    return assertion !== null;
+    return verified;
   }
 
   hasCredentials() {
-    return !!localStorage.getItem('credential');
+    return localStorage.getItem('bio-auth') == 'true';
   }
 
-  clear() {
-    localStorage.removeItem('credential');
+  async clear() {
+    await NativeBiometric.deleteCredentials({
+      server: "erizo.zwisler.dev",
+    }).then();
+    localStorage.setItem("bio-auth", "false");
   }
 }

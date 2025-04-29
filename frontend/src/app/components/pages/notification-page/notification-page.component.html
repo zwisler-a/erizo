@@ -1,5 +1,5 @@
 <mat-list role="list" *ngIf="(notifications$ | async)?.length; else noMessages">
-  @for (notification of notifications$ | async; track notification.messageId) {
+  @for (notification of notifications$ | async; track notification.id) {
     <app-notification [notification]="notification"></app-notification>
   }
 </mat-list>

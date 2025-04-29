@@ -3,6 +3,7 @@ import {ThreadListComponent} from '../../shared/thread-list/thread-list.componen
 import {ThreadEntity} from '../../../api/models/thread-entity';
 import {Router} from '@angular/router';
 import {URLS} from '../../../app.routes';
+import {UploadPostJourneyService} from '../upload-page/upload-post-journey.service';
 
 @Component({
   selector: 'app-share-page',
@@ -14,13 +15,13 @@ import {URLS} from '../../../app.routes';
 })
 export class SharePageComponent implements OnInit {
 
-  constructor(private router: Router) {
+  constructor(private postJourney: UploadPostJourneyService) {
   }
 
   ngOnInit() {
   }
 
   selected(thread: ThreadEntity) {
-    this.router.navigateByUrl(URLS.UPLOAD_IMAGE_FN(thread.id.toString()));
+    this.postJourney.selectThread(thread.id);
   }
 }

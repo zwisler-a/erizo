@@ -5,6 +5,10 @@ import {LoadingInterceptor} from './http-interceptors/loading.interceptor';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {AsyncPipe, NgIf} from '@angular/common';
 import {URLS} from './app.routes';
+import {SendIntent} from 'send-intent';
+import {Filesystem} from '@capacitor/filesystem';
+import {UploadPostJourneyService} from './components/pages/upload-page/upload-post-journey.service';
+import {App} from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
@@ -36,17 +40,9 @@ export class AppComponent {
   loading$;
 
   constructor(loadingInterceptor: LoadingInterceptor,
-              private router: Router
+              postJourney: UploadPostJourneyService
   ) {
     this.loading$ = loadingInterceptor.loading$;
-    navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data?.type === 'share-target') {
-        localStorage.setItem('share', JSON.stringify({
-          link: event.data.link,
-          imageUrl: event.data.file
-        }));
-        this.router.navigateByUrl(URLS.SHARE);
-      }
-    });
+    postJourney.checkShare();
   }
 }

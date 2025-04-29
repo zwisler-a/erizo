@@ -40,12 +40,6 @@
   opacity: 0.8;
 }
 
-.post-button {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-}
-
 .names {
   display: flex;
   flex-wrap: wrap;

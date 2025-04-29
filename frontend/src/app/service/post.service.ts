@@ -22,6 +22,7 @@ import {IdsPage} from '../api/models/ids-page';
 import {filterAsync, IndexedDBStore} from '../util/local-storage-record';
 import {NotificationPayload, NotificationService, NotificationType} from './notification.service';
 import {MessagePayload} from '@angular/fire/messaging';
+import {PushNotificationSchema} from '@capacitor/push-notifications';
 
 export type CompletePost = PostDto & DecryptedPost & { alias: string } & { url: any };
 
@@ -110,7 +111,7 @@ export class PostService {
   }
 
 
-  private handleNotification(notification: MessagePayload) {
+  private handleNotification(notification: PushNotificationSchema) {
     if (!notification.data) return;
     if (notification.data["type"] == NotificationType.NEW_POST) {
       const data = notification.data as any as NotificationPayload;

@@ -19,6 +19,8 @@ import {
 } from './components/pages/connections-page/create-thread-view/create-thread-view.component';
 import {ThreadDataResolver} from './components/pages/thread-page/thread.resolver';
 import {SharePageComponent} from './components/pages/share-page/share-page.component';
+import {TakePhotoComponent} from './components/pages/upload-page/take-photo/take-photo.component';
+import {EditPostComponent} from './components/pages/upload-page/edit-post/edit-post.component';
 
 export const URLS = {
   HOME: 'home',
@@ -28,14 +30,14 @@ export const URLS = {
   IDENTITY: 'identity',
   LANDING: 'landing',
   CREATE_THREAD: 'thread/create',
+  TAKE_PHOTO: 'photo/take',
+  SEND_POST: 'photo/send',
   ADD_CONNECTION: 'add-contact/:fingerprint',
   ADD_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ADD_CONNECTION.replace(':fingerprint', fingerprint),
   ACCEPT_CONNECTION: 'accept-contact/:fingerprint',
   ACCEPT_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ACCEPT_CONNECTION.replace(':fingerprint', fingerprint),
   THREAD: 'thread/:id',
   THREAD_FN: (id: number | string) => '/' + URLS.THREAD.replace(':id', id.toString()),
-  UPLOAD_IMAGE: 'upload/:threadId',
-  UPLOAD_IMAGE_FN: (threadId: string) => '/' + URLS.UPLOAD_IMAGE.replace(':threadId', threadId),
   VIEW_POST: 'post/:postId',
   VIEW_POST_FN: (postId: number | string) => '/' + URLS.VIEW_POST.replace(':postId', postId.toString()),
 
@@ -56,7 +58,8 @@ export const routes: Routes = [
       {path: URLS.ACCEPT_CONNECTION, component: AcceptConnectionViewComponent},
       {path: URLS.THREAD, component: ThreadPageComponent, resolve: {thread: ThreadDataResolver}},
       {path: URLS.VIEW_POST, component: PostViewComponent},
-      {path: URLS.UPLOAD_IMAGE, component: UploadImageViewComponent},
+      {path: URLS.TAKE_PHOTO, component: TakePhotoComponent},
+      {path: URLS.SEND_POST, component: EditPostComponent},
       {path: '**', redirectTo: URLS.HOME},
     ],
   },

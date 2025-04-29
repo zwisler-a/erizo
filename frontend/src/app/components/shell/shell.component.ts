@@ -1,4 +1,4 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, NgZone} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
@@ -11,6 +11,7 @@ import {URLS} from '../../app.routes';
 import {BiometricsService} from '../../service/biometrics.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ERROR_SNACKBAR} from '../../util/snackbar-consts';
+import {App} from '@capacitor/app';
 
 @Component({
   selector: 'app-shell',
@@ -36,11 +37,15 @@ export class ShellComponent {
   constructor(
     private bioService: BiometricsService,
     private notificationService: NotificationService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private zone: NgZone
   ) {
     this.notifications$ = notificationService.getNotifications();
     this.locked = this.bioService.hasCredentials();
     this.handleNotifications();
+    App.addListener('resume', () => {
+      this.onWindowBlur()
+    });
   }
 
 
@@ -52,17 +57,18 @@ export class ShellComponent {
     }
   }
 
-  @HostListener('window:blur', [])
   onWindowBlur() {
     if (this.bioService.hasCredentials()) {
-      this.locked = true;
+      this.zone.run(() => {
+        this.locked = true;
+      });
     }
   }
 
   async authenticate() {
     const auth = await this.bioService.login()
     if (auth) {
-      this.locked = false;
+      setTimeout(() => this.locked = false, 100);
     } else {
       this.snackBar.open("Could not authenticate", "Ok", ERROR_SNACKBAR);
     }

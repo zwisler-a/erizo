@@ -1,0 +1,75 @@
+<div class="top-bar">
+
+  <button mat-icon-button (click)="retakePhoto()">
+    <mat-icon>repeat</mat-icon>
+  </button>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="uploadJourney.isNsfw = !uploadJourney.isNsfw">
+    @if (uploadJourney.isNsfw) {
+      <mat-icon>18_up_rating</mat-icon>
+    } @else {
+      <mat-icon>no_adult_content</mat-icon>
+    }
+  </button>
+
+  <button mat-icon-button (click)="nextCounter()">
+    <mat-icon>
+      @switch (uploadJourney.deleteAfter) {
+        @case (0) {
+          timer_off
+        }
+        @case (1) {
+          looks_one
+        }
+        @case (2) {
+          looks_two
+        }
+        @case (3) {
+          looks_3
+        }
+      }
+    </mat-icon>
+  </button>
+</div>
+
+<img #image class="preview-image" *ngIf="uploadJourney.previewPhoto" [src]="uploadJourney.previewPhoto"/>
+<div class="manipulations">
+  <button (click)="flipX()" mat-icon-button>
+    <mat-icon>swap_horiz</mat-icon>
+  </button>
+  <button (click)="flipY()" mat-icon-button>
+    <mat-icon>swap_vert</mat-icon>
+  </button>
+  <button (click)="rotateLeft()" mat-icon-button>
+    <mat-icon>rotate_90_degrees_ccw</mat-icon>
+  </button>
+  <button (click)="rotateRight()" mat-icon-button>
+    <mat-icon>rotate_90_degrees_cw</mat-icon>
+  </button>
+</div>
+
+<div class="hints">
+
+  <div *ngIf="uploadJourney.isNsfw" class="info-text">
+    <mat-icon>info</mat-icon>
+    <span>The post will be hidden behind the "not safe for work" blur</span>
+  </div>
+  <div *ngIf="uploadJourney.deleteAfter > 0" class="info-text">
+    <mat-icon>info</mat-icon>
+    <span>The post will be deleted after {{ uploadJourney.deleteAfter }} days</span>
+  </div>
+
+</div>
+
+<div class="message-input">
+  <mat-form-field appearance="outline">
+    <mat-label>Message</mat-label>
+    <input maxlength="100" matInput [(ngModel)]="uploadJourney.message">
+  </mat-form-field>
+  <button *ngIf="!loading" mat-icon-button [disabled]="loading" (click)="complete()">
+    <mat-icon>send</mat-icon>
+  </button>
+  <div *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+</div>

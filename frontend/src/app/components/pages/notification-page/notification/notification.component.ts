@@ -7,6 +7,7 @@ import { NotificationService } from '../../../../service/notification.service';
 import { MessagePayload } from '@angular/fire/messaging';
 import { URLS } from '../../../../app.routes';
 import { AliasPipePipe } from '../../../shared/alias-pipe/alias.pipe';
+import {PushNotificationSchema} from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-notification',
@@ -30,13 +31,13 @@ import { AliasPipePipe } from '../../../shared/alias-pipe/alias.pipe';
 })
 export class NotificationComponent {
   @Input()
-  notification!: MessagePayload;
+  notification!: PushNotificationSchema;
 
   constructor(private notificationService: NotificationService) {
   }
 
-  notificationClicked(notification: MessagePayload) {
-    this.notificationService.removeNotification(notification.messageId);
+  notificationClicked(notification: PushNotificationSchema) {
+    this.notificationService.removeNotification(notification.id);
   }
 
   protected readonly URLS = URLS;

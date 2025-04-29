@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1074541584385",
+    "project_id": "erizo-3e72a",
+    "storage_bucket": "erizo-3e72a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074541584385:android:0f12d97066f2aa04332000",
+        "android_client_info": {
+          "package_name": "de.zwisler.erizo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBusb-13OVs67I-fIqiK7TmaqziTrwQalE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import {KeyboardResize} from '@capacitor/keyboard';
 
 const config: CapacitorConfig = {
   appId: 'de.zwisler.erizo',
@@ -10,8 +11,15 @@ const config: CapacitorConfig = {
       imageName: "Splashscreen",
       contentMode: "scaleAspectFit",
       preventScreenshots: false
-    }
-  }
+    },
+    Keyboard: {
+      resize: KeyboardResize.Body,
+      resizeOnFullScreen: true,
+    },
+  },
+  /*server: {
+    url: "https://192.168.0.53:4200"
+  }*/
 };
 
 export default config;

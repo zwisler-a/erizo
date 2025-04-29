@@ -62,6 +62,7 @@ export class NotificationService {
     try {
       const message: Message = {
         token,
+        notification: this.getNotificationFromType(data.type),
         data: this.removeEmpty(data),
       };
       return await admin.messaging().send(message);
@@ -73,5 +74,51 @@ export class NotificationService {
         this.logger.error(error);
       }
     }
+  }
+
+  private getNotificationFromType(type: NotificationType): Partial<Notification> {
+    if (type === NotificationType.NEW_POST) {
+      return {
+        title: ['You got mail', 'There is something for you', 'Come, have a look', 'I got something'][
+          Math.floor(Math.random() * 4)
+        ],
+        body: [
+          'There is a new post waiting for you',
+          'There is something interesting for you',
+          'I think you might want to have a look at whats new',
+          'Something exciting is waiting for you',
+        ][Math.floor(Math.random() * 4)],
+      };
+    }
+    if (type === NotificationType.LIKE_POST) {
+      return {
+        title: ['Someone wants you', 'Someone thinks about you', 'Someone likes your post'][
+          Math.floor(Math.random() * 3)
+        ],
+        body: [
+          'I think there was someone very excited to see what you have done',
+          'Someone liked what you posted. Really liked it!',
+          'Your post got liked ;)',
+        ][Math.floor(Math.random() * 3)],
+      };
+    }
+
+    if (type === NotificationType.CONNECTION_REQUEST) {
+      return {
+        title: ['Someone wants to connect with you'][Math.floor(Math.random() * 1)],
+        body: ['Someone send you a connection request'][Math.floor(Math.random() * 1)],
+      };
+    }
+    if (type === NotificationType.CONNECTION_ADDED) {
+      return {
+        title: ['Your request got accepted'][Math.floor(Math.random() * 1)],
+        body: ['Feel free to start sending them some treats'][Math.floor(Math.random() * 1)],
+      };
+    }
+
+    return {
+      title: 'Something happened!',
+      body: 'Come and take a look, whats new in Erizo',
+    };
   }
 }

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">erizo</string>
-    <string name="title_activity_main">erizo</string>
+    <string name="app_name">Erizo</string>
+    <string name="title_activity_main">Erizo</string>
     <string name="package_name">de.zwisler.erizo</string>
     <string name="custom_url_scheme">de.zwisler.erizo</string>
 </resources>

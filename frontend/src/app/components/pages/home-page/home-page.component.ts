@@ -24,8 +24,8 @@ export class HomePageComponent {
     this.postService.homeFeed.next();
   }
 
-  @HostListener('window:scroll', [])
-  async onScroll() {
+  @HostListener('window:scroll', ['$event'])
+  async onScroll(event: any) {
     const element = this.el.nativeElement;
     const scrollPosition = window.innerHeight + window.scrollY;
     const threshold = element.offsetTop + element.clientHeight - 100;

@@ -1,10 +1,10 @@
 <ng-container *ngIf="feed.feed$ | async as posts;">
-    <ng-container *ngIf="posts.length || (feed.loading$|async); else noMessages">
-      @for (post of posts; track post.id) {
-        <app-post [post]="post"></app-post>
-      }
-    </ng-container>
+  <ng-container *ngIf="posts.length || (feed.loading$|async); else noMessages">
+    @for (post of posts; track post.id) {
+      <app-post [post]="post"></app-post>
+    }
   </ng-container>
+</ng-container>
 <div *ngIf="!(feed.loading$|async); else loading"></div>
 
 <ng-template #noMessages>

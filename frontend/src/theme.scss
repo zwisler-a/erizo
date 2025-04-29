@@ -43,10 +43,16 @@ html {
   animation: fadeIn 0.5s ease-in 0.1s forwards;
 }
 
+.fab-button {
+  position: fixed !important;
+  bottom: calc(32px + env(safe-area-inset-bottom));
+  right: calc(32px + env(safe-area-inset-right));
+}
+
 .snackbar-error.mat-mdc-snack-bar-container .mat-mdc-snackbar-surface {
-    background-color: #bb2c21;
-    color: white;
-    font-weight: 500;
+  background-color: #bb2c21;
+  color: white;
+  font-weight: 500;
 }
 
 @keyframes fadeIn {

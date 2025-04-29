@@ -15,7 +15,6 @@
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon>favorite</mat-icon>
       <div matListItemTitle>{{ notification.data['fingerprint'] | alias }} loves your post</div>
-      <div matListItemLine>There is a new post waiting for you</div>
       <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 

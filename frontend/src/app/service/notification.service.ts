@@ -1,12 +1,11 @@
-import {inject, Injectable} from '@angular/core';
-import {BehaviorSubject, concat, fromEvent, Observable} from 'rxjs';
-import {getToken, Messaging, onMessage} from '@angular/fire/messaging';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {ApiUserService} from '../api/services/api-user.service';
-import {MessagePayload} from '@angular/fire/messaging';
-import {NotificationPersistenceService} from './notification-persistance.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {map} from 'rxjs/operators';
 import {ERROR_SNACKBAR} from '../util/snackbar-consts';
+import {ActionPerformed, PushNotifications, PushNotificationSchema, Token} from '@capacitor/push-notifications';
+import {Router} from '@angular/router';
+import {URLS} from '../app.routes';
 
 export enum NotificationType {
   NEW_POST = 'NEW_POST',
@@ -26,48 +25,23 @@ export interface NotificationPayload {
 
 @Injectable({providedIn: 'root'})
 export class NotificationService {
-  private notifications$ = new BehaviorSubject<MessagePayload[]>([]);
-  private fcmMessages$?: Observable<MessagePayload>;
-  private msg?: Messaging;
+  private notifications$ = new BehaviorSubject<PushNotificationSchema[]>([]);
 
   constructor(
     private userApi: ApiUserService,
-    private persistenceService: NotificationPersistenceService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
-    this.tryInitMessaging();
-    this.refreshNotifications();
-    fromEvent(window, 'focus').subscribe(() => {
-      this.refreshNotifications();
-    });
   }
 
-  private tryInitMessaging() {
-    try {
-      this.msg = inject(Messaging);
-      if (!this.msg) return;
-      this.fcmMessages$ = new Observable<MessagePayload>((sub) => onMessage(this.msg!, (msg) => sub.next(msg)));
-      this.fcmMessages$.subscribe(async (msg: any) => {
-        await this.addNotification(msg);
-        await this.refreshNotifications();
-      });
-    } catch (e) {
-      this.snackBar.open("Something went wrong! Maybe enable Notifications und the User-Page?", 'Ok', ERROR_SNACKBAR);
-    }
-  }
 
-  async addNotification(payload: MessagePayload) {
-    try {
-      await this.persistenceService.saveNotification(payload);
-    } catch (e) {
-    }
-    this.refreshNotifications();
+  async addNotification(notification: PushNotificationSchema) {
+    this.notifications$.next([...this.notifications$.value, notification])
   }
 
 
   async removeNotification(id: string) {
-    await this.persistenceService.deleteNotification(id);
-    this.refreshNotifications();
+    this.notifications$.next(this.notifications$.value.filter(n => n.id !== id));
   }
 
   getNotifications() {
@@ -75,28 +49,43 @@ export class NotificationService {
   }
 
   async enableNotifications() {
-    if (!this.msg) return;
-    const serviceWorkerRegistration = await navigator.serviceWorker
-      .register('/combined-sw.js', {
-        type: 'module',
+    PushNotifications.requestPermissions().then(result => {
+      if (result.receive === 'granted') {
+        PushNotifications.register();
+      }
+    });
+
+    PushNotifications.addListener('registration', (token: Token) => {
+      this.userApi.registerDevice({body: {fcmToken: token.value}}).subscribe(() => {
       });
+    });
 
-    const notificationPermissions = await Notification.requestPermission();
-    if (notificationPermissions === 'denied') {
-      throw new Error("Notification permissions are denied")
-    }
-    const fcmToken = await getToken(this.msg, {serviceWorkerRegistration});
-    this.userApi.registerDevice({body: {fcmToken}}).subscribe();
+    PushNotifications.addListener('registrationError', (error: any) => {
+      this.snackBar.open('Failed to register!' + error, 'Ok', ERROR_SNACKBAR);
+    });
+
+    PushNotifications.addListener(
+      'pushNotificationReceived',
+      (notification: PushNotificationSchema) => {
+        this.addNotification(notification);
+      },
+    );
+
+    PushNotifications.addListener(
+      'pushNotificationActionPerformed',
+      (notification: ActionPerformed) => {
+        if (notification.notification.data['type'] === NotificationType.NEW_POST) {
+          this.router.navigateByUrl(URLS.VIEW_POST_FN(notification.notification.data['post_id']));
+        }
+        if (notification.notification.data['type'] === NotificationType.LIKE_POST) {
+          this.router.navigateByUrl(URLS.VIEW_POST_FN(notification.notification.data['post_id']));
+        }
+        if (notification.notification.data['type'] === NotificationType) {
+          this.router.navigateByUrl(URLS.ACCEPT_CONNECTION_FN(notification.notification.data['fingerprint']));
+        }
+        this.addNotification(notification.notification);
+      },
+    );
     return true;
-  }
-
-  private async refreshNotifications() {
-    try {
-      const notifications = await this.persistenceService.getAllNotifications();
-      notifications.reverse();
-      this.notifications$.next(notifications);
-    } catch (error) {
-      console.error('Error refreshing notification-page', error);
-    }
   }
 }

@@ -29,9 +29,3 @@ h3 {
   gap: 8px;
   align-items: center;
 }
-
-.fab {
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-}

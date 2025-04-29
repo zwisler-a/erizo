@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { MessagePayload } from '@angular/fire/messaging';
 import { NotificationComponent } from './notification/notification.component';
+import {PushNotificationSchema} from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-notification-page',
@@ -19,7 +20,7 @@ import { NotificationComponent } from './notification/notification.component';
 })
 export class NotificationPageComponent {
 
-  notifications$: Observable<MessagePayload[]>;
+  notifications$: Observable<PushNotificationSchema[]>;
 
   constructor(private notificationService: NotificationService) {
     this.notifications$ = notificationService.getNotifications();

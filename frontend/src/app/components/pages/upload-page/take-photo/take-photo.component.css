@@ -1,0 +1,39 @@
+:host {
+  top:0;
+  left:0;
+  position: fixed;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.cameraPreview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.controls .switch {
+  position: fixed;
+  bottom: 40px;
+  right: 30px;
+}
+
+.controls .trigger {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  padding: 0;
+}
+.controls .trigger .mat-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+}

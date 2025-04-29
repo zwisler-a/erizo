@@ -12,6 +12,7 @@ import {URLS} from '../../../app.routes';
 import {BlurDirective} from '../../shared/blur-directive/blur.directive';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {UploadPostJourneyService} from '../upload-page/upload-post-journey.service';
 
 @Component({
   selector: 'app-thread-page',
@@ -42,6 +43,7 @@ export class ThreadPageComponent {
     private route: ActivatedRoute,
     private router: Router,
     private postService: PostService,
+    private uploadJourney: UploadPostJourneyService,
     private el: ElementRef
   ) {
     this.thread = this.route.snapshot.data['thread'];
@@ -52,7 +54,7 @@ export class ThreadPageComponent {
 
 
   sendImage(id: number) {
-    this.router.navigateByUrl(URLS.UPLOAD_IMAGE_FN(id.toString()));
+    this.uploadJourney.start(id);
   }
 
 
