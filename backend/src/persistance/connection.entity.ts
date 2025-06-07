@@ -26,7 +26,7 @@ export class ConnectionEntity {
   @ApiProperty({ required: false })
   @ManyToOne(() => ThreadEntity, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn()
-  chat: ThreadEntity;
+  thread: ThreadEntity;
 
   @ApiProperty()
   @Column({ default: 'PENDING', enum: ['PENDING', 'CONFIRMED', 'REJECTED'] })

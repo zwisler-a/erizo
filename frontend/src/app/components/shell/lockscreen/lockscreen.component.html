@@ -1,0 +1,6 @@
+<div *ngIf="locked" class="locked">
+  <h1>Hey 🔥</h1>
+  <button *ngIf="hasBiometrics" (click)="authenticate()" mat-flat-button>Use Biometrics</button>
+  <br>
+  <app-pin-input *ngIf="hasPin" (pinEntered)="checkPin($event)"></app-pin-input>
+</div>

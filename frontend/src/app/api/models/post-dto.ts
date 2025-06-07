@@ -5,7 +5,6 @@
 import { DecryptionKeyEntity } from '../models/decryption-key-entity';
 import { ThreadEntity } from '../models/thread-entity';
 export interface PostDto {
-  chat: ThreadEntity;
   created_at: number;
   data: string;
   days_to_live: number;
@@ -15,4 +14,5 @@ export interface PostDto {
   message: string;
   nsfw: boolean;
   sender_fingerprint: string;
+  thread: ThreadEntity;
 }

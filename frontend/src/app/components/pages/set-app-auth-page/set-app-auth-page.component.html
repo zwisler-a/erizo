@@ -1,0 +1,16 @@
+<ng-container *ngIf="!pinInput">
+  <h3>Biometric authentication</h3>
+
+  @if (!hasBiometrics) {
+    <button mat-stroked-button (click)="enableBiometrics()">Enable Biometric Authentication</button>
+  } @else {
+    <button mat-stroked-button (click)="disableBiometrics()">Disable Biometric Authentication</button>
+  }
+
+  <h3>Pin Authentication</h3>
+  <button mat-stroked-button (click)="pinInput = true">Set pin</button>
+  <button mat-stroked-button (click)="removePin()" *ngIf="hasPin()">Remove pin</button>
+</ng-container>
+
+
+<app-pin-input *ngIf="pinInput" (pinEntered)="setPin($event)"></app-pin-input>

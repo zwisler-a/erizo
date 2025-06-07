@@ -28,7 +28,7 @@ export class HomePageComponent {
   async onScroll(event: any) {
     const element = this.el.nativeElement;
     const scrollPosition = window.innerHeight + window.scrollY;
-    const threshold = element.offsetTop + element.clientHeight - 100;
+    const threshold = element.offsetTop + element.clientHeight - 500;
 
     if (scrollPosition >= threshold) {
       if (!this.postService.homeFeed.loading$.value && !this.postService.homeFeed.endOfFeed$.value) {

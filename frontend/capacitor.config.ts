@@ -17,9 +17,9 @@ const config: CapacitorConfig = {
       resizeOnFullScreen: true,
     },
   },
-  /*server: {
-    url: "https://192.168.0.53:4200"
-  }*/
+  server: {
+    url: "https://192.168.178.103:4200"
+  }
 };
 
 export default config;

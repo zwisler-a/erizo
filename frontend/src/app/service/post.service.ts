@@ -161,7 +161,7 @@ export class PostService {
     return this.postsApi.like({postId: id});
   }
 
-  async publishPost(file: File, chatId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number, nsfw?: boolean) {
+  async publishPost(file: File, threadId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number, nsfw?: boolean) {
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
@@ -173,7 +173,7 @@ export class PostService {
       body: {
         ...message,
         days_to_live: daysToLive,
-        chat_id: chatId,
+        thread_id: threadId,
         nsfw
       }
     }));

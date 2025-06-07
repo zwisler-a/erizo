@@ -31,21 +31,17 @@
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  margin: 32px 0;
 }
 
-.icon {
-  transform: scale(4);
-  padding: 0 32px;
-  opacity: 0.8;
-}
 
-.names {
+.name {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   gap: 8px;
   flex: 1 1 auto;
+  font-weight: bold;
+  font-size: 1.5rem;
 }
 
 .header {
@@ -53,8 +49,8 @@
   flex-direction: row;
   align-items: center;
   gap: 16px;
-  padding-left: 16px;
-  margin: 0;
+  padding: 0 16px;
+  margin: 8px 0;
 }
 
 .spacer {

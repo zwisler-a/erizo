@@ -28,7 +28,7 @@
     @for (connection of connections; track connection) {
       <mat-list-item
         *ngIf="connection.state != 'PENDING'"
-        (click)="onClick.emit(connection.chat)">
+        (click)="onClick.emit(connection.thread)">
         <div class="list-content">
           <div>
             <mat-icon>account_circle</mat-icon>

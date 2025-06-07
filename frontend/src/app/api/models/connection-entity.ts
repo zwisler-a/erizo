@@ -6,9 +6,9 @@ import { ThreadEntity } from '../models/thread-entity';
 import { UserEntity } from '../models/user-entity';
 export interface ConnectionEntity {
   alias: string;
-  chat?: ThreadEntity;
   connectedWith: UserEntity;
   id: number;
   owner: UserEntity;
   state: string;
+  thread?: ThreadEntity;
 }

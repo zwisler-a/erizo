@@ -4,7 +4,6 @@
 
 import { RecipientList } from '../models/recipient-list';
 export interface CreatePostDto {
-  chat_id: number;
   data: string;
   days_to_live?: number;
   iv: string;
@@ -12,4 +11,5 @@ export interface CreatePostDto {
   nsfw?: boolean;
   recipients: Array<RecipientList>;
   sender_fingerprint: string;
+  thread_id: number;
 }

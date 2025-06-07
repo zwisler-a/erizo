@@ -101,7 +101,7 @@ export class PostController {
     try {
       const body = req.body as CreatePostDto;
       const user = req.user as UserEntity;
-      this.logger.debug(`Creating post from user ${user.fingerprint} ${body.chat_id}`);
+      this.logger.debug(`Creating post from user ${user.fingerprint} ${body.thread_id}`);
       const entity = await this.postService.create(body, user);
       return {post_id: entity.id};
     } catch (error) {

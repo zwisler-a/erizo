@@ -12,6 +12,7 @@ import { ApiAuthenticationService } from './services/api-authentication.service'
 import { ApiConnectionService } from './services/api-connection.service';
 import { ApiThreadService } from './services/api-thread.service';
 import { ApiLoggerService } from './services/api-logger.service';
+import { ApiShareService } from './services/api-share.service';
 
 /**
  * Module that provides all services and configuration.
@@ -27,6 +28,7 @@ import { ApiLoggerService } from './services/api-logger.service';
     ApiConnectionService,
     ApiThreadService,
     ApiLoggerService,
+    ApiShareService,
     ApiConfiguration
   ],
 })

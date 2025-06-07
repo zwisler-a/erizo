@@ -6,16 +6,12 @@ import { ConnectionEntity } from './connection.entity';
 import { ThreadEntity } from './thread.entity';
 import { DecryptionKeyEntity } from './decryption-key.entity';
 import { DeviceEntity } from './device.entity';
+import { ORMConfig } from '../ORMConfig';
+
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db/db.sql',
-      synchronize: true,
-      logging: false,
-      entities: [PostEntity, UserEntity, ConnectionEntity, ThreadEntity, DecryptionKeyEntity, DeviceEntity],
-    }),
+    TypeOrmModule.forRoot(ORMConfig),
     TypeOrmModule.forFeature([
       PostEntity,
       UserEntity,

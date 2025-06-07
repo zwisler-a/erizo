@@ -13,7 +13,7 @@ export class CreatePostDto {
   @ApiProperty()
   message: string;
   @ApiProperty()
-  chat_id: number;
+  thread_id: number;
   @ApiProperty()
   iv: string;
   @ApiProperty({ isArray: true, type: RecipientList })

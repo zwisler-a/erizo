@@ -55,6 +55,10 @@ html {
   font-weight: 500;
 }
 
+.mat-mdc-snack-bar-container {
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
 @keyframes fadeIn {
   to {
     opacity: 1;

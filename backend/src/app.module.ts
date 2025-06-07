@@ -22,6 +22,7 @@ import { ThreadController } from './controller/thread.controller';
 import { ThreadService } from './service/thread.service';
 import { LoggerController } from './controller/logger.controller';
 import {ShareController} from "./controller/share.controller";
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import {ShareController} from "./controller/share.controller";
       secret: jwtSecret,
       signOptions: { expiresIn: '1h' },
     }),
+    ScheduleModule.forRoot()
   ],
   controllers: [
     AppController,

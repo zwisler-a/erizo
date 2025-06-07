@@ -4,7 +4,7 @@
   font-style: normal;
   font-size: 32px;
   position: fixed;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top));
   left: 50%;
   transform: translate(-50%);
 }
@@ -14,7 +14,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: calc(100vh - env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   gap: 16px;
 }
 .explanation {

@@ -12,7 +12,7 @@ import { UserEntity } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { PostEntity } from './post.entity';
 
-@Entity({ name: 'chat_entity' })
+@Entity()
 export class ThreadEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -32,6 +32,6 @@ export class ThreadEntity {
   @JoinTable()
   participants: UserEntity[];
 
-  @OneToMany(() => PostEntity, (message) => message.chat, { cascade: false })
-  messages: PostEntity[];
+  @OneToMany(() => PostEntity, (post) => post.thread, { cascade: false })
+  posts: PostEntity[];
 }

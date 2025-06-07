@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { DecryptionKeyEntity } from './decryption-key.entity';
 import { ThreadEntity } from './thread.entity';
 
-@Entity({ name: 'message_entity' })
+@Entity()
 export class PostEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -18,9 +18,9 @@ export class PostEntity {
   decryptionKeys: DecryptionKeyEntity[];
 
   @ApiProperty()
-  @ManyToOne(() => ThreadEntity, (chat) => chat.messages, {onDelete: 'NO ACTION' })
+  @ManyToOne(() => ThreadEntity, (thread) => thread.posts, {onDelete: 'NO ACTION' })
   @JoinColumn()
-  chat: ThreadEntity;
+  thread: ThreadEntity;
 
   @ApiProperty()
   @Column()

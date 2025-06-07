@@ -1,17 +1,18 @@
-import {Component} from '@angular/core';
-import {KeyService} from '../../../service/key.service';
-import {MatButtonModule} from '@angular/material/button';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {PersistenceService} from '../../../service/persistence.service';
-import {Router} from '@angular/router';
-import {MatIconModule} from '@angular/material/icon';
-import {NotificationService} from '../../../service/notification.service';
-import {ConfirmationService} from '../../../service/confirmation.service';
-import {UserService} from '../../../service/user.service';
-import {BiometricsService} from '../../../service/biometrics.service';
-import {PostService} from '../../../service/post.service';
-import {ERROR_SNACKBAR} from '../../../util/snackbar-consts';
+import { Component } from '@angular/core';
+import { KeyService } from '../../../service/key.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { PersistenceService } from '../../../service/persistence.service';
+import { Router, RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { NotificationService } from '../../../service/notification.service';
+import { ConfirmationService } from '../../../service/confirmation.service';
+import { UserService } from '../../../service/user.service';
+import { BiometricsService } from '../../../service/biometrics.service';
+import { PostService } from '../../../service/post.service';
+import { ERROR_SNACKBAR } from '../../../util/snackbar-consts';
+import { URLS } from '../../../app.routes';
 
 @Component({
   selector: 'app-user-page',
@@ -19,6 +20,7 @@ import {ERROR_SNACKBAR} from '../../../util/snackbar-consts';
     MatButtonModule,
     MatExpansionModule,
     MatIconModule,
+    RouterLink,
 
   ],
   templateUrl: './user-page.component.html',
@@ -27,7 +29,6 @@ import {ERROR_SNACKBAR} from '../../../util/snackbar-consts';
 export class UserPageComponent {
 
   ownFingerprint: string | null = '';
-  protected hasBiometrics;
 
   constructor(
     private keyService: KeyService,
@@ -37,13 +38,11 @@ export class UserPageComponent {
     private notificationService: NotificationService,
     private confirmation: ConfirmationService,
     private userService: UserService,
-    private bioService: BiometricsService,
     private postService: PostService,
   ) {
     this.keyService.getOwnFingerprint().then(fp => {
       this.ownFingerprint = fp;
     });
-    this.hasBiometrics = this.bioService.hasCredentials();
   }
 
   async downloadIdentity() {
@@ -53,7 +52,7 @@ export class UserPageComponent {
       publicKey: await this.keyService.keyToBase64(pair.publicKey),
       privateKey: await this.keyService.keyToBase64(pair.privateKey),
     });
-    const blob = new Blob([identityData], {type: 'application/json'});
+    const blob = new Blob([identityData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -69,15 +68,6 @@ export class UserPageComponent {
     this.userService.shareIdentity();
   }
 
-  async enableBiometrics() {
-    await this.bioService.register();
-    this.hasBiometrics = this.bioService.hasCredentials();
-  }
-
-  async disableBiometrics() {
-    await this.bioService.clear();
-    this.hasBiometrics = this.bioService.hasCredentials();
-  }
 
   async deleteIdentity() {
     this.confirmation.confirm('Are your sure? You will lose everything, if you did not download your identity!')
@@ -109,7 +99,7 @@ export class UserPageComponent {
     try {
       const success = await this.notificationService.enableNotifications();
       if (success) {
-        this.snackBar.open('Notifications are enabled ', '', {duration: 2000});
+        this.snackBar.open('Notifications are enabled ', '', { duration: 2000 });
       } else {
         this.snackBar.open('Could not enable notifications', '', ERROR_SNACKBAR);
       }
@@ -121,6 +111,8 @@ export class UserPageComponent {
 
   async clearImageCache() {
     await this.postService.clearImageCache();
-    this.snackBar.open('Post cache cleared!', '', {duration: 2000});
+    this.snackBar.open('Post cache cleared!', '', { duration: 2000 });
   }
+
+  protected readonly URLS = URLS;
 }
