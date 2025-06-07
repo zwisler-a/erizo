@@ -7,6 +7,7 @@ import { ThreadEntity } from './thread.entity';
 import { DecryptionKeyEntity } from './decryption-key.entity';
 import { DeviceEntity } from './device.entity';
 import { ORMConfig } from '../ORMConfig';
+import { LikeEntity } from './like.entity';
 
 
 @Module({
@@ -19,6 +20,7 @@ import { ORMConfig } from '../ORMConfig';
       ThreadEntity,
       DecryptionKeyEntity,
       DeviceEntity,
+      LikeEntity
     ]),
   ],
   controllers: [],
@@ -31,6 +33,7 @@ import { ORMConfig } from '../ORMConfig';
       ThreadEntity,
       DecryptionKeyEntity,
       DeviceEntity,
+      LikeEntity
     ]),
   ],
 })

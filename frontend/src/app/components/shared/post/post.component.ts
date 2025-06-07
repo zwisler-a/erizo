@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { CompletePost, PostService } from '../../../service/post.service';
 import { RouterLink } from '@angular/router';
@@ -9,7 +9,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { KeyService } from '../../../service/key.service';
 import { ConfirmationService } from '../../../service/confirmation.service';
 import { BlurDirective } from '../blur-directive/blur.directive';
-import {LinkPipe} from '../link-pipe/link.pipe';
+import { LinkPipe } from '../link-pipe/link.pipe';
+import { AliasPipePipe } from '../alias-pipe/alias.pipe';
+import { MatBadge } from '@angular/material/badge';
 
 @Component({
   selector: 'app-post',
@@ -23,6 +25,9 @@ import {LinkPipe} from '../link-pipe/link.pipe';
     BlurDirective,
     MatIconButton,
     LinkPipe,
+    NgForOf,
+    AliasPipePipe,
+    MatBadge,
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
@@ -33,18 +38,24 @@ export class PostComponent {
   post!: CompletePost;
 
   isOwn;
-  isLiked: boolean = false;
+  isLiked;
 
   constructor(
     private keyService: KeyService,
     private postService: PostService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
   ) {
     this.isOwn = this.isOwnEval();
+    this.isLiked = this.isLikedByUser();
   }
 
   async isOwnEval() {
     return (await this.keyService.getOwnFingerprint() == this.post.sender_fingerprint);
+  }
+
+  async isLikedByUser() {
+    const ownFp = await this.keyService.getOwnFingerprint();
+    return !!this.post.likes.find(like => like.userFingerprint == ownFp);
   }
 
   deletePost() {
@@ -59,9 +70,9 @@ export class PostComponent {
   }
 
   async likePost() {
-    if(!this.isLiked) {
-      this.isLiked = true;
-      this.postService.likePost(this.post.id).subscribe()
+    if (!(await this.isLiked)) {
+      this.isLiked = Promise.resolve(true);
+      this.postService.likePost(this.post.id);
     }
   }
 }

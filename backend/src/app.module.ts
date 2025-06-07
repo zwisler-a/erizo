@@ -23,6 +23,7 @@ import { ThreadService } from './service/thread.service';
 import { LoggerController } from './controller/logger.controller';
 import {ShareController} from "./controller/share.controller";
 import { ScheduleModule } from '@nestjs/schedule';
+import { LikeService } from './service/like.service';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ChallengeValidationGuard,
     AuthGuard,
     UserService,
+    LikeService
   ],
 })
 export class AppModule {}

@@ -1,11 +1,12 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {ApiUserService} from '../api/services/api-user.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ERROR_SNACKBAR} from '../util/snackbar-consts';
-import {ActionPerformed, PushNotifications, PushNotificationSchema, Token} from '@capacitor/push-notifications';
-import {Router} from '@angular/router';
-import {URLS} from '../app.routes';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ApiUserService } from '../api/services/api-user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ERROR_SNACKBAR } from '../util/snackbar-consts';
+import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
+import { Router } from '@angular/router';
+import { URLS } from '../app.routes';
+import { PostService } from './post.service';
 
 export enum NotificationType {
   NEW_POST = 'NEW_POST',
@@ -23,20 +24,20 @@ export interface NotificationPayload {
   timestamp?: string;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class NotificationService {
   private notifications$ = new BehaviorSubject<PushNotificationSchema[]>([]);
 
   constructor(
     private userApi: ApiUserService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
   ) {
   }
 
 
   async addNotification(notification: PushNotificationSchema) {
-    this.notifications$.next([...this.notifications$.value, notification])
+    this.notifications$.next([...this.notifications$.value, notification]);
   }
 
 
@@ -56,7 +57,7 @@ export class NotificationService {
     });
 
     PushNotifications.addListener('registration', (token: Token) => {
-      this.userApi.registerDevice({body: {fcmToken: token.value}}).subscribe(() => {
+      this.userApi.registerDevice({ body: { fcmToken: token.value } }).subscribe(() => {
       });
     });
 

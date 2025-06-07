@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { ApiProperty } from '@nestjs/swagger';
 import { DecryptionKeyEntity } from './decryption-key.entity';
 import { ThreadEntity } from './thread.entity';
+import { LikeEntity } from './like.entity';
 
 @Entity()
 export class PostEntity {
@@ -18,7 +19,7 @@ export class PostEntity {
   decryptionKeys: DecryptionKeyEntity[];
 
   @ApiProperty()
-  @ManyToOne(() => ThreadEntity, (thread) => thread.posts, {onDelete: 'NO ACTION' })
+  @ManyToOne(() => ThreadEntity, (thread) => thread.posts, { onDelete: 'NO ACTION' })
   @JoinColumn()
   thread: ThreadEntity;
 
@@ -44,4 +45,8 @@ export class PostEntity {
   @ApiProperty()
   @Column({ default: false })
   nsfw: boolean;
+
+  @ApiProperty({ type: LikeEntity, isArray: true })
+  @OneToMany(() => LikeEntity, (like) => like.post, { cascade: false })
+  likes: LikeEntity[];
 }

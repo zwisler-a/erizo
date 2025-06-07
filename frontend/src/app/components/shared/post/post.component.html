@@ -20,11 +20,21 @@
       </div>
       <span class="date">{{ post.created_at | date: "dd.MM HH:mm" }}</span>
     </div>
-    <button *ngIf="!(isOwn|async)" mat-icon-button (click)="likePost()">
-      <mat-icon>{{ isLiked ? 'favorite' : 'favorite_outline' }}</mat-icon>
+    <button *ngIf="!(isOwn|async); else ownLikes" mat-icon-button (click)="likePost()">
+      <mat-icon>{{ (isLiked|async) ? 'favorite' : 'favorite_outline' }}</mat-icon>
     </button>
   </div>
 </div>
 <ng-template #blurry>
   <mat-icon>local_fire_department</mat-icon>
 </ng-template>
+<ng-template #ownLikes>
+  <span>
+    <mat-icon [matBadgeHidden]="post.likes.length == 0" [matBadge]="post.likes.length" [matMenuTriggerFor]="menu">favorite</mat-icon>
+  </span>
+</ng-template>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item *ngFor="let liker of post.likes">
+    {{ liker.userFingerprint | alias }}
+  </button>
+</mat-menu>

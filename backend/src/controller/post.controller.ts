@@ -18,13 +18,17 @@ import { PostDto } from '../dto/post/post.dto';
 import { AuthGuard } from '../util/auth.guard';
 import { UserEntity } from '../persistance/user.entity';
 import { IdsPage } from '../dto/page.dto';
-import {CreatePostResponseDto} from "../dto/post/create-post-response.dto";
+import { CreatePostResponseDto } from '../dto/post/create-post-response.dto';
+import { LikeService } from '../service/like.service';
 
 @Controller('post')
 export class PostController {
   private logger = new Logger(PostController.name);
 
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private likeService: LikeService,
+  ) {}
 
   @Get('/all/ids')
   @ApiOkResponse({
@@ -96,14 +100,14 @@ export class PostController {
   @UseGuards(AuthGuard)
   @ApiOperation({ operationId: 'publish' })
   @ApiBody({ type: CreatePostDto })
-  @ApiOkResponse({type: CreatePostResponseDto})
+  @ApiOkResponse({ type: CreatePostResponseDto })
   async upload(@Request() req: any): Promise<CreatePostResponseDto> {
     try {
       const body = req.body as CreatePostDto;
       const user = req.user as UserEntity;
       this.logger.debug(`Creating post from user ${user.fingerprint} ${body.thread_id}`);
       const entity = await this.postService.create(body, user);
-      return {post_id: entity.id};
+      return { post_id: entity.id };
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -119,7 +123,7 @@ export class PostController {
       const body = req.query.postId as string;
       const user = req.user as UserEntity;
       this.logger.debug(`Liking post from user ${user.fingerprint} ${body}`);
-      await this.postService.like(body, user);
+      await this.likeService.addLike(Number.parseInt(body), user);
       return { success: true };
     } catch (error) {
       this.logger.error(error);

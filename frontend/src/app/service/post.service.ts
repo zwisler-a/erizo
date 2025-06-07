@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {DecryptedPost, EncryptionService} from './encryption.service';
+import { Injectable } from '@angular/core';
+import { DecryptedPost, EncryptionService } from './encryption.service';
 import {
   BehaviorSubject,
   firstValueFrom,
@@ -10,19 +10,19 @@ import {
   OperatorFunction,
   shareReplay,
   switchMap,
-  tap
+  tap,
 } from 'rxjs';
-import {ContactService} from './contact.service';
-import {DomSanitizer} from '@angular/platform-browser';
+import { ContactService } from './contact.service';
+import { DomSanitizer } from '@angular/platform-browser';
 import imageCompression from 'browser-image-compression';
-import {UserEntity} from '../api/models/user-entity';
-import {ApiPostService} from '../api/services/api-post.service';
-import {PostDto} from '../api/models/post-dto';
-import {IdsPage} from '../api/models/ids-page';
-import {filterAsync, IndexedDBStore} from '../util/local-storage-record';
-import {NotificationPayload, NotificationService, NotificationType} from './notification.service';
-import {MessagePayload} from '@angular/fire/messaging';
-import {PushNotificationSchema} from '@capacitor/push-notifications';
+import { UserEntity } from '../api/models/user-entity';
+import { ApiPostService } from '../api/services/api-post.service';
+import { PostDto } from '../api/models/post-dto';
+import { IdsPage } from '../api/models/ids-page';
+import { filterAsync, IndexedDBStore } from '../util/local-storage-record';
+import { NotificationPayload, NotificationService, NotificationType } from './notification.service';
+import { MessagePayload } from '@angular/fire/messaging';
+import { PushNotificationSchema } from '@capacitor/push-notifications';
 
 export type CompletePost = PostDto & DecryptedPost & { alias: string } & { url: any };
 
@@ -37,7 +37,7 @@ export class PostFeed {
     private loadPage: (opts: { page: number, limit: number }) => Observable<IdsPage>,
     private idsToPostPipe: OperatorFunction<number[], PostDto[]>,
     private decryptionPipe: OperatorFunction<PostDto[], CompletePost[]>,
-    private pageSize = 3
+    private pageSize = 3,
   ) {
     this.feed$ = this.feedIds$.pipe(
       tap(_ => this.loading$.next(true)),
@@ -46,7 +46,7 @@ export class PostFeed {
       this.decryptionPipe,
       map(post => post.sort((a, b) => b.created_at - a.created_at)),
       tap(_ => this.loading$.next(false)),
-      shareReplay(1)
+      shareReplay(1),
     );
   }
 
@@ -54,13 +54,13 @@ export class PostFeed {
   public next() {
     if (this.loading$.value) return;
     this.loading$.next(true);
-    this.loadPage({page: this.currentPage, limit: this.pageSize}).subscribe(page => {
+    this.loadPage({ page: this.currentPage, limit: this.pageSize }).subscribe(page => {
       this.currentPage++;
       if (!page.data.length) {
         this.endOfFeed$.next(true);
       }
-      this.feedIds$.next([...this.feedIds$.value, ...page.data])
-    })
+      this.feedIds$.next([...this.feedIds$.value, ...page.data]);
+    });
   }
 
   addPost(id: number) {
@@ -84,7 +84,7 @@ export class PostFeed {
 })
 export class PostService {
 
-  private postCache: IndexedDBStore = new IndexedDBStore("erizo_images", "images", 1000 * 60 * 60 * 24 * 14);
+  private postCache: IndexedDBStore = new IndexedDBStore('erizo_images', 'images', 1000 * 60 * 60 * 24 * 14);
   public homeFeed: PostFeed;
   private threadFeeds: Record<string, PostFeed> = {};
 
@@ -93,16 +93,16 @@ export class PostService {
     private contactService: ContactService,
     private sanitizer: DomSanitizer,
     private postsApi: ApiPostService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {
     this.homeFeed = new PostFeed(
       (opts) => this.postsApi.getAllPostIds(opts),
       this.getPostsByIds(),
-      this.postDecryptionPipe()
+      this.postDecryptionPipe(),
     );
     this.notificationService.getNotifications().subscribe(
-      notifications => notifications.forEach(notification => this.handleNotification(notification))
-    )
+      notifications => notifications.forEach(notification => this.handleNotification(notification)),
+    );
   }
 
 
@@ -113,10 +113,15 @@ export class PostService {
 
   private handleNotification(notification: PushNotificationSchema) {
     if (!notification.data) return;
-    if (notification.data["type"] == NotificationType.NEW_POST) {
+    if (notification.data['type'] == NotificationType.NEW_POST) {
       const data = notification.data as any as NotificationPayload;
       if (!data.post_id) return;
       this.addPostToFeeds(Number.parseInt(data.post_id));
+    }
+    if (notification.data['type'] == NotificationType.LIKE_POST) {
+      const data = notification.data as any as NotificationPayload;
+      if (!data.post_id) return;
+      this.postCache.delete(Number.parseInt(data.post_id));
     }
   }
 
@@ -133,11 +138,11 @@ export class PostService {
   getAllPostsFor(threadId: number): PostFeed {
     if (!!this.threadFeeds[threadId]) return this.threadFeeds[threadId];
     const feed = new PostFeed(
-      (opts) => this.postsApi.getPostIdsInThread({threadId, ...opts}),
+      (opts) => this.postsApi.getPostIdsInThread({ threadId, ...opts }),
       this.getPostsByIds(),
       this.postDecryptionPipe(),
-      9 * 2
-    )
+      9 * 2,
+    );
     this.threadFeeds[threadId] = feed;
     return feed;
   }
@@ -146,19 +151,21 @@ export class PostService {
     return from([[postId]]).pipe(
       this.getPostsByIds(),
       this.postDecryptionPipe(),
-      map(post => post[0])
-    )
+      map(post => post[0]),
+    );
   }
 
 
   deletePost(id: number) {
-    return this.postsApi.delete({postId: id}).pipe(
+    return this.postsApi.delete({ postId: id }).pipe(
       tap(() => this.removePostFromFeeds(id)),
     );
   }
 
   likePost(id: number) {
-    return this.postsApi.like({postId: id});
+    return this.postsApi.like({ postId: id }).subscribe(() => {
+      this.postCache.delete(id);
+    });
   }
 
   async publishPost(file: File, threadId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number, nsfw?: boolean) {
@@ -169,13 +176,13 @@ export class PostService {
     };
     const compressedFile = await imageCompression(file, options);
     const message = await this.encryptionService.encryptImage(compressedFile, textMessage ?? '', contacts);
-    const response = await firstValueFrom( this.postsApi.publish({
+    const response = await firstValueFrom(this.postsApi.publish({
       body: {
         ...message,
         days_to_live: daysToLive,
         thread_id: threadId,
-        nsfw
-      }
+        nsfw,
+      },
     }));
     this.addPostToFeeds(response.post_id);
   }
@@ -186,18 +193,17 @@ export class PostService {
         switchMap(async ids => {
           const cachedIds = await filterAsync(ids, id => this.postCache.has(id));
           const uncachedIds = await filterAsync(ids, async id => !(await this.postCache.has(id)));
-          // console.log(cachedIds, uncachedIds, ids)
           const cachedPosts: PostDto[] = await Promise.all(cachedIds.map(id => this.postCache.get<PostDto>(id))) as any;
           if (!uncachedIds.length) return cachedPosts;
-          const uncachedPosts = this.postsApi.getPosts({ids: uncachedIds}).pipe(
+          const uncachedPosts = this.postsApi.getPosts({ ids: uncachedIds }).pipe(
             tap(res => {
-              res.forEach(post => this.postCache.set(post.id, post))
-            })
-          )
+              res.forEach(post => this.postCache.set(post.id, post));
+            }),
+          );
 
-          return [...cachedPosts, ...(await firstValueFrom(uncachedPosts))]
+          return [...cachedPosts, ...(await firstValueFrom(uncachedPosts))];
         }),
-      )
+      );
   }
 
   private postDecryptionPipe(): OperatorFunction<PostDto[], CompletePost[]> {
@@ -207,11 +213,11 @@ export class PostService {
           Promise.all(messages.map(async message => {
             try {
               const decryptedPost = await this.encryptionService.decryptMessage(message);
-              return ({...message, ...decryptedPost});
+              return ({ ...message, ...decryptedPost });
             } catch (e) {
               console.error(e);
             }
-            return {...message, decryptionError: true};
+            return { ...message, decryptionError: true };
           })),
         ),
         mergeMap(async messages => {
@@ -236,7 +242,7 @@ export class PostService {
             const binary = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
             const base64String = window.btoa(binary);
             const url = this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${base64String}`);
-            return ({...msg, url} as any);
+            return ({ ...msg, url } as any);
           });
         }),
       );

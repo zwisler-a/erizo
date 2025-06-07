@@ -72,7 +72,7 @@ export class PostService {
       skip: page * limit,
       take: limit,
       order: { id: 'DESC' },
-      relations: { decryptionKeys: true },
+      relations: { decryptionKeys: true, thread: true },
     });
     return this.mapToIds(posts);
   }
@@ -80,7 +80,7 @@ export class PostService {
   public async fetchPosts(fingerprint: string, ids: number[]) {
     const posts = await this.postRepo.find({
       where: { decryptionKeys: { recipient_fingerprint: fingerprint }, id: In(ids) },
-      relations: { decryptionKeys: true, thread: true },
+      relations: { decryptionKeys: true, thread: true, likes: true },
     });
     return this.mapPosts(posts);
   }
@@ -119,21 +119,5 @@ export class PostService {
     this.fileService.delete(new FilePointer(post.file_path));
   }
 
-  async like(postId: string, user: UserEntity) {
-    const post = await this.postRepo.findOneOrFail({
-      where: { id: Number.parseInt(postId) },
-      relations: { decryptionKeys: true },
-    });
-    const canSeePost = post.decryptionKeys.some((recipient) => recipient.recipient_fingerprint == user.fingerprint);
-    if (!canSeePost) throw new UnauthorizedException();
 
-    this.notificationService.notify(
-      { fingerprint: post.sender_fingerprint },
-      {
-        fingerprint: user.fingerprint,
-        type: NotificationType.LIKE_POST,
-        post_id: postId,
-      },
-    );
-  }
 }

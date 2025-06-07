@@ -16,6 +16,7 @@ export { DecryptionKeyEntity } from './models/decryption-key-entity';
 export { DeleteConnectionRequestDto } from './models/delete-connection-request-dto';
 export { Error } from './models/error';
 export { IdsPage } from './models/ids-page';
+export { LikeEntity } from './models/like-entity';
 export { PostDto } from './models/post-dto';
 export { RecipientList } from './models/recipient-list';
 export { RegisterDeviceDto } from './models/register-device-dto';
