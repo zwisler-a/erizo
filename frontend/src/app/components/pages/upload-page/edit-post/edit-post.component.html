@@ -15,7 +15,7 @@
   <button mat-icon-button (click)="nextCounter()">
     <mat-icon>
       @switch (uploadJourney.deleteAfter) {
-        @case (0) {
+        @case (undefined) {
           timer_off
         }
         @case (1) {
@@ -54,7 +54,7 @@
     <mat-icon>info</mat-icon>
     <span>The post will be hidden behind the "not safe for work" blur</span>
   </div>
-  <div *ngIf="uploadJourney.deleteAfter > 0" class="info-text">
+  <div *ngIf="uploadJourney.deleteAfter && uploadJourney.deleteAfter > 0" class="info-text">
     <mat-icon>info</mat-icon>
     <span>The post will be deleted after {{ uploadJourney.deleteAfter }} days</span>
   </div>

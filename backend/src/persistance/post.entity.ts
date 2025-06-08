@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { DecryptionKeyEntity } from './decryption-key.entity';
+import { PostDecryptionKeyEntity } from './post-decryption-key.entity';
 import { ThreadEntity } from './thread.entity';
 import { LikeEntity } from './like.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity()
 export class PostEntity {
@@ -14,9 +15,9 @@ export class PostEntity {
   @Column()
   sender_fingerprint: string;
 
-  @ApiProperty({ type: DecryptionKeyEntity, isArray: true })
-  @OneToMany(() => DecryptionKeyEntity, (user) => user.message, { cascade: true, onDelete: 'CASCADE' })
-  decryptionKeys: DecryptionKeyEntity[];
+  @ApiProperty({ type: PostDecryptionKeyEntity, isArray: true })
+  @OneToMany(() => PostDecryptionKeyEntity, (user) => user.post, { cascade: true, onDelete: 'CASCADE' })
+  decryptionKeys: PostDecryptionKeyEntity[];
 
   @ApiProperty()
   @ManyToOne(() => ThreadEntity, (thread) => thread.posts, { onDelete: 'NO ACTION' })
@@ -49,4 +50,9 @@ export class PostEntity {
   @ApiProperty({ type: LikeEntity, isArray: true })
   @OneToMany(() => LikeEntity, (like) => like.post, { cascade: false })
   likes: LikeEntity[];
+
+  @ApiProperty({type: CommentEntity, isArray: true })
+  @OneToMany(() => CommentEntity, comment => comment.post)
+  comments: CommentEntity[];
+
 }

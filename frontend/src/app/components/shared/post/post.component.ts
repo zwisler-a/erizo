@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { CompletePost, PostService } from '../../../service/post.service';
 import { RouterLink } from '@angular/router';
 import { URLS } from '../../../app.routes';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { KeyService } from '../../../service/key.service';
 import { ConfirmationService } from '../../../service/confirmation.service';
@@ -12,6 +12,9 @@ import { BlurDirective } from '../blur-directive/blur.directive';
 import { LinkPipe } from '../link-pipe/link.pipe';
 import { AliasPipePipe } from '../alias-pipe/alias.pipe';
 import { MatBadge } from '@angular/material/badge';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-post',
@@ -28,6 +31,12 @@ import { MatBadge } from '@angular/material/badge';
     NgForOf,
     AliasPipePipe,
     MatBadge,
+    MatButton,
+    JsonPipe,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    ReactiveFormsModule,
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
@@ -39,6 +48,7 @@ export class PostComponent {
 
   isOwn;
   isLiked;
+  showNewComment = false;
 
   constructor(
     private keyService: KeyService,
@@ -74,5 +84,12 @@ export class PostComponent {
       this.isLiked = Promise.resolve(true);
       this.postService.likePost(this.post.id);
     }
+  }
+
+  commentPost(value: string) {
+    if (!value) return;
+    if (!this.post) return;
+    this.postService.comment(this.post.id, this.post.thread.participants, value);
+    this.showNewComment = false;
   }
 }

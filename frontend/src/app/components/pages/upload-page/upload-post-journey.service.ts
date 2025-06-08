@@ -13,7 +13,7 @@ export class UploadPostJourneyService {
   previewPhoto?: string;
   isNsfw = false;
   message: string = "";
-  deleteAfter = 0;
+  deleteAfter: undefined | number = undefined;
   threadId?: number = undefined;
   private isShare = false;
 
@@ -30,7 +30,7 @@ export class UploadPostJourneyService {
     this.previewPhoto = '';
     this.isNsfw = false;
     this.message = "";
-    this.deleteAfter = 0;
+    this.deleteAfter = undefined;
   }
 
   start(threadId: number): void {

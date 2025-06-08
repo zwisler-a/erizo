@@ -1,16 +1,17 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { PostEntity } from './post.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity()
-export class DecryptionKeyEntity {
+export class CommentDecryptionKeyEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => PostEntity)
+  @ManyToOne(() => CommentEntity, { onDelete: 'CASCADE' })
   @JoinColumn()
-  message: PostEntity;
+  comment: CommentEntity;
 
   @ApiProperty()
   @Column()

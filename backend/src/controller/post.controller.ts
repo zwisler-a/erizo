@@ -20,6 +20,8 @@ import { UserEntity } from '../persistance/user.entity';
 import { IdsPage } from '../dto/page.dto';
 import { CreatePostResponseDto } from '../dto/post/create-post-response.dto';
 import { LikeService } from '../service/like.service';
+import { CreateCommentDto } from '../dto/post/comment.dto';
+import { CommentService } from '../service/comment.service';
 
 @Controller('post')
 export class PostController {
@@ -28,6 +30,7 @@ export class PostController {
   constructor(
     private postService: PostService,
     private likeService: LikeService,
+    private commentService: CommentService,
   ) {}
 
   @Get('/all/ids')
@@ -128,6 +131,22 @@ export class PostController {
     } catch (error) {
       this.logger.error(error);
       return { error: error.message };
+    }
+  }
+
+  @Post('/comment')
+  @UseGuards(AuthGuard)
+  @ApiBody({ type: CreateCommentDto })
+  @ApiOperation({ operationId: 'comment' })
+  async comment(@Request() req: any) {
+    try {
+      const body = req.body as CreateCommentDto;
+      const user = req.user as UserEntity;
+      this.logger.debug(`Creating comment for user ${user.fingerprint}`);
+      await this.commentService.create(body);
+    } catch (e) {
+      this.logger.error(e);
+      return { error: e.message };
     }
   }
 

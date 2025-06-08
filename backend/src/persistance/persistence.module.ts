@@ -4,11 +4,12 @@ import { PostEntity } from './post.entity';
 import { UserEntity } from './user.entity';
 import { ConnectionEntity } from './connection.entity';
 import { ThreadEntity } from './thread.entity';
-import { DecryptionKeyEntity } from './decryption-key.entity';
+import { PostDecryptionKeyEntity } from './post-decryption-key.entity';
 import { DeviceEntity } from './device.entity';
 import { ORMConfig } from '../ORMConfig';
 import { LikeEntity } from './like.entity';
-
+import { CommentEntity } from './comment.entity';
+import { CommentDecryptionKeyEntity } from './comment-decryption-key.entity';
 
 @Module({
   imports: [
@@ -18,9 +19,11 @@ import { LikeEntity } from './like.entity';
       UserEntity,
       ConnectionEntity,
       ThreadEntity,
-      DecryptionKeyEntity,
+      PostDecryptionKeyEntity,
       DeviceEntity,
-      LikeEntity
+      LikeEntity,
+      CommentEntity,
+      CommentDecryptionKeyEntity,
     ]),
   ],
   controllers: [],
@@ -31,9 +34,11 @@ import { LikeEntity } from './like.entity';
       UserEntity,
       ConnectionEntity,
       ThreadEntity,
-      DecryptionKeyEntity,
+      PostDecryptionKeyEntity,
       DeviceEntity,
-      LikeEntity
+      LikeEntity,
+      CommentEntity,
+      CommentDecryptionKeyEntity,
     ]),
   ],
 })

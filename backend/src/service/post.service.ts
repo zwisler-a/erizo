@@ -6,7 +6,7 @@ import { FilePointer, FileService } from './file.service';
 import { CreatePostDto } from '../dto/post/create-post.dto';
 import { NotificationService, NotificationType } from './notification.service';
 import { UserEntity } from '../persistance/user.entity';
-import { DecryptionKeyEntity } from '../persistance/decryption-key.entity';
+import { PostDecryptionKeyEntity } from '../persistance/post-decryption-key.entity';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class PostService {
   constructor(
     private notificationService: NotificationService,
     @InjectRepository(PostEntity) private postRepo: Repository<PostEntity>,
-    @InjectRepository(DecryptionKeyEntity) private decryptionKeyRepo: Repository<DecryptionKeyEntity>,
+    @InjectRepository(PostDecryptionKeyEntity) private decryptionKeyRepo: Repository<PostDecryptionKeyEntity>,
     private fileService: FileService,
   ) {}
 
@@ -80,7 +80,12 @@ export class PostService {
   public async fetchPosts(fingerprint: string, ids: number[]) {
     const posts = await this.postRepo.find({
       where: { decryptionKeys: { recipient_fingerprint: fingerprint }, id: In(ids) },
-      relations: { decryptionKeys: true, thread: true, likes: true },
+      relations: {
+        decryptionKeys: true,
+        thread: { participants: true },
+        likes: true,
+        comments: { decryptionKeys: true, author: true },
+      },
     });
     return this.mapPosts(posts);
   }
@@ -114,10 +119,8 @@ export class PostService {
 
   async delete(postId: number, user: Partial<UserEntity>) {
     const post = await this.postRepo.findOneOrFail({ where: { id: postId } });
-    await this.decryptionKeyRepo.delete({ message: { id: postId } });
+    await this.decryptionKeyRepo.delete({ post: { id: postId } });
     await this.postRepo.delete({ id: postId, sender_fingerprint: user.fingerprint });
     this.fileService.delete(new FilePointer(post.file_path));
   }
-
-
 }

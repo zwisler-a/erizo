@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Logger, Post, UnauthorizedException } from '@nestjs/common';
 import { ChallengeService } from '../service/challenge.service';
 import { ChallengeRequestDto } from '../dto/challenge/challenge-request.dto';
 import { ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
@@ -14,6 +14,9 @@ import { ChallengeVerifyDto } from '../dto/challenge/challenge-verify.dto';
 @ApiTags('Authentication')
 @Controller('auth')
 export class ChallengesController {
+
+  private logger: Logger = new Logger(ChallengesController.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private identityRepository: Repository<UserEntity>,
@@ -28,6 +31,7 @@ export class ChallengesController {
       const { fingerprint, public_key } = body;
       await this.identityRepository.upsert({ fingerprint: fingerprint, public_key: public_key }, ['fingerprint']);
     } catch (error: any) {
+      this.logger.error(error);
       throw new HttpException('Something went wrong!', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

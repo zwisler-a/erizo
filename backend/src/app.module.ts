@@ -24,6 +24,7 @@ import { LoggerController } from './controller/logger.controller';
 import {ShareController} from "./controller/share.controller";
 import { ScheduleModule } from '@nestjs/schedule';
 import { LikeService } from './service/like.service';
+import { CommentService } from './service/comment.service';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { LikeService } from './service/like.service';
     ConnectionController,
     ThreadController,
     LoggerController,
-    ShareController
+    ShareController,
   ],
   providers: [
     ThreadService,
@@ -59,7 +60,8 @@ import { LikeService } from './service/like.service';
     ChallengeValidationGuard,
     AuthGuard,
     UserService,
-    LikeService
+    LikeService,
+    CommentService
   ],
 })
 export class AppModule {}

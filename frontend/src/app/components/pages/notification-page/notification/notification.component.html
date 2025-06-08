@@ -44,6 +44,16 @@
       <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
     </mat-list-item>
 
+
+    <mat-list-item *ngSwitchCase="'NEW_COMMENT'"
+                   [routerLink]="notification.data ? URLS.VIEW_POST_FN(notification.data['post_id']) : ''"
+                   (click)="notificationClicked(notification)">
+      <mat-icon matListItemIcon>person</mat-icon>
+      <div matListItemTitle>{{ notification.data['fingerprint'] | alias }} left you a comment</div>
+      <div matListItemLine>Want to have a look?</div>
+      <div matListItemLine>{{notification.data['timestamp'] | date}}</div>
+    </mat-list-item>
+
     <mat-list-item *ngSwitchDefault [routerLink]=""
                    (click)="notificationClicked(notification)">
       <mat-icon matListItemIcon></mat-icon>

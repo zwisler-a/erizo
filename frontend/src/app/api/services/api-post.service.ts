@@ -11,6 +11,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { comment } from '../fn/post/comment';
+import { Comment$Params } from '../fn/post/comment';
 import { CreatePostResponseDto } from '../models/create-post-response-dto';
 import { delete$ } from '../fn/post/delete';
 import { Delete$Params } from '../fn/post/delete';
@@ -179,6 +181,31 @@ export class ApiPostService extends BaseService {
    */
   like(params: Like$Params, context?: HttpContext): Observable<void> {
     return this.like$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `comment()` */
+  static readonly CommentPath = '/api/post/comment';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `comment()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  comment$Response(params: Comment$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return comment(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `comment$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  comment(params: Comment$Params, context?: HttpContext): Observable<void> {
+    return this.comment$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

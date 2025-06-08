@@ -33,9 +33,14 @@ export class EditPostComponent {
 
 
   nextCounter() {
-    this.uploadJourney.deleteAfter++;
+    if(this.uploadJourney.deleteAfter == undefined){
+      this.uploadJourney.deleteAfter = 1;
+    } else {
+      this.uploadJourney.deleteAfter++;
+    }
+
     if (this.uploadJourney.deleteAfter >= 4) {
-      this.uploadJourney.deleteAfter = 0;
+      this.uploadJourney.deleteAfter = undefined;
     }
   }
 

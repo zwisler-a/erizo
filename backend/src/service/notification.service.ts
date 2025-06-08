@@ -13,6 +13,7 @@ export enum NotificationType {
   CONNECTION_ADDED = 'CONNECTION_ADDED',
   CONNECTION_REQUEST = 'CONNECTION_REQUEST',
   LIKE_POST = 'LIKE_POST',
+  NEW_COMMENT = 'NEW_COMMENT',
 }
 
 export interface NotificationPayload {
@@ -113,6 +114,12 @@ export class NotificationService {
       return {
         title: ['Your request got accepted'][Math.floor(Math.random() * 1)],
         body: ['Feel free to start sending them some treats'][Math.floor(Math.random() * 1)],
+      };
+    }
+    if (type === NotificationType.NEW_COMMENT) {
+      return {
+        title: ['Someone has left you a comment'][Math.floor(Math.random() * 1)],
+        body: ['Want to have a look?'][Math.floor(Math.random() * 1)],
       };
     }
 

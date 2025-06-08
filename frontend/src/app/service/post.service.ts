@@ -21,7 +21,6 @@ import { PostDto } from '../api/models/post-dto';
 import { IdsPage } from '../api/models/ids-page';
 import { filterAsync, IndexedDBStore } from '../util/local-storage-record';
 import { NotificationPayload, NotificationService, NotificationType } from './notification.service';
-import { MessagePayload } from '@angular/fire/messaging';
 import { PushNotificationSchema } from '@capacitor/push-notifications';
 
 export type CompletePost = PostDto & DecryptedPost & { alias: string } & { url: any };
@@ -70,6 +69,9 @@ export class PostFeed {
   removePost(id: number) {
     this.feedIds$.next([...this.feedIds$.value.filter(a => a !== id)]);
   }
+  public reload() {
+    this.feedIds$.next(this.feedIds$.value);
+  }
 
   public reset() {
     this.currentPage = 0;
@@ -105,11 +107,9 @@ export class PostService {
     );
   }
 
-
   clearImageCache() {
     return this.postCache.clear();
   }
-
 
   private handleNotification(notification: PushNotificationSchema) {
     if (!notification.data) return;
@@ -121,6 +121,7 @@ export class PostService {
     if (notification.data['type'] == NotificationType.LIKE_POST) {
       const data = notification.data as any as NotificationPayload;
       if (!data.post_id) return;
+      this.encryptionService.evictCache(Number.parseInt(data.post_id));
       this.postCache.delete(Number.parseInt(data.post_id));
     }
   }
@@ -133,6 +134,11 @@ export class PostService {
   private removePostFromFeeds(id: number) {
     this.homeFeed.removePost(id);
     Object.keys(this.threadFeeds).map(threadId => this.threadFeeds[threadId].removePost(id));
+  }
+
+  private reloadPosts() {
+    this.homeFeed.reload();
+    Object.keys(this.threadFeeds).map(threadId => this.threadFeeds[threadId].reload());
   }
 
   getAllPostsFor(threadId: number): PostFeed {
@@ -165,6 +171,7 @@ export class PostService {
   likePost(id: number) {
     return this.postsApi.like({ postId: id }).subscribe(() => {
       this.postCache.delete(id);
+      this.encryptionService.evictCache(id);
     });
   }
 
@@ -210,14 +217,15 @@ export class PostService {
     return (source) => {
       return source.pipe(
         mergeMap(async messages =>
-          Promise.all(messages.map(async message => {
+          Promise.all(messages.map(async post => {
             try {
-              const decryptedPost = await this.encryptionService.decryptMessage(message);
-              return ({ ...message, ...decryptedPost });
+              const decryptedPost = await this.encryptionService.decryptPost(post);
+              decryptedPost.comments.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+              return ({ ...post, ...decryptedPost });
             } catch (e) {
               console.error(e);
             }
-            return { ...message, decryptionError: true };
+            return { ...post, decryptionError: true };
           })),
         ),
         mergeMap(async messages => {
@@ -250,4 +258,20 @@ export class PostService {
   }
 
 
+  async comment(id: number, users: UserEntity[], value: string) {
+    const comment = await this.encryptionService.encryptText(value, users);
+    this.postsApi.comment({
+      body: {
+        post_id: id,
+        iv: comment.iv,
+        content: comment.message,
+        recipients: comment.recipients,
+        sender_fingerprint: comment.sender_fingerprint,
+      },
+    }).subscribe(() => {
+      this.postCache.delete(id);
+      this.encryptionService.evictCache(id);
+      this.reloadPosts();
+    });
+  }
 }
