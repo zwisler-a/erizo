@@ -63,12 +63,6 @@ export class UserPageComponent {
     URL.revokeObjectURL(url);
   }
 
-
-  async shareIdentity() {
-    this.userService.shareIdentity();
-  }
-
-
   async deleteIdentity() {
     this.confirmation.confirm('Are your sure? You will lose everything, if you did not download your identity!')
       .subscribe(async (confirmed) => {

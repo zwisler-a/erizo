@@ -13,10 +13,11 @@ import {ConnectionEntity} from '../../../api/models/connection-entity';
 import {ContactService} from '../../../service/contact.service';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {UserService} from '../../../service/user.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-thread-list',
-  imports: [MatListModule, MatIconModule, MatMenuModule, NgIf, AsyncPipe, MatButtonModule, MatProgressSpinner],
+  imports: [MatListModule, MatIconModule, MatMenuModule, NgIf, AsyncPipe, MatButtonModule, MatProgressSpinner, RouterLink],
   templateUrl: './thread-list.component.html',
   styleUrl: './thread-list.component.css'
 })
@@ -32,8 +33,7 @@ export class ThreadListComponent {
   constructor(
     private threadService: ThreadService,
     private confirmationService: ConfirmationService,
-    private contactService: ContactService,
-    private userService: UserService
+    private contactService: ContactService
   ) {
     this.threads$ = this.threadService.getThreads();
     this.connections$ = this.contactService.getContacts();
@@ -69,10 +69,6 @@ export class ThreadListComponent {
         }
       },
     );
-  }
-
-  shareIdentity() {
-    this.userService.shareIdentity();
   }
 
   protected readonly URLS = URLS;

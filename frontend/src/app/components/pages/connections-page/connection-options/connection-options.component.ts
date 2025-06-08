@@ -1,13 +1,18 @@
-import {Component, inject} from '@angular/core';
-import {MatListModule} from '@angular/material/list';
-import {MatLine} from '@angular/material/core';
-import {MatIcon} from '@angular/material/icon';
-import {UserService} from '../../../../service/user.service';
-import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
-import {Router, RouterLink} from '@angular/router';
-import {URLS} from '../../../../app.routes';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
+import { Component, inject } from '@angular/core';
+import { MatListModule } from '@angular/material/list';
+import { MatLine } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { UserService } from '../../../../service/user.service';
+import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { Router, RouterLink } from '@angular/router';
+import { URLS } from '../../../../app.routes';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ERROR_SNACKBAR } from '../../../../util/snackbar-consts';
+import {
+  CapacitorBarcodeScanner, CapacitorBarcodeScannerAndroidScanningLibrary,
+  CapacitorBarcodeScannerCameraDirection, CapacitorBarcodeScannerScanOrientation,
+  CapacitorBarcodeScannerTypeHint,
+} from '@capacitor/barcode-scanner';
 
 @Component({
   selector: 'app-connection-options',
@@ -27,12 +32,29 @@ export class ConnectionOptionsComponent {
   constructor(
     private userService: UserService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
   }
 
-  share() {
-    this.userService.shareIdentity();
+  async scanQr() {
+    const result = await CapacitorBarcodeScanner.scanBarcode({
+      hint: CapacitorBarcodeScannerTypeHint.ALL,
+      scanInstructions: 'Please scan a identity code',
+      scanButton: true,
+      scanText: 'Scan',
+      cameraDirection: CapacitorBarcodeScannerCameraDirection.BACK,
+      scanOrientation: CapacitorBarcodeScannerScanOrientation.ADAPTIVE,
+      android: {
+        scanningLibrary: CapacitorBarcodeScannerAndroidScanningLibrary.ZXING,
+      },
+    });
+    if(result.ScanResult != null) {
+      this.router.navigateByUrl(URLS.ADD_CONNECTION_FN(result.ScanResult));
+      this.close();
+    }
+  }
+
+  close() {
     this._bottomSheetRef.dismiss();
   }
 
@@ -46,7 +68,7 @@ export class ConnectionOptionsComponent {
       }
       this.router.navigateByUrl(URLS.ADD_CONNECTION_FN(lastPart));
     }).catch(err => {
-      this.snackBar.open("Could not paste from clipboard. Maybe the permission was not granted? Error:" + err.message, 'Ok', ERROR_SNACKBAR);
+      this.snackBar.open('Could not paste from clipboard. Maybe the permission was not granted? Error:' + err.message, 'Ok', ERROR_SNACKBAR);
     });
   }
 

@@ -22,6 +22,7 @@ import { SharePageComponent } from './components/pages/share-page/share-page.com
 import { TakePhotoComponent } from './components/pages/upload-page/take-photo/take-photo.component';
 import { EditPostComponent } from './components/pages/upload-page/edit-post/edit-post.component';
 import { SetAppAuthPageComponent } from './components/pages/set-app-auth-page/set-app-auth-page.component';
+import { ShareIdentityComponent } from './components/pages/connections-page/share-identity/share-identity.component';
 
 export const URLS = {
   HOME: 'home',
@@ -29,6 +30,7 @@ export const URLS = {
   NOTIFICATIONS: 'notifications',
   CONNECTIONS: 'connections',
   IDENTITY: 'identity',
+  SHARE_IDENTITY: 'share-identity',
   LANDING: 'landing',
   CREATE_THREAD: 'thread/create',
   TAKE_PHOTO: 'photo/take',
@@ -53,6 +55,7 @@ export const routes: Routes = [
       { path: URLS.HOME, component: HomePageComponent },
       { path: URLS.SHARE, component: SharePageComponent },
       { path: URLS.IDENTITY, component: UserPageComponent },
+      { path: URLS.SHARE_IDENTITY, component: ShareIdentityComponent },
       { path: URLS.SET_APP_AUTH, component: SetAppAuthPageComponent },
       { path: URLS.CREATE_THREAD, component: CreateThreadViewComponent },
       { path: URLS.NOTIFICATIONS, component: NotificationPageComponent },

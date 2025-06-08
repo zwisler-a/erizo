@@ -7,6 +7,7 @@ import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } fro
 import { Router } from '@angular/router';
 import { URLS } from '../app.routes';
 import { PostService } from './post.service';
+import { Capacitor } from '@capacitor/core';
 
 export enum NotificationType {
   NEW_POST = 'NEW_POST',
@@ -50,6 +51,11 @@ export class NotificationService {
   }
 
   async enableNotifications() {
+    const isPushNotificationsAvailable = Capacitor.isPluginAvailable('PushNotifications');
+    if(!isPushNotificationsAvailable) {
+      console.log('PushNotifications not available');
+      return;
+    }
     PushNotifications.requestPermissions().then(result => {
       if (result.receive === 'granted') {
         PushNotifications.register();

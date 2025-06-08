@@ -28,10 +28,7 @@ export class ConnectionsPageComponent {
   openRequests$: Observable<(ConnectionEntity)[]>;
 
   constructor(
-    private contactService: ContactService,
-    private threadService: ThreadService,
-    private confirmationService: ConfirmationService,
-    private userService: UserService,
+    contactService: ContactService,
     private router: Router,
     private bottomSheet: MatBottomSheet,
   ) {

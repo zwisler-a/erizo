@@ -1,6 +1,6 @@
 <h3>Identity</h3>
 <div class="info-text">My fingerprint: {{ ownFingerprint }}</div>
-<button mat-stroked-button (click)="shareIdentity()">Share Identity</button>
+<button mat-stroked-button [routerLink]="'/' + URLS.SHARE_IDENTITY">Share Identity</button>
 <button mat-stroked-button (click)="downloadIdentity()">Download Identity</button>
 <button mat-stroked-button (click)="deleteIdentity()">Delete/Logout Identity</button>
 

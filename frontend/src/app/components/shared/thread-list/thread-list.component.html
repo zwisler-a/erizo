@@ -54,7 +54,7 @@
 <ng-template #noMessages>
   <div class="no-data">
     <div>No connections yet</div>
-    <button mat-flat-button (click)="shareIdentity()">Share your identity</button>
+    <button mat-flat-button [routerLink]="'/' + URLS.SHARE_IDENTITY">Share your identity</button>
   </div>
 </ng-template>
 

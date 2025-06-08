@@ -2,8 +2,7 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm
 
 export class CommentFeature1749321375152 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // await queryRunner.query(`ALTER TABLE post_decryption_key_entity RENAME COLUMN messageId TO postId`);
-    // await queryRunner.query(`ALTER TABLE decryption_key_entity RENAME TO post_decryption_key_entity`);
+    await queryRunner.query(`ALTER TABLE decryption_key_entity RENAME TO post_decryption_key_entity`);
 
     await queryRunner.createTable(
       new Table({
@@ -39,12 +38,13 @@ export class CommentFeature1749321375152 implements MigrationInterface {
           },
         ],
       }),
+      true
     );
 
     await queryRunner.createForeignKey(
       'comment_entity',
       new TableForeignKey({
-        columnNames: ['authorId'],
+        columnNames: ['authorFingerprint'],
         referencedColumnNames: ['fingerprint'],
         referencedTableName: 'user_entity',
         onDelete: 'CASCADE',
@@ -86,6 +86,7 @@ export class CommentFeature1749321375152 implements MigrationInterface {
           },
         ],
       }),
+      true
     );
 
     await queryRunner.createForeignKey(

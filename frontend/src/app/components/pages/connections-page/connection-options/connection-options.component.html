@@ -4,9 +4,13 @@
     <span matLine>Create a new thread</span>
   </a>
   <mat-divider></mat-divider>
-  <a mat-list-item (click)="share()">
+  <a mat-list-item [routerLink]="'/' + URLS.SHARE_IDENTITY" (click)="close()">
     <mat-icon matListItemIcon>share</mat-icon>
-    <span matLine>Share your invitation link</span>
+    <span matLine>Share Identity</span>
+  </a>
+  <a mat-list-item (click)="scanQr()">
+    <mat-icon matListItemIcon>share</mat-icon>
+    <span matLine>Scan QR Code</span>
   </a>
 
   <a mat-list-item (click)="paste()">

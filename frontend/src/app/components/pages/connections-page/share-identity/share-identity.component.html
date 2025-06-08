@@ -1,0 +1,6 @@
+<h3>Share Identity</h3>
+
+<button (click)="share()" mat-stroked-button>Copy Invitation link</button>
+<qr-code [value]="(fingerprint | async) ?? ''"
+         size="320"
+         errorCorrectionLevel="H" />
