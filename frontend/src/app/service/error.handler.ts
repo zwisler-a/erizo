@@ -12,7 +12,7 @@ export class GlobalErrorHandler implements ErrorHandler {
   }
 
   handleError(error: Error): void {
-    console.error(error); // Keep logging to console
+    console.error(error);
     const stack = `${error.stack}`;
     const message = error.message || 'An unexpected error occurred';
     this.logApi.log({body: {message: error.message, stack}}).subscribe({

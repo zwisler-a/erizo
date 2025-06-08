@@ -201,7 +201,6 @@ export class EncryptionService {
         importedAesKey,
         encryptedCommentBuffer,
       );
-      console.log(decryptedComment);
       return {
         ...comment,
         content: new TextDecoder().decode(decryptedComment),
