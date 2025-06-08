@@ -28,7 +28,7 @@ export class ThreadEntity {
   owner: UserEntity;
 
   @ApiProperty({ type: UserEntity, isArray: true })
-  @ManyToMany(() => UserEntity, { cascade: false })
+  @ManyToMany(() => UserEntity, { cascade: false, onDelete: 'CASCADE' })
   @JoinTable()
   participants: UserEntity[];
 
