@@ -45,8 +45,8 @@ html {
 
 .fab-button {
   position: fixed !important;
-  bottom: calc(32px + env(safe-area-inset-bottom));
-  right: calc(32px + env(safe-area-inset-right));
+  bottom: calc(32px + var(--safe-area-inset-bottom));
+  right: calc(32px + var(--safe-area-inset-right));
 }
 
 .snackbar-error.mat-mdc-snack-bar-container .mat-mdc-snackbar-surface {

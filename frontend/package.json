@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "cap:sync": "npm run build && cap sync",
+    "cap:open-ios": "cap open ios",
     "generate:api": "ng-openapi-gen"
   },
   "private": true,
@@ -26,6 +27,7 @@
     "@angular/service-worker": "^19.1.5",
     "@capacitor-community/camera-preview": "^7.0.1",
     "@capacitor-community/privacy-screen": "^6.0.0",
+    "@capacitor-community/safe-area": "^7.0.0-alpha.1",
     "@capacitor/android": "^7.2.0",
     "@capacitor/app": "^7.0.1",
     "@capacitor/barcode-scanner": "^2.0.3",
@@ -35,6 +37,7 @@
     "@capacitor/ios": "^7.2.0",
     "@capacitor/keyboard": "^7.0.1",
     "@capacitor/push-notifications": "^7.0.1",
+    "@capacitor/share": "^7.0.1",
     "@capgo/capacitor-native-biometric": "^7.1.7",
     "browser-image-compression": "^2.0.2",
     "capacitor-plugin-safe-area": "^4.0.0",

@@ -2,7 +2,7 @@ nav {
   display: flex;
   flex-direction: row;
   gap: 16px;
-  padding: max(env(safe-area-inset-top), 8px) 16px 8px 16px;
+  padding: max(var(--safe-area-inset-top), 8px) 16px 8px 16px;
   position: fixed;
   width: 100vw;
   top: 0;
@@ -30,8 +30,8 @@ main {
   padding-top: 64px;
   box-sizing: border-box;
   max-width: 640px;
-  height: calc(100vh - env(safe-area-inset-top));
-  margin: env(safe-area-inset-top) auto 0 auto;
+  height: 100vh;
+  margin: var(--safe-area-inset-top) auto 0 auto;
 }
 
 .logo {
