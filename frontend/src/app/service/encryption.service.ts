@@ -109,7 +109,7 @@ export class EncryptionService {
     };
   }
 
-  evictCache(id:number) {
+  evictCache(id: number) {
     this.postCache.delete(id);
   }
 
@@ -182,7 +182,7 @@ export class EncryptionService {
       const decryptionKey = comment.decryptionKeys.find(key => key.recipient_fingerprint === ownFingerprint);
       const ivBuffer = this.base64ToArrayBuffer(comment.iv);
       const encryptedCommentBuffer = this.base64ToArrayBuffer(comment.content);
-      if (!decryptionKey) throw new Error("No decryption key found.");
+      if (!decryptionKey) throw new Error('No decryption key found.');
       const encryptedKeyBuffer = this.base64ToArrayBuffer(decryptionKey.encrypted_key);
       const aesKey = await crypto.subtle.decrypt(
         { name: 'RSA-OAEP' },
@@ -208,5 +208,9 @@ export class EncryptionService {
       };
     });
     return Promise.all(promises);
+  }
+
+  evictCompleteCache() {
+    this.postCache.clear();
   }
 }

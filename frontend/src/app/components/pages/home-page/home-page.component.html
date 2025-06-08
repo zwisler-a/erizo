@@ -1,12 +1,13 @@
-<ng-container *ngIf="feed.feed$ | async as posts;">
-  <ng-container *ngIf="posts.length || (feed.loading$|async); else noMessages">
-    @for (post of posts; track post.id) {
-      <app-post [post]="post"></app-post>
-    }
+<app-pull-to-refresh (pullToRefresh)="refresh($event)">
+  <ng-container *ngIf="feed.feed$ | async as posts;">
+    <ng-container *ngIf="posts.length || (feed.loading$|async); else noMessages">
+      @for (post of posts; track post.id) {
+        <app-post [post]="post"></app-post>
+      }
+    </ng-container>
   </ng-container>
-</ng-container>
-<div *ngIf="!(feed.loading$|async); else loading"></div>
-
+  <div *ngIf="!(feed.loading$|async); else loading"></div>
+</app-pull-to-refresh>
 <ng-template #noMessages>
   <div class="no-data">
     <div>Nothing here yet ...</div>

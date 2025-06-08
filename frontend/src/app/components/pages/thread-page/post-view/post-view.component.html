@@ -1,3 +1,4 @@
+<app-pull-to-refresh (pullToRefresh)="refresh($event)">
 <div class="header" *ngIf="post$ | async as post">
   <button mat-icon-button (click)="navigateBack()">
     <mat-icon>arrow_back</mat-icon>
@@ -5,3 +6,4 @@
 </div>
 
 <app-post *ngIf="post$ | async as post" [post]="post"></app-post>
+</app-pull-to-refresh>

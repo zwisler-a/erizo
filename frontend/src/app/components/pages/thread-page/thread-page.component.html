@@ -1,43 +1,45 @@
-<div class="connection-header">
-  <div class="header">
-    <div class="name">
-      <ng-container *ngIf="thread?.name">
+<app-pull-to-refresh (pullToRefresh)="refresh($event)">
+  <div class="connection-header">
+    <div class="header">
+      <div class="name">
+        <ng-container *ngIf="thread?.name">
         <span>
           {{ thread.name }}
         </span>
-      </ng-container>
-      <ng-container *ngIf="!thread?.name">
+        </ng-container>
+        <ng-container *ngIf="!thread?.name">
         <span *ngFor="let participant of thread?.participants; let last = last; let first = first">
           <span><span>{{ participant.fingerprint | alias }}</span><span *ngIf="!last"> & </span></span>
         </span>
-      </ng-container>
+        </ng-container>
+      </div>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>info</mat-icon>
+      </button>
     </div>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>info</mat-icon>
-    </button>
   </div>
-</div>
 
-<mat-menu #menu="matMenu">
-  <button mat-menu-item *ngFor="let participant of thread?.participants;">
-    {{participant.fingerprint | alias}}
-  </button>
-</mat-menu>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item *ngFor="let participant of thread?.participants;">
+      {{ participant.fingerprint | alias }}
+    </button>
+  </mat-menu>
 
-<div class="images" *ngIf="(posts?.feed$ | async)?.length || (posts?.loading$|async); else noMessages">
-  @for (post of posts?.feed$ | async; track post.id) {
-    <div class="image">
-      <img [appBlur]="post.nsfw"
-           [appBlurAlways]="true"
-           [appBlurOverlay]="blurry"
-           [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
-           [src]="post.url"
-           alt="">
-    </div>
-  }
-</div>
-<div *ngIf="!(posts?.loading$|async); else loading"></div>
+  <div class="images" *ngIf="(posts?.feed$ | async)?.length || (posts?.loading$|async); else noMessages">
+    @for (post of posts?.feed$ | async; track post.id) {
+      <div class="image">
+        <img [appBlur]="post.nsfw"
+             [appBlurAlways]="true"
+             [appBlurOverlay]="blurry"
+             [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
+             [src]="post.url"
+             alt="">
+      </div>
+    }
+  </div>
+  <div *ngIf="!(posts?.loading$|async); else loading"></div>
 
+</app-pull-to-refresh>
 
 <ng-template #loading>
   <div class="loader">
@@ -53,7 +55,6 @@
 <ng-template #blurry>
   <mat-icon>local_fire_department</mat-icon>
 </ng-template>
-
 
 
 <button class="fab-button" mat-flat-button (click)="sendImage(thread.id)">Post new

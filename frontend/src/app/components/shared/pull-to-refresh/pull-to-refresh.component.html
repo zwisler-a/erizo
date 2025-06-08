@@ -1,0 +1,10 @@
+<ngx-pull-to-refresh
+  spinnerColor="#ff0000"
+  [spinnerSize]="50"
+  [distanceForRefresh]="200"
+  [isEnable]="true"
+  [targetElement]="targetElement"
+  (refresh)="refresh($event)"
+  style="display: block; width: 100%;height:100%">
+  <ng-content></ng-content>
+</ngx-pull-to-refresh>

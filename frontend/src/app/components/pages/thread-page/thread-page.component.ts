@@ -1,18 +1,19 @@
-import {Component, ElementRef, HostListener} from '@angular/core';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
-import {MatIcon} from '@angular/material/icon';
-import {CompletePost, PostFeed, PostService} from '../../../service/post.service';
-import {Observable, shareReplay} from 'rxjs';
-import {ApiThreadService} from '../../../api/services/api-thread.service';
-import {ThreadEntity} from '../../../api/models/thread-entity';
-import {AliasPipePipe} from '../../shared/alias-pipe/alias.pipe';
-import {URLS} from '../../../app.routes';
-import {BlurDirective} from '../../shared/blur-directive/blur.directive';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {UploadPostJourneyService} from '../upload-page/upload-post-journey.service';
+import { Component, ElementRef, HostListener } from '@angular/core';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { CompletePost, PostFeed, PostService } from '../../../service/post.service';
+import { Observable, shareReplay, Subject } from 'rxjs';
+import { ApiThreadService } from '../../../api/services/api-thread.service';
+import { ThreadEntity } from '../../../api/models/thread-entity';
+import { AliasPipePipe } from '../../shared/alias-pipe/alias.pipe';
+import { URLS } from '../../../app.routes';
+import { BlurDirective } from '../../shared/blur-directive/blur.directive';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { UploadPostJourneyService } from '../upload-page/upload-post-journey.service';
+import { PullToRefreshComponent } from '../../shared/pull-to-refresh/pull-to-refresh.component';
 
 @Component({
   selector: 'app-thread-page',
@@ -31,6 +32,7 @@ import {UploadPostJourneyService} from '../upload-page/upload-post-journey.servi
     MatMenu,
     MatMenuTrigger,
     MatMenuItem,
+    PullToRefreshComponent,
   ],
   templateUrl: './thread-page.component.html',
   styleUrl: './thread-page.component.css',
@@ -44,10 +46,10 @@ export class ThreadPageComponent {
     private router: Router,
     private postService: PostService,
     private uploadJourney: UploadPostJourneyService,
-    private el: ElementRef
+    private el: ElementRef,
   ) {
     this.thread = this.route.snapshot.data['thread'];
-    if(this.thread) {
+    if (this.thread) {
       this.initImages(this.thread.id);
     }
   }
@@ -77,4 +79,12 @@ export class ThreadPageComponent {
   }
 
   protected readonly URLS = URLS;
+
+  refresh(event: Subject<any>) {
+    this.posts?.reset();
+    setTimeout(() => {
+      this.posts?.next();
+      event.next('');
+    });
+  }
 }

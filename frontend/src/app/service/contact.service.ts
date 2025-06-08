@@ -1,22 +1,10 @@
-import {Injectable} from '@angular/core';
-import {PersistenceService} from './persistence.service';
-import {
-  BehaviorSubject,
-  EMPTY,
-  firstValueFrom,
-  map,
-  Observable,
-  OperatorFunction,
-  shareReplay,
-  switchMap,
-  tap
-} from 'rxjs';
-import {ApiConnectionService} from '../api/services/api-connection.service';
-import {ConnectionEntity} from '../api/models/connection-entity';
-import {KeyService} from './key.service';
-import {ApiThreadService} from '../api/services/api-thread.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {catchError} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, EMPTY, firstValueFrom, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
+import { ApiConnectionService } from '../api/services/api-connection.service';
+import { ConnectionEntity } from '../api/models/connection-entity';
+import { KeyService } from './key.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { catchError } from 'rxjs/operators';
 
 
 @Injectable({providedIn: 'root'})
@@ -88,5 +76,9 @@ export class ContactService {
     return this.connectionApi.deleteConnection({body: {connectionId: id}}).pipe(
       tap(() => this.reloadContacts$.next(null))
     );
+  }
+
+  refresh() {
+    this.reloadContacts$.next(null);
   }
 }

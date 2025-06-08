@@ -1,24 +1,26 @@
-<app-thread-list (onClick)="navigateToThread($event)"></app-thread-list>
+<app-pull-to-refresh (pullToRefresh)="refresh($event)">
 
-<ng-container *ngIf="openRequests$ | async as openRequests">
-  <h3 *ngIf="openRequests.length">Open requests</h3>
-  <mat-nav-list>
-    @for (connection of openRequests; track connection) {
-      <mat-list-item
-        [routerLink]="URLS.ACCEPT_CONNECTION_FN(connection.owner.fingerprint)">
-        <div class="list-content">
-          <div>
-            <mat-icon>person</mat-icon>
+  <app-thread-list (onClick)="navigateToThread($event)"></app-thread-list>
+
+  <ng-container *ngIf="openRequests$ | async as openRequests">
+    <h3 *ngIf="openRequests.length">Open requests</h3>
+    <mat-nav-list>
+      @for (connection of openRequests; track connection) {
+        <mat-list-item
+          [routerLink]="URLS.ACCEPT_CONNECTION_FN(connection.owner.fingerprint)">
+          <div class="list-content">
+            <div>
+              <mat-icon>person</mat-icon>
+            </div>
+            <span>{{ connection.owner.fingerprint }}</span>
+            <span class="spacer"></span>
+            <span *ngIf="connection.state == 'PENDING'">Pending Request</span>
           </div>
-          <span>{{ connection.owner.fingerprint }}</span>
-          <span class="spacer"></span>
-          <span *ngIf="connection.state == 'PENDING'">Pending Request</span>
-        </div>
-      </mat-list-item>
-    }
-  </mat-nav-list>
-</ng-container>
-
+        </mat-list-item>
+      }
+    </mat-nav-list>
+  </ng-container>
+</app-pull-to-refresh>
 
 
 <button mat-mini-fab class="fab-button" (click)="openBottomSheet()">

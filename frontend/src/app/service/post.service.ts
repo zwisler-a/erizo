@@ -69,6 +69,7 @@ export class PostFeed {
   removePost(id: number) {
     this.feedIds$.next([...this.feedIds$.value.filter(a => a !== id)]);
   }
+
   public reload() {
     this.feedIds$.next(this.feedIds$.value);
   }
@@ -108,8 +109,15 @@ export class PostService {
   }
 
   clearImageCache() {
+    this.encryptionService.evictCompleteCache();
     return this.postCache.clear();
   }
+
+  clearImageCacheFor(postId: number) {
+    this.encryptionService.evictCompleteCache();
+    return this.postCache.delete(postId);
+  }
+
 
   private handleNotification(notification: PushNotificationSchema) {
     if (!notification.data) return;

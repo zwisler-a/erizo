@@ -39,6 +39,7 @@
     "browser-image-compression": "^2.0.2",
     "capacitor-plugin-safe-area": "^4.0.0",
     "ng-qrcode": "^19.1.0",
+    "ngx-pull-to-refresh": "^19.0.0",
     "rxjs": "~7.8.0",
     "send-intent": "^7.0.0",
     "tslib": "^2.3.0",
