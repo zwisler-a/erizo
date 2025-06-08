@@ -8,13 +8,20 @@ const config: CapacitorConfig = {
   plugins: {
     PrivacyScreen: {
       enable: true,
-      imageName: "Splashscreen",
-      contentMode: "scaleAspectFit",
-      preventScreenshots: false
+      preventScreenshots: true
     },
     Keyboard: {
       resize: KeyboardResize.Body,
       resizeOnFullScreen: true,
+    },
+    SafeArea: {
+      enabled: true,
+      customColorsForSystemBars: true,
+      statusBarColor: '#000000',
+      statusBarContent: 'light',
+      navigationBarColor: '#000000',
+      navigationBarContent: 'light',
+      offset: 0,
     },
   },
   /*server: {

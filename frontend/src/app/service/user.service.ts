@@ -3,6 +3,7 @@ import {KeyService} from './key.service';
 import {ApiAuthenticationService} from '../api/services/api-authentication.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ERROR_SNACKBAR} from '../util/snackbar-consts';
+import { Share } from '@capacitor/share';
 
 @Injectable({providedIn: 'root'})
 export class UserService {
@@ -28,12 +29,23 @@ export class UserService {
   }
 
   async shareIdentity() {
+    return await Share.share({
+      title: 'Connect on Erizo ;)',
+      text: 'Do you want to connect with me on Erizo?',
+      url: `${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`,
+      dialogTitle: 'Connect with',
+    });
+
+
+
+
     const url = `${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
     if (navigator.share) {
       navigator.share({
         url: url,
         title: `Hey, connect with me on erizo!`,
-      }).catch(console.error);
+
+      }).catch(e => {throw new Error(JSON.stringify(e))});
     } else {
       navigator.clipboard.writeText(url).then(() => {
         this.snackBar.open('Copied to clipboard!', '', {duration: 2000});
