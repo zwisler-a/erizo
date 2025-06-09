@@ -1,14 +1,10 @@
 import {Component} from '@angular/core';
-import {UserService} from './service/user.service';
-import {Router, RouterOutlet} from '@angular/router';
-import {LoadingInterceptor} from './http-interceptors/loading.interceptor';
+import {RouterOutlet} from '@angular/router';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {AsyncPipe, NgIf} from '@angular/common';
-import {URLS} from './app.routes';
-import {SendIntent} from 'send-intent';
-import {Filesystem} from '@capacitor/filesystem';
-import {UploadPostJourneyService} from './components/pages/upload-page/upload-post-journey.service';
-import {App} from '@capacitor/app';
+import {UserService} from './core/services/user.service';
+import {LoadingInterceptor} from './core/interceptors/loading.interceptor';
+import {UploadPostJourneyService} from './features/post/services/upload-post-journey.service';
 
 @Component({
   selector: 'app-root',

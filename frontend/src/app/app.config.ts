@@ -9,15 +9,15 @@ import {provideRouter} from '@angular/router';
 import {routes} from './app.routes';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideServiceWorker} from '@angular/service-worker';
-import {initIdentity} from './service/init';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
-import {ErrorHandlerInterceptor} from './http-interceptors/http-error.interceptor';
 import {ApiModule} from './api/api.module';
-import {AuthenticationInterceptor} from './http-interceptors/authentication.interceptor';
 import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
 import {getMessaging, provideMessaging} from '@angular/fire/messaging';
-import {GlobalErrorHandler} from './service/error.handler';
-import {LoadingInterceptor} from './http-interceptors/loading.interceptor';
+import {initIdentity} from './core/init';
+import {GlobalErrorHandler} from './core/services/error.handler';
+import {ErrorHandlerInterceptor} from './core/interceptors/http-error.interceptor';
+import {AuthenticationInterceptor} from './core/interceptors/authentication.interceptor';
+import {LoadingInterceptor} from './core/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
