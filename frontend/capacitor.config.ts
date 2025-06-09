@@ -18,7 +18,7 @@ const config: CapacitorConfig = {
     },
   },
   server: {
-    url: "https://192.168.178.103:4200"
+    url: "https://172.24.156.155:4200"
   }
 };
 

@@ -1,0 +1,13 @@
+<div class="comments">
+  <div class="info" (click)="showNewComment = !showNewComment" *ngIf="post.comments.length == 0">Comment ...</div>
+  <div (click)="showNewComment = !showNewComment" *ngFor="let comment of post.decryptedComments" class="comment">
+    <span class="user">{{ comment.author.fingerprint | alias }}</span>
+    <span class="content">{{ comment.content }}</span>
+  </div>
+  <div *ngIf="showNewComment" class="new">
+    <input #commentInput>
+    <button mat-icon-button (click)="commentPost(commentInput.value); commentInput.value = ''">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>

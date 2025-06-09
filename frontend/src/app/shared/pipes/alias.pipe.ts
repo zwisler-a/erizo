@@ -22,6 +22,7 @@ export class AliasPipePipe implements PipeTransform {
         this.cdr.markForCheck();
       });
     }
+    if(this.loading) return '';
     return this.alias || value;
   }
 }

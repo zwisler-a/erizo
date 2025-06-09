@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
@@ -9,6 +9,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {LockscreenComponent} from '../lockscreen/lockscreen.component';
 import {URLS} from '../../../app.routes';
 import {NotificationService} from '../../../features/notification/services/notification.service';
+import {SplashScreen} from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-shell',
@@ -28,7 +29,7 @@ import {NotificationService} from '../../../features/notification/services/notif
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.css',
 })
-export class ShellComponent {
+export class ShellComponent implements AfterViewInit {
   protected readonly URLS = URLS;
   notifications$;
 
@@ -39,6 +40,10 @@ export class ShellComponent {
   ) {
     this.notifications$ = notificationService.getNotifications();
     this.handleNotifications();
+  }
+
+  ngAfterViewInit(): void {
+    SplashScreen.hide()
   }
 
 

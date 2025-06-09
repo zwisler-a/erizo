@@ -1,21 +1,14 @@
 <mat-nav-list>
-  <a mat-list-item (click)="_bottomSheetRef.dismiss()" [routerLink]="['/' + URLS.CREATE_THREAD]">
-    <mat-icon matListItemIcon>add</mat-icon>
-    <span matLine>Create a new thread</span>
-  </a>
-  <mat-divider></mat-divider>
   <a mat-list-item [routerLink]="'/' + URLS.SHARE_IDENTITY" (click)="close()">
-    <mat-icon matListItemIcon>share</mat-icon>
-    <span matLine>Share Identity</span>
-  </a>
-  <a mat-list-item (click)="scanQr()">
-    <mat-icon matListItemIcon>share</mat-icon>
-    <span matLine>Scan QR Code</span>
+    <mat-icon matListItemIcon>person_add</mat-icon>
+    <span matLine>Add Contact</span>
   </a>
 
-  <a mat-list-item (click)="paste()">
+  <mat-divider></mat-divider>
+  <a mat-list-item (click)="_bottomSheetRef.dismiss()" [routerLink]="['/' + URLS.CREATE_THREAD]">
     <mat-icon matListItemIcon>add</mat-icon>
-    <span matLine>Use invitation link from clipboard</span>
+    <span matLine>Create a new Gallery</span>
   </a>
+
 
 </mat-nav-list>

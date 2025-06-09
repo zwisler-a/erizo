@@ -5,7 +5,9 @@
   display: flex;
   justify-content: center;
 }
-
+.mdc-list {
+  padding: 0;
+}
 .list-content {
   display: flex;
   flex-direction: row;

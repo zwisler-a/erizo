@@ -14,6 +14,7 @@ import {KeyService} from '../../../../core/crypto/key.service';
 import {ConfirmationService} from '../../../../shared/services/confirmation.service';
 import {URLS} from '../../../../app.routes';
 import {DecryptedPost} from '../../types/decrypted-post.interface';
+import {CommentsViewComponent} from '../comments-view/comments-view.component';
 
 @Component({
   selector: 'app-post',
@@ -31,6 +32,7 @@ import {DecryptedPost} from '../../types/decrypted-post.interface';
     AliasPipePipe,
     MatBadge,
     ReactiveFormsModule,
+    CommentsViewComponent,
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
@@ -80,10 +82,4 @@ export class PostComponent {
     }
   }
 
-  commentPost(value: string) {
-    if (!value) return;
-    if (!this.post) return;
-    this.postService.comment(this.post.id, this.post.thread.participants, value);
-    this.showNewComment = false;
-  }
 }

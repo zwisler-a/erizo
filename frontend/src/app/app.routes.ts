@@ -46,27 +46,74 @@ export const URLS = {
 
 };
 
+
 export const routes: Routes = [
-  {path: 'landing', component: LandingPageComponent},
   {
-    path: '', component: ShellComponent,
+    path: 'landing',
+    loadComponent: () => import('./core/components/landing-page/landing-page.component').then(m => m.LandingPageComponent),
+  },
+  {
+    path: '',
+    loadComponent: () => import('./core/components/shell/shell.component').then(m => m.ShellComponent),
     children: [
-      {path: URLS.HOME, component: HomePageComponent},
-      {path: URLS.SHARE, component: SharePageComponent},
-      {path: URLS.IDENTITY, component: UserPageComponent},
-      {path: URLS.SHARE_IDENTITY, component: ShareIdentityComponent},
-      {path: URLS.SET_APP_AUTH, component: SetAppAuthPageComponent},
-      {path: URLS.CREATE_THREAD, component: CreateThreadViewComponent},
-      {path: URLS.NOTIFICATIONS, component: NotificationPageComponent},
-      {path: URLS.CONNECTIONS, component: ConnectionsPageComponent},
-      {path: URLS.ADD_CONNECTION, component: AddContactViewComponent},
-      {path: URLS.ACCEPT_CONNECTION, component: AcceptConnectionViewComponent},
-      {path: URLS.THREAD, component: ThreadPageComponent, resolve: {thread: ThreadDataResolver}},
-      {path: URLS.VIEW_POST, component: PostViewComponent},
-      {path: URLS.TAKE_PHOTO, component: TakePhotoComponent},
-      {path: URLS.SEND_POST, component: EditPostComponent},
+      {
+        path: URLS.HOME,
+        loadComponent: () => import('./features/post/components/home-page/home-page.component').then(m => m.HomePageComponent),
+      },
+      {
+        path: URLS.SHARE,
+        loadComponent: () => import('./features/post/components/share-page/share-page.component').then(m => m.SharePageComponent),
+      },
+      {
+        path: URLS.IDENTITY,
+        loadComponent: () => import('./features/user/components/user-page/user-page.component').then(m => m.UserPageComponent),
+      },
+      {
+        path: URLS.SHARE_IDENTITY,
+        loadComponent: () => import('./features/connection/components/share-identity/share-identity.component').then(m => m.ShareIdentityComponent),
+      },
+      {
+        path: URLS.SET_APP_AUTH,
+        loadComponent: () => import('./features/user/components/set-app-auth-page/set-app-auth-page.component').then(m => m.SetAppAuthPageComponent),
+      },
+      {
+        path: URLS.CREATE_THREAD,
+        loadComponent: () => import('./features/thread/components/create-thread-view/create-thread-view.component').then(m => m.CreateThreadViewComponent),
+      },
+      {
+        path: URLS.NOTIFICATIONS,
+        loadComponent: () => import('./features/notification/components/notification-page/notification-page.component').then(m => m.NotificationPageComponent),
+      },
+      {
+        path: URLS.CONNECTIONS,
+        loadComponent: () => import('./features/connection/components/connections-page/connections-page.component').then(m => m.ConnectionsPageComponent),
+      },
+      {
+        path: URLS.ADD_CONNECTION,
+        loadComponent: () => import('./features/connection/components/request-connection-view/add-contact-view.component').then(m => m.AddContactViewComponent),
+      },
+      {
+        path: URLS.ACCEPT_CONNECTION,
+        loadComponent: () => import('./features/connection/components/accept-connection-view/accept-connection-view.component').then(m => m.AcceptConnectionViewComponent),
+      },
+      {
+        path: URLS.THREAD,
+        loadComponent: () => import('./features/thread/components/thread-page/thread-page.component').then(m => m.ThreadPageComponent),
+        resolve: {thread: ThreadDataResolver},
+      },
+      {
+        path: URLS.VIEW_POST,
+        loadComponent: () => import('./features/post/components/post-view/post-view.component').then(m => m.PostViewComponent),
+      },
+      {
+        path: URLS.TAKE_PHOTO,
+        loadComponent: () => import('./features/post/components/take-photo/take-photo.component').then(m => m.TakePhotoComponent),
+      },
+      {
+        path: URLS.SEND_POST,
+        loadComponent: () => import('./features/post/components/edit-post/edit-post.component').then(m => m.EditPostComponent),
+      },
       {path: '**', redirectTo: URLS.HOME},
     ],
   },
 ];
-

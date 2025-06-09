@@ -2,7 +2,27 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   height: 100%;
-  gap: 32px;
+  gap: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.manual-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.qrcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px;
+}
+
+
+.info-text {
+  margin: 8px 0;
 }

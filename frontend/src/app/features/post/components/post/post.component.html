@@ -16,7 +16,8 @@
   <div class="post-message">
     <div>
       <div>
-        <b>{{ (post.sender_fingerprint | alias) }} </b> <span class="message" *ngIf="post.decryptedMessage" [innerHTML]="post.decryptedMessage | link "></span>
+        <b>{{ (post.sender_fingerprint | alias) }} </b> <span class="message" *ngIf="post.decryptedMessage"
+                                                              [innerHTML]="post.decryptedMessage | link "></span>
       </div>
       <span class="date">{{ post.created_at | date: "dd.MM HH:mm" }}</span>
     </div>
@@ -24,19 +25,7 @@
       <mat-icon>{{ (isLiked|async) ? 'favorite' : 'favorite_outline' }}</mat-icon>
     </button>
   </div>
-  <div class="comments">
-    <div class="info" (click)="showNewComment = !showNewComment" *ngIf="post.comments.length == 0">Comment ...</div>
-    <div (click)="showNewComment = !showNewComment" *ngFor="let comment of post.comments" class="comment">
-      <span class="user">{{ comment.author.fingerprint | alias }}</span>
-      <span class="content">{{ comment.content }}</span>
-    </div>
-    <div *ngIf="showNewComment" class="new">
-      <input #commentInput>
-      <button mat-icon-button (click)="commentPost(commentInput.value); commentInput.value = ''">
-        <mat-icon>send</mat-icon>
-      </button>
-    </div>
-  </div>
+  <app-comments-view [post]="post"></app-comments-view>
 </div>
 
 

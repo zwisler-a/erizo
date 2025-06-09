@@ -36,23 +36,7 @@ export class ConnectionOptionsComponent {
   ) {
   }
 
-  async scanQr() {
-    const result = await CapacitorBarcodeScanner.scanBarcode({
-      hint: CapacitorBarcodeScannerTypeHint.ALL,
-      scanInstructions: 'Please scan a identity code',
-      scanButton: true,
-      scanText: 'Scan',
-      cameraDirection: CapacitorBarcodeScannerCameraDirection.BACK,
-      scanOrientation: CapacitorBarcodeScannerScanOrientation.ADAPTIVE,
-      android: {
-        scanningLibrary: CapacitorBarcodeScannerAndroidScanningLibrary.ZXING,
-      },
-    });
-    if(result.ScanResult != null) {
-      this.router.navigateByUrl(URLS.ADD_CONNECTION_FN(result.ScanResult));
-      this.close();
-    }
-  }
+
 
   close() {
     this._bottomSheetRef.dismiss();
