@@ -1,25 +1,11 @@
-import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  firstValueFrom,
-  from,
-  map,
-  mergeMap,
-  Observable,
-  OperatorFunction,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
+import {Injectable} from '@angular/core';
+import {firstValueFrom, from, map, mergeMap, Observable, OperatorFunction, switchMap, tap,} from 'rxjs';
 import imageCompression from 'browser-image-compression';
 
-import { PushNotificationSchema } from '@capacitor/push-notifications';
+import {PushNotificationSchema} from '@capacitor/push-notifications';
 import {PostDto} from '../../../api/models/post-dto';
-import {DecryptedPost, EncryptionService} from '../../../core/crypto/encryption.service';
-import {IdsPage} from '../../../api/models/ids-page';
+import {EncryptionService} from '../../../core/crypto/encryption.service';
 import {filterAsync, IndexedDBStore} from '../../../util/local-storage-record';
-import {ContactService} from '../../connection/services/contact.service';
 import {ApiPostService} from '../../../api/services/api-post.service';
 import {
   NotificationPayload,
@@ -27,65 +13,9 @@ import {
   NotificationType
 } from '../../notification/services/notification.service';
 import {UserEntity} from '../../../api/models/user-entity';
-
-export type CompletePost = PostDto & DecryptedPost & { alias: string } & { url: any };
-
-export class PostFeed {
-  public feedIds$ = new BehaviorSubject<number[]>([]);
-  public feed$: Observable<CompletePost[]>;
-  public loading$ = new BehaviorSubject<boolean>(false);
-  public endOfFeed$ = new BehaviorSubject(false);
-  private currentPage = 0;
-
-  constructor(
-    private loadPage: (opts: { page: number, limit: number }) => Observable<IdsPage>,
-    private idsToPostPipe: OperatorFunction<number[], PostDto[]>,
-    private decryptionPipe: OperatorFunction<PostDto[], CompletePost[]>,
-    private pageSize = 3,
-  ) {
-    this.feed$ = this.feedIds$.pipe(
-      tap(_ => this.loading$.next(true)),
-      map(ids => [...new Set(ids)]),
-      this.idsToPostPipe,
-      this.decryptionPipe,
-      map(post => post.sort((a, b) => b.created_at - a.created_at)),
-      tap(_ => this.loading$.next(false)),
-      shareReplay(1),
-    );
-  }
-
-
-  public next() {
-    if (this.loading$.value) return;
-    this.loading$.next(true);
-    this.loadPage({ page: this.currentPage, limit: this.pageSize }).subscribe(page => {
-      this.currentPage++;
-      if (!page.data.length) {
-        this.endOfFeed$.next(true);
-      }
-      this.feedIds$.next([...this.feedIds$.value, ...page.data]);
-    });
-  }
-
-  addPost(id: number) {
-    this.feedIds$.next([id, ...this.feedIds$.value]);
-  }
-
-  removePost(id: number) {
-    this.feedIds$.next([...this.feedIds$.value.filter(a => a !== id)]);
-  }
-
-  public reload() {
-    this.feedIds$.next(this.feedIds$.value);
-  }
-
-  public reset() {
-    this.currentPage = 0;
-    this.endOfFeed$.next(false);
-    this.feedIds$.next([]);
-    this.next();
-  }
-}
+import {PostFeed} from './post-feed.dto';
+import {PostEncryptionService} from './post-encryption.service';
+import {DecryptedPost} from '../types/decrypted-post.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -98,8 +28,7 @@ export class PostService {
 
   constructor(
     private encryptionService: EncryptionService,
-    private contactService: ContactService,
-    private sanitizer: DomSanitizer,
+    private postEncryptionService: PostEncryptionService,
     private postsApi: ApiPostService,
     private notificationService: NotificationService,
   ) {
@@ -114,12 +43,12 @@ export class PostService {
   }
 
   clearImageCache() {
-    this.encryptionService.evictCompleteCache();
+    this.postEncryptionService.evictCache();
     return this.postCache.clear();
   }
 
   clearImageCacheFor(postId: number) {
-    this.encryptionService.evictCompleteCache();
+    this.postEncryptionService.evictCache();
     return this.postCache.delete(postId);
   }
 
@@ -134,7 +63,7 @@ export class PostService {
     if (notification.data['type'] == NotificationType.LIKE_POST) {
       const data = notification.data as any as NotificationPayload;
       if (!data.post_id) return;
-      this.encryptionService.evictCache(Number.parseInt(data.post_id));
+      this.postEncryptionService.evictCache(Number.parseInt(data.post_id));
       this.postCache.delete(Number.parseInt(data.post_id));
     }
   }
@@ -157,7 +86,7 @@ export class PostService {
   getAllPostsFor(threadId: number): PostFeed {
     if (!!this.threadFeeds[threadId]) return this.threadFeeds[threadId];
     const feed = new PostFeed(
-      (opts) => this.postsApi.getPostIdsInThread({ threadId, ...opts }),
+      (opts) => this.postsApi.getPostIdsInThread({threadId, ...opts}),
       this.getPostsByIds(),
       this.postDecryptionPipe(),
       9 * 2,
@@ -166,7 +95,7 @@ export class PostService {
     return feed;
   }
 
-  getPost(postId: number): Observable<CompletePost> {
+  getPost(postId: number): Observable<DecryptedPost> {
     return from([[postId]]).pipe(
       this.getPostsByIds(),
       this.postDecryptionPipe(),
@@ -176,15 +105,15 @@ export class PostService {
 
 
   deletePost(id: number) {
-    return this.postsApi.delete({ postId: id }).pipe(
+    return this.postsApi.delete({postId: id}).pipe(
       tap(() => this.removePostFromFeeds(id)),
     );
   }
 
   likePost(id: number) {
-    return this.postsApi.like({ postId: id }).subscribe(() => {
+    return this.postsApi.like({postId: id}).subscribe(() => {
       this.postCache.delete(id);
-      this.encryptionService.evictCache(id);
+      this.postEncryptionService.evictCache(id);
     });
   }
 
@@ -195,7 +124,7 @@ export class PostService {
       useWebWorker: true,
     };
     const compressedFile = await imageCompression(file, options);
-    const message = await this.encryptionService.encryptImage(compressedFile, textMessage ?? '', contacts);
+    const message = await this.postEncryptionService.encryptPost(compressedFile, textMessage ?? '', contacts);
     const response = await firstValueFrom(this.postsApi.publish({
       body: {
         ...message,
@@ -215,7 +144,7 @@ export class PostService {
           const uncachedIds = await filterAsync(ids, async id => !(await this.postCache.has(id)));
           const cachedPosts: PostDto[] = await Promise.all(cachedIds.map(id => this.postCache.get<PostDto>(id))) as any;
           if (!uncachedIds.length) return cachedPosts;
-          const uncachedPosts = this.postsApi.getPosts({ ids: uncachedIds }).pipe(
+          const uncachedPosts = this.postsApi.getPosts({ids: uncachedIds}).pipe(
             tap(res => {
               res.forEach(post => this.postCache.set(post.id, post));
             }),
@@ -226,50 +155,13 @@ export class PostService {
       );
   }
 
-  private postDecryptionPipe(): OperatorFunction<PostDto[], CompletePost[]> {
-    return (source) => {
-      return source.pipe(
-        mergeMap(async messages =>
-          Promise.all(messages.map(async post => {
-            try {
-              const decryptedPost = await this.encryptionService.decryptPost(post);
-              decryptedPost.comments.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-              return ({ ...post, ...decryptedPost });
-            } catch (e) {
-              console.error(e);
-            }
-            return { ...post, decryptionError: true };
-          })),
-        ),
-        mergeMap(async messages => {
-          const mapped = messages.map(async message => ({
-              ...message,
-              alias: await this.contactService.getAlias(message.sender_fingerprint) ?? message.sender_fingerprint,
-            }),
-          );
-          return Promise.all(mapped);
-        }),
-        this.createUrlPipe(),
-      );
-    };
+  private postDecryptionPipe(): OperatorFunction<PostDto[], DecryptedPost[]> {
+    return (source) => source.pipe(
+      mergeMap(async posts =>
+        Promise.all(posts.map(async post => await this.postEncryptionService.decryptPost(post))),
+      ),
+    );
   }
-
-  private createUrlPipe(): OperatorFunction<any[], CompletePost[]> {
-    return source => {
-      return source.pipe(
-        map(messages => {
-          return messages.map(msg => {
-            const uint8Array = new Uint8Array(msg.data);
-            const binary = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
-            const base64String = window.btoa(binary);
-            const url = this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${base64String}`);
-            return ({ ...msg, url } as any);
-          });
-        }),
-      );
-    };
-  }
-
 
   async comment(id: number, users: UserEntity[], value: string) {
     const comment = await this.encryptionService.encryptText(value, users);
@@ -283,7 +175,7 @@ export class PostService {
       },
     }).subscribe(() => {
       this.postCache.delete(id);
-      this.encryptionService.evictCache(id);
+      this.postEncryptionService.evictCache(id);
       this.reloadPosts();
     });
   }

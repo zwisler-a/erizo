@@ -9,10 +9,11 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {BlurDirective} from '../../../../shared/directives/blur.directive';
 import {LinkPipe} from '../../../../shared/pipes/link.pipe';
 import {AliasPipePipe} from '../../../../shared/pipes/alias.pipe';
-import {CompletePost, PostService} from '../../services/post.service';
+import { PostService} from '../../services/post.service';
 import {KeyService} from '../../../../core/crypto/key.service';
 import {ConfirmationService} from '../../../../shared/services/confirmation.service';
 import {URLS} from '../../../../app.routes';
+import {DecryptedPost} from '../../types/decrypted-post.interface';
 
 @Component({
   selector: 'app-post',
@@ -37,7 +38,7 @@ import {URLS} from '../../../../app.routes';
 export class PostComponent {
   protected readonly URLS = URLS;
   @Input()
-  post!: CompletePost;
+  post!: DecryptedPost;
 
   isOwn;
   isLiked;

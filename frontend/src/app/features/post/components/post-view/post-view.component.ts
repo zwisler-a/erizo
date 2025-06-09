@@ -6,7 +6,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {PostComponent} from '../post/post.component';
 import {PullToRefreshComponent} from '../../../../shared/components/pull-to-refresh/pull-to-refresh.component';
-import {CompletePost, PostService} from '../../services/post.service';
+import {PostService} from '../../services/post.service';
+import {DecryptedPost} from '../../types/decrypted-post.interface';
 
 @Component({
   selector: 'app-post-view',
@@ -22,7 +23,7 @@ import {CompletePost, PostService} from '../../services/post.service';
   styleUrl: './post-view.component.css',
 })
 export class PostViewComponent {
-  post$!: Observable<CompletePost>;
+  post$!: Observable<DecryptedPost>;
 
   constructor(
     private route: ActivatedRoute,

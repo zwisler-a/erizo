@@ -5,8 +5,9 @@ import {AsyncPipe, NgIf} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {Subject} from 'rxjs';
 import {PostComponent} from '../post/post.component';
-import {PostFeed, PostService} from '../../services/post.service';
+import {PostService} from '../../services/post.service';
 import {PullToRefreshComponent} from '../../../../shared/components/pull-to-refresh/pull-to-refresh.component';
+import {PostFeed} from '../../services/post-feed.dto';
 
 @Component({
   selector: 'app-home-page',

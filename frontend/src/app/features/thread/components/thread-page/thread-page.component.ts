@@ -9,10 +9,11 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {AliasPipePipe} from '../../../../shared/pipes/alias.pipe';
 import {BlurDirective} from '../../../../shared/directives/blur.directive';
 import {PullToRefreshComponent} from '../../../../shared/components/pull-to-refresh/pull-to-refresh.component';
-import {PostFeed, PostService} from '../../../post/services/post.service';
+import {PostService} from '../../../post/services/post.service';
 import {ThreadEntity} from '../../../../api/models/thread-entity';
 import {UploadPostJourneyService} from '../../../post/services/upload-post-journey.service';
 import { URLS } from '../../../../app.routes';
+import {PostFeed} from '../../../post/services/post-feed.dto';
 
 @Component({
   selector: 'app-thread-page',
