@@ -1,17 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { MatListModule } from '@angular/material/list';
-import { MatLine } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { Router, RouterLink } from '@angular/router';
-import { URLS } from '../../../../app.routes';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ERROR_SNACKBAR } from '../../../../util/snackbar-consts';
-import {
-  CapacitorBarcodeScanner, CapacitorBarcodeScannerAndroidScanningLibrary,
-  CapacitorBarcodeScannerCameraDirection, CapacitorBarcodeScannerScanOrientation,
-  CapacitorBarcodeScannerTypeHint,
-} from '@capacitor/barcode-scanner';
+import {Component, inject} from '@angular/core';
+import {MatListModule} from '@angular/material/list';
+import {MatLine} from '@angular/material/core';
+import {MatIcon} from '@angular/material/icon';
+import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
+import {Router, RouterLink} from '@angular/router';
+import {URLS} from '../../../../app.routes';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 import {UserService} from '../../../../core/services/user.service';
 
 @Component({

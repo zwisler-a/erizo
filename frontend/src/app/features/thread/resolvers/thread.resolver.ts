@@ -29,7 +29,7 @@ export class ThreadDataResolver implements Resolve<ThreadEntity> {
         if (!res) throw new Error('Thread does not exist');
         return res;
       }),
-      catchError(err => {
+      catchError(_ => {
         this.snackBar.open("There is no such thread with this id.", "Ok", ERROR_SNACKBAR);
         return EMPTY
       })

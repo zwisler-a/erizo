@@ -94,12 +94,12 @@ export class BlurDirective implements AfterViewInit {
 
   @HostListener('mousedown', ['$event'])
   @HostListener('touchstart', ['$event'])
-  onPress(event: Event) {
+  onPress(_: Event) {
     this.removeBlur();
   }
 
-  @HostListener('mouseup')
-  @HostListener('touchend')
+  @HostListener('window:mouseup')
+  @HostListener('window:touchend')
   onRelease() {
     this.applyBlur();
   }

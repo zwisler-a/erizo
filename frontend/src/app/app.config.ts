@@ -1,7 +1,7 @@
 import {
-  ApplicationConfig, ErrorHandler,
+  ApplicationConfig,
+  ErrorHandler,
   importProvidersFrom,
-  isDevMode,
   provideAppInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';

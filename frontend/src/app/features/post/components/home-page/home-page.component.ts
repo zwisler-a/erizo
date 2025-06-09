@@ -36,7 +36,7 @@ export class HomePageComponent {
   }
 
   @HostListener('window:scroll', ['$event'])
-  async onScroll(event: any) {
+  async onScroll(_: any) {
     const element = this.el.nativeElement;
     const scrollPosition = window.innerHeight + window.scrollY;
     const threshold = element.offsetTop + element.clientHeight - 500;

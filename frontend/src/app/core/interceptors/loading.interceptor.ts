@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import {
-  HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse
-} from '@angular/common/http';
-import {Observable, BehaviorSubject} from 'rxjs';
-import {finalize, tap} from 'rxjs/operators';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {finalize} from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class LoadingInterceptor implements HttpInterceptor {

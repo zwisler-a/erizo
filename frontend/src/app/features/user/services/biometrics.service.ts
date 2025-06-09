@@ -20,12 +20,9 @@ export class BiometricsService {
 
     if (!result.isAvailable) return false;
 
-    const verified = await NativeBiometric.verifyIdentity({
-    })
+    return await NativeBiometric.verifyIdentity({})
       .then(() => true)
       .catch(() => false);
-
-    return verified;
   }
 
   hasCredentials() {
