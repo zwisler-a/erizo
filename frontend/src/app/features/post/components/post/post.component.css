@@ -12,7 +12,7 @@
 }
 
 .post-header {
-  padding: 4px 16px 4px 12px;
+  padding: 4px 1rem 4px 12px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -21,7 +21,7 @@
 
 .date {
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .post-header .user {
@@ -32,11 +32,11 @@
 }
 
 .message {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .post-message {
-  padding: 12px 16px 0 16px;
+  padding: 12px 1rem 0 1rem;
   display: flex;
   flex-direction: row;
   overflow-wrap: anywhere;

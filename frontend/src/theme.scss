@@ -5,7 +5,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+
+
 html {
+  font-size: 16px;
   color-scheme: light;
   @include mat.theme((
     color: mat.$violet-palette,
@@ -14,10 +17,22 @@ html {
   ));
 }
 
+@media (min-resolution: 2dppx) {
+  html {
+    font-size: 48px;
+  }
+}
+
 .lightbox-info {
   width: 95%;
   padding: 4px 0;
   box-sizing: border-box;
+}
+
+.mat-icon {
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  font-size: 1.5rem !important;
 }
 
 .no-data {

@@ -1,20 +1,20 @@
 nav {
   display: flex;
   flex-direction: row;
-  gap: 16px;
-  padding: max(env(safe-area-inset-top), 8px) 16px 8px 16px;
+  gap: 1rem;
+  padding: max(env(safe-area-inset-top), 0.5rem) 1rem 0.5rem 1rem;
   position: fixed;
   width: 100vw;
   top: 0;
   box-sizing: border-box;
-  background: linear-gradient(to top, transparent, light-dark(transparent,  rgba(0, 0, 0, 0.6)) 48px);
+  background: linear-gradient(to top, transparent, light-dark(transparent,  rgba(0, 0, 0, 0.6)) 3rem);
   z-index: 999;
 }
 
 
 
 nav div {
-  padding: 8px;
+  padding: 0.5rem;
   cursor: pointer;
 }
 
@@ -27,7 +27,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 64px;
+  padding-top: 4rem;
   box-sizing: border-box;
   max-width: 640px;
   height: calc(100vh - env(safe-area-inset-top));
@@ -38,7 +38,7 @@ main {
   font-family: "Rubik Lines", system-ui;
   font-weight: 400;
   font-style: normal;
-  font-size: 32px;
+  font-size: 2rem;
   position: absolute;
   bottom: 0;
   left: 50%;

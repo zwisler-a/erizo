@@ -2,9 +2,9 @@
   font-family: "Rubik Lines", system-ui;
   font-weight: 400;
   font-style: normal;
-  font-size: 32px;
+  font-size: 2rem;
   position: fixed;
-  top: calc(20px + env(safe-area-inset-top));
+  top: calc(1.25rem + env(safe-area-inset-top));
   left: 50%;
   transform: translate(-50%);
 }
@@ -16,17 +16,17 @@
   align-items: center;
   height: calc(100vh - env(safe-area-inset-top));
   padding-top: env(safe-area-inset-top);
-  gap: 16px;
+  gap: 1rem;
 }
 .explanation {
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: center;
   opacity: 0.8;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 .explanation > div:first-child {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
 }
