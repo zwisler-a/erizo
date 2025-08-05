@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.config.json --host 0.0.0.0",
+    "start": "ng serve --proxy-config proxy.config.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "cap:sync": "npm run build && cap sync",
+    "dev:setup": "node scripts/setup-dev-env.js",
     "generate:api": "ng-openapi-gen"
   },
   "private": true,
@@ -29,7 +30,7 @@
     "@capacitor/android": "^7.2.0",
     "@capacitor/app": "^7.0.1",
     "@capacitor/barcode-scanner": "^2.0.3",
-    "@capacitor/camera": "^7.0.1",
+    "@capacitor/camera": "^7.0.2",
     "@capacitor/core": "^7.2.0",
     "@capacitor/filesystem": "^7.0.1",
     "@capacitor/ios": "^7.2.0",

@@ -3,6 +3,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {CameraPreview, CameraPreviewPictureOptions} from '@capacitor-community/camera-preview';
 import {UploadPostJourneyService} from '../../services/upload-post-journey.service';
+import {Camera, CameraResultType} from '@capacitor/camera';
 
 @Component({
   selector: 'app-take-photo',
@@ -22,7 +23,7 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
 
 
   async startCamera() {
-    CameraPreview.start({parent: 'cameraPreview', disableAudio: true, toBack: true, lockAndroidOrientation: true});
+    CameraPreview.start({parent: 'cameraPreview',width:window.innerWidth, height: window.innerHeight ,disableAudio: true, toBack: true, lockAndroidOrientation: true});
   }
 
   async takePhoto() {
@@ -49,6 +50,13 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
 
   async toggleCamera() {
     CameraPreview.flip();
+  }
+
+  uploadPhoto(): void {
+    Camera.getPhoto({resultType: CameraResultType.DataUrl}).then((photo) => {
+      if(!photo || !photo.dataUrl) return;
+      this.postJourney.setPhoto(photo.dataUrl)
+    })
   }
 
 }

@@ -1,5 +1,5 @@
 <div class="comments">
-  <div class="info" (click)="showNewComment = !showNewComment" *ngIf="post.comments.length == 0">Comment ...</div>
+  <div class="info" (click)="showNewComment = !showNewComment" *ngIf="(post.comments?.length ?? 0) == 0">Comment ...</div>
   <div (click)="showNewComment = !showNewComment" *ngFor="let comment of post.decryptedComments" class="comment">
     <span class="user">{{ comment.author.fingerprint | alias }}</span>
     <span class="content">{{ comment.content }}</span>

@@ -31,8 +31,9 @@ export class UserService {
     const url = `${window.location.origin}/add-contact/${await this.keyService.getOwnFingerprint()}`;
     if (navigator.share) {
       navigator.share({
-        url: url,
+        // url: url,
         title: `Hey, connect with me on erizo!`,
+        text: "Use the fingerprint " + await this.keyService.getOwnFingerprint()
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(url).then(() => {

@@ -12,6 +12,10 @@ import {UserService} from '../../../../core/services/user.service';
 import {PostService} from '../../../post/services/post.service';
 import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 import {URLS} from '../../../../app.routes';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatInput} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ApiConfiguration} from '../../../../api/api-configuration';
 
 
 @Component({
@@ -21,6 +25,11 @@ import {URLS} from '../../../../app.routes';
     MatExpansionModule,
     MatIconModule,
     RouterLink,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    ReactiveFormsModule,
+    FormsModule,
 
   ],
   templateUrl: './user-page.component.html',
@@ -39,6 +48,7 @@ export class UserPageComponent {
     private confirmation: ConfirmationService,
     private userService: UserService,
     private postService: PostService,
+    private apiConfig: ApiConfiguration
   ) {
     this.keyService.getOwnFingerprint().then(fp => {
       this.ownFingerprint = fp;
@@ -106,6 +116,17 @@ export class UserPageComponent {
   async clearImageCache() {
     await this.postService.clearImageCache();
     this.snackBar.open('Post cache cleared!', '', {duration: 2000});
+  }
+
+  setBackendUrl() {
+    this.confirmation.confirmWithInput(`Url: (${this.apiConfig.rootUrl})`, this.apiConfig.rootUrl).subscribe(async (input) => {
+      this.apiConfig.rootUrl = input
+      localStorage.setItem('url', input);
+      if (!input || input === '') {
+        localStorage.removeItem('url');
+      }
+      window.location.reload();
+    })
   }
 
 

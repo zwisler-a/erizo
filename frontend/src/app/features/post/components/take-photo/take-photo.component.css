@@ -37,3 +37,8 @@
   width: 80px;
   height: 80px;
 }
+.controls .upload {
+  position: fixed;
+  bottom: 40px;
+  left: 30px;
+}

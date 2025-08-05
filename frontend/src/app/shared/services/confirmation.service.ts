@@ -17,9 +17,7 @@ export class ConfirmationService {
   confirmWithInput(message: string, placeholder: string): Observable<string> {
     return new Observable((observer) => {
       const userInput = prompt(message, placeholder);
-      if (userInput) {
-        observer.next(userInput);
-      }
+      observer.next(userInput || '');
       observer.complete();
     });
   }

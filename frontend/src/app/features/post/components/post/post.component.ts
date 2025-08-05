@@ -61,7 +61,7 @@ export class PostComponent {
 
   async isLikedByUser() {
     const ownFp = await this.keyService.getOwnFingerprint();
-    return !!this.post.likes.find((like: any) => like.userFingerprint == ownFp);
+    return !!this.post.likes?.find((like: any) => like.userFingerprint == ownFp);
   }
 
   deletePost() {

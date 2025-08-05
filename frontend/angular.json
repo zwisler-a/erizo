@@ -74,6 +74,12 @@
               "buildTarget": "frontend:build:development"
             }
           },
+          "options": {
+            "ssl": true,
+            "sslKey": "certs/dev.key",
+            "sslCert": "certs/dev.crt",
+            "host": "0.0.0.0"
+          },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {

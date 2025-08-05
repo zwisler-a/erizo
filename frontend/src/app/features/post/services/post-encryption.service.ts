@@ -66,6 +66,7 @@ export class PostEncryptionService {
   }
 
   private async decryptComment(post: PostDto, privateKey: CryptoKey, fingerprint: string): Promise<CommentEntity[]> {
+    if(!post.comments) return [];
     const comments = await Promise.all(post.comments.map(async comment => {
       const decryptionKey = comment.decryptionKeys.find(key => key.recipient_fingerprint === fingerprint);
       if (decryptionKey) {
