@@ -54,15 +54,18 @@ export class NotificationService {
     const isPushNotificationsAvailable = Capacitor.isPluginAvailable('PushNotifications');
     if (!isPushNotificationsAvailable) {
       console.log('PushNotifications not available');
-      return;
+      return false;
     }
     PushNotifications.requestPermissions().then(result => {
       if (result.receive === 'granted') {
         PushNotifications.register();
+      } else {
+        this.snackBar.open('Push notification permissions denied!', 'Ok', ERROR_SNACKBAR);
       }
     });
 
     PushNotifications.addListener('registration', (token: Token) => {
+      this.snackBar.open('Push token retrieved', 'Ok', {duration: 1000});
       this.userApi.registerDevice({body: {fcmToken: token.value}}).subscribe(() => {
       });
     });

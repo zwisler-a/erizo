@@ -25,7 +25,7 @@ export class UserController {
       const user = req.user as UserEntity;
       const body = req.body as RegisterDeviceDto;
       const added = await this.userService.registerDevice(user, body.fcmToken);
-      this.logger.debug(`Registering device for user ${user.fingerprint}`)
+      this.logger.debug(`Registering device for user ${user.fingerprint}`);
       if (added) await this.notificationService.notify(user, { type: NotificationType.DEVICE_ADDED });
       return { success: true };
     } catch (e) {
