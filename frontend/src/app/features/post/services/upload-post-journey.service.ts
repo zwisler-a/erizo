@@ -12,6 +12,7 @@ export class UploadPostJourneyService {
 
   previewPhoto?: string;
   isNsfw = false;
+  isVideo = false;
   message: string = "";
   deleteAfter: undefined | number = undefined;
   threadId?: number = undefined;
@@ -51,12 +52,13 @@ export class UploadPostJourneyService {
     console.log(thread?.participants)
     if (!thread) throw new Error('Thread could not be found');
     await this.postService.publishPost(
-      this.base64ToFile(this.previewPhoto, "image.png"),
+      this.base64ToFile(this.previewPhoto, this.isVideo ? "video.mp4" : "image.png"),
       this.threadId,
       [...thread.participants],
       this.message,
       this.deleteAfter,
-      this.isNsfw
+      this.isNsfw,
+      this.isVideo
     );
     if (!this.isShare) {
       this.router.navigateByUrl('/');
@@ -128,5 +130,11 @@ export class UploadPostJourneyService {
 
       }
     }).catch(err => console.error(err));
+  }
+
+  setVideo(path: string) {
+    this.previewPhoto = path;
+    this.isVideo = true;
+    this.router.navigateByUrl(URLS.SEND_POST);
   }
 }

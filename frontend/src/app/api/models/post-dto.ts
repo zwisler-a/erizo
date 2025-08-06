@@ -19,4 +19,5 @@ export interface PostDto {
   nsfw: boolean;
   sender_fingerprint: string;
   thread: ThreadEntity;
+  type: 'image' | 'video';
 }

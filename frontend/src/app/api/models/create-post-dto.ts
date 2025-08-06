@@ -12,4 +12,5 @@ export interface CreatePostDto {
   recipients: Array<RecipientList>;
   sender_fingerprint: string;
   thread_id: number;
+  type: 'image' | 'video';
 }

@@ -6,13 +6,12 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { ApiUserService } from './services/api-user.service';
-import { ApiPostService } from './services/api-post.service';
-import { ApiAuthenticationService } from './services/api-authentication.service';
-import { ApiConnectionService } from './services/api-connection.service';
-import { ApiThreadService } from './services/api-thread.service';
 import { ApiLoggerService } from './services/api-logger.service';
-import { ApiShareService } from './services/api-share.service';
+import { ApiAuthenticationService } from './services/api-authentication.service';
+import { ApiPostService } from './services/api-post.service';
+import { ApiThreadService } from './services/api-thread.service';
+import { ApiUserService } from './services/api-user.service';
+import { ApiConnectionService } from './services/api-connection.service';
 
 /**
  * Module that provides all services and configuration.
@@ -22,13 +21,12 @@ import { ApiShareService } from './services/api-share.service';
   exports: [],
   declarations: [],
   providers: [
-    ApiUserService,
-    ApiPostService,
-    ApiAuthenticationService,
-    ApiConnectionService,
-    ApiThreadService,
     ApiLoggerService,
-    ApiShareService,
+    ApiAuthenticationService,
+    ApiPostService,
+    ApiThreadService,
+    ApiUserService,
+    ApiConnectionService,
     ApiConfiguration
   ],
 })

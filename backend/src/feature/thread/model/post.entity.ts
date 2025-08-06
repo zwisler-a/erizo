@@ -15,6 +15,10 @@ export class PostEntity {
   @Column()
   sender_fingerprint: string;
 
+  @ApiProperty({ enum: ['image', 'video'] })
+  @Column({ default: 'image' })
+  type: 'image' | 'video';
+
   @ApiProperty({ type: PostDecryptionKeyEntity, isArray: true })
   @OneToMany(() => PostDecryptionKeyEntity, (user) => user.post, { cascade: true, onDelete: 'CASCADE' })
   decryptionKeys: PostDecryptionKeyEntity[];
@@ -51,8 +55,7 @@ export class PostEntity {
   @OneToMany(() => LikeEntity, (like) => like.post, { cascade: false })
   likes: LikeEntity[];
 
-  @ApiProperty({type: CommentEntity, isArray: true })
-  @OneToMany(() => CommentEntity, comment => comment.post)
+  @ApiProperty({ type: CommentEntity, isArray: true })
+  @OneToMany(() => CommentEntity, (comment) => comment.post)
   comments: CommentEntity[];
-
 }

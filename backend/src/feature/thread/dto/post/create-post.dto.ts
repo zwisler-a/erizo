@@ -10,6 +10,8 @@ export class RecipientList {
 export class CreatePostDto {
   @ApiProperty()
   data: string;
+  @ApiProperty({ enum: ['image', 'video'] })
+  type: 'image' | 'video';
   @ApiProperty()
   message: string;
   @ApiProperty()

@@ -117,13 +117,19 @@ export class PostService {
     });
   }
 
-  async publishPost(file: File, threadId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number, nsfw?: boolean) {
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-    const compressedFile = await imageCompression(file, options);
+  async publishPost(file: File, threadId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number, nsfw?: boolean, isVideo?: boolean) {
+    let compressedFile;
+    if(!isVideo) {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+      compressedFile = await imageCompression(file, options);
+    } else {
+      compressedFile = file;
+    }
+
     const message = await this.postEncryptionService.encryptPost(compressedFile, textMessage ?? '', contacts);
     const response = await firstValueFrom(this.postsApi.publish({
       body: {
@@ -131,6 +137,7 @@ export class PostService {
         days_to_live: daysToLive,
         thread_id: threadId,
         nsfw,
+        type: isVideo ? 'video' : 'image',
       },
     }));
     this.addPostToFeeds(response.post_id);

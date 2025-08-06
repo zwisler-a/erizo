@@ -4,6 +4,7 @@ import {MatIconButton} from '@angular/material/button';
 import {CameraPreview, CameraPreviewPictureOptions} from '@capacitor-community/camera-preview';
 import {UploadPostJourneyService} from '../../services/upload-post-journey.service';
 import {Camera, CameraResultType, CameraSource} from '@capacitor/camera';
+import {FilePicker} from '@capawesome/capacitor-file-picker';
 
 @Component({
   selector: 'app-take-photo',
@@ -23,7 +24,14 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
 
 
   async startCamera() {
-    CameraPreview.start({parent: 'cameraPreview',width:window.innerWidth, height: window.innerHeight ,disableAudio: true, toBack: true, lockAndroidOrientation: true});
+    CameraPreview.start({
+      parent: 'cameraPreview',
+      width: window.innerWidth,
+      height: window.innerHeight,
+      disableAudio: true,
+      toBack: true,
+      lockAndroidOrientation: true
+    });
   }
 
   async takePhoto() {
@@ -52,11 +60,21 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
     CameraPreview.flip();
   }
 
-  uploadPhoto(): void {
-    Camera.getPhoto({resultType: CameraResultType.DataUrl, source: CameraSource.Photos}).then((photo) => {
-      if(!photo || !photo.dataUrl) return;
-      this.postJourney.setPhoto(photo.dataUrl)
-    })
+  async uploadPhoto() {
+    const result = await FilePicker.pickMedia({
+      readData: true,
+      limit: 1
+    });
+
+    if (result.files.length > 0) {
+      const file = result.files[0];
+      if (file.mimeType.startsWith('image/')) {
+        this.postJourney.setPhoto(`data:${file.mimeType};base64,${file.data}`);
+      } else if (file.mimeType.startsWith('video/')) {
+        const base64Video = `data:${file.mimeType};base64,${file.data}`;
+        this.postJourney.setVideo(base64Video);
+      }
+    }
   }
 
 }
