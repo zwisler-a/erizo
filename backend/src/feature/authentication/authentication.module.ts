@@ -10,7 +10,6 @@ import { AuthGuard } from './guard/auth.guard';
 import { ChallengeValidationGuard } from './guard/challenge-validation.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtSecret } from '../../constants';
-import { UserController } from './controller/user.controller';
 
 @Module({
   imports: [
@@ -21,7 +20,7 @@ import { UserController } from './controller/user.controller';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  controllers: [AuthenticationController, UserController],
+  controllers: [AuthenticationController],
   providers: [UserService, ChallengeService, CryptoService, ChallengeValidationGuard, AuthGuard],
   exports: [UserService, AuthGuard],
 })

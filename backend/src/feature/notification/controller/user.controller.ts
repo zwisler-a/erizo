@@ -1,10 +1,10 @@
 import { Controller, HttpException, HttpStatus, Logger, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../guard/auth.guard';
-import { UserEntity } from '../model/user.entity';
-import { UserService } from '../service/user.service';
-import { RegisterDeviceDto } from '../dto/register-device.dto';
-import { NotificationService, NotificationType } from '../../notification/service/notification.service';
+import { AuthGuard } from '../../authentication/guard/auth.guard';
+import { UserEntity } from '../../authentication/model/user.entity';
+import { UserService } from '../../authentication/service/user.service';
+import { RegisterDeviceDto } from '../../authentication/dto/register-device.dto';
+import { NotificationService, NotificationType } from '../service/notification.service';
 
 @ApiTags('User')
 @Controller('user')
