@@ -6,7 +6,7 @@ import {CommentEntity} from '../../../api/models/comment-entity';
 import {DomSanitizer} from '@angular/platform-browser';
 import {DecryptedPost} from '../types/decrypted-post.interface';
 import {UserEntity} from '../../../api/models/user-entity';
-import {MessageCreation} from '../../../types/message-creation';
+import {MessageCreation} from '../types/message-creation';
 
 
 @Injectable({providedIn: 'root'})

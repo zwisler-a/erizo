@@ -2,9 +2,8 @@
 <div class="info-text">My fingerprint: {{ fingerprint | async }}</div>
 
 <button (click)="share()" mat-stroked-button>Share Fingerprint</button>
-
-<br>
 <h3>Add Contact by fingerprint</h3>
+<p>Get the fingerprint of the user you want to add. Your fingerprint can be found above!</p>
 <mat-form-field>
   <mat-label>Fingerprint</mat-label>
   <input #fingerprintInput [required]="true" matInput/>
@@ -13,11 +12,9 @@
   <mat-icon>add</mat-icon>
   Add
 </button>
-
-<br>
+<hr />
 <h3>Add contact by QR Code</h3>
-
-
+<p>Share the fingerprint using a QR Code. Either scan the QR Code of the user you want to add or let the user scan your QR Code.</p>
 <div class="qrcode">
   <qr-code [value]="(fingerprint | async) ?? ''"
            errorCorrectionLevel="H"
