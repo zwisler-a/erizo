@@ -106,6 +106,7 @@ export class PostService {
       .filter((post) => !post.days_to_live || post.created_at + 60 * 60 * 1000 * 24 * post.days_to_live > Date.now())
       .map((post) => ({
         ...post,
+        likes: post.likes ? post.likes : [],
         file_path: undefined,
         data: this.fileService.retrieve(new FilePointer(post.file_path)),
       }));
