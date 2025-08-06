@@ -2,7 +2,7 @@
     <div class="post-header">
         <div class="user" [routerLink]="[URLS.THREAD_FN(post.thread?.id ?? 0)]">
             <mat-icon>{{ post.days_to_live ? 'schedule' : 'account_circle' }}</mat-icon>
-            {{ !!post.thread?.name ? (post.sender_fingerprint | alias) + ' @ ' + post.thread?.name : (post.sender_fingerprint | alias) }}
+            {{ postTitle$ | async }}
         </div>
 
         <mat-icon class="menu" *ngIf="isOwn | async" [matMenuTriggerFor]="menu">more_vert</mat-icon>

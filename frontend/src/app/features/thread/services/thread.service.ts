@@ -39,4 +39,8 @@ export class ThreadService {
   getThread(threadId: number) {
     return this.threadApi.getThread({threadId})
   }
+
+  refresh() {
+    this.reloadThreads$.next(void 0);
+  }
 }

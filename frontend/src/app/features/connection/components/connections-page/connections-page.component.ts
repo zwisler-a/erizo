@@ -14,6 +14,7 @@ import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {ThreadEntity} from '../../../../api/models/thread-entity';
 import {URLS} from '../../../../app.routes';
 import {ConnectionOptionsComponent} from '../connection-options/connection-options.component';
+import {ThreadService} from '../../../thread/services/thread.service';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class ConnectionsPageComponent {
 
   constructor(
     private contactService: ContactService,
+    private threadService: ThreadService,
     private router: Router,
     private bottomSheet: MatBottomSheet,
   ) {
@@ -40,6 +42,7 @@ export class ConnectionsPageComponent {
 
   refresh($event: Subject<any>) {
     this.contactService.refresh();
+    this.threadService.refresh();
     setTimeout(() => {
       $event.next('');
     }, 100);

@@ -9,13 +9,15 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {BlurDirective} from '../../../../shared/directives/blur.directive';
 import {LinkPipe} from '../../../../shared/pipes/link.pipe';
 import {AliasPipePipe} from '../../../../shared/pipes/alias.pipe';
-import { PostService} from '../../services/post.service';
+import {PostService} from '../../services/post.service';
 import {KeyService} from '../../../../core/crypto/key.service';
 import {ConfirmationService} from '../../../../shared/services/confirmation.service';
 import {URLS} from '../../../../app.routes';
 import {DecryptedPost} from '../../types/decrypted-post.interface';
 import {CommentsViewComponent} from '../comments-view/comments-view.component';
 import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import {ContactService} from '../../../connection/services/contact.service';
+import {BehaviorSubject, from, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-post',
@@ -36,23 +38,34 @@ import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-she
     CommentsViewComponent,
     MatBottomSheetModule
   ],
+  providers: [AliasPipePipe],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
 })
 export class PostComponent {
   protected readonly URLS = URLS;
-  @Input()
-  post!: DecryptedPost;
+
+  @Input() set post(value: DecryptedPost) {
+    this._post = value;
+    this.updatePostTitle();
+  }
+
+  get post(): DecryptedPost {
+    return this._post;
+  }
+
+  private _post: any;
+  postTitle$ = new BehaviorSubject<string>('');
 
   isOwn;
   isLiked;
-  showNewComment = false;
 
   constructor(
     private keyService: KeyService,
     private postService: PostService,
     private confirmationService: ConfirmationService,
-    private bottomSheet: MatBottomSheet
+    private bottomSheet: MatBottomSheet,
+    private contactService: ContactService
   ) {
     this.isOwn = this.isOwnEval();
     this.isLiked = this.isLikedByUser();
@@ -91,5 +104,36 @@ export class PostComponent {
       ariaLabel: 'Comments',
       panelClass: 'bottomsheet-comments',
     });
+  }
+
+  private async updatePostTitle() {
+    if (this.post?.thread?.name) {
+      const alias = await this.contactService.getAlias(this.post.sender_fingerprint);
+      this.postTitle$.next(`${alias} @ ${this.post.thread.name}`);
+      return;
+    }
+
+    if (this.post?.thread?.participants?.length === 2) {
+      const ownFp = await this.keyService.getOwnFingerprint();
+      if (!ownFp) throw new Error(`${this.post.thread.name} not found`);
+
+
+      const recps = this.post.thread.participants.filter(
+        (participant: any) => participant.fingerprint !== this.post.sender_fingerprint
+      );
+      if (recps.length !== 1) return;
+      const recp = recps[0];
+      if (!recp?.fingerprint) {
+        this.postTitle$.next('Unknown');
+        return;
+      }
+
+      const senderAlias = await this.contactService.getAlias(this.post.sender_fingerprint);
+      const recpAlias = await this.contactService.getAlias(recp.fingerprint);
+      this.postTitle$.next(`${senderAlias} to ${recpAlias}`);
+      return;
+    }
+
+    this.postTitle$.next('');
   }
 }
