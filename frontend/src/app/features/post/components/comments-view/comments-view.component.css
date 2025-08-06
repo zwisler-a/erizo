@@ -6,6 +6,13 @@
   padding: 0 1rem 1rem;
 }
 
+.message {
+  padding: 1rem 0;
+}
+
+.more-comments {
+  opacity: 0.5;
+}
 
 .comment .user {
   font-weight: bold;

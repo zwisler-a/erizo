@@ -15,6 +15,7 @@ import {ConfirmationService} from '../../../../shared/services/confirmation.serv
 import {URLS} from '../../../../app.routes';
 import {DecryptedPost} from '../../types/decrypted-post.interface';
 import {CommentsViewComponent} from '../comments-view/comments-view.component';
+import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-post',
@@ -33,6 +34,7 @@ import {CommentsViewComponent} from '../comments-view/comments-view.component';
     MatBadge,
     ReactiveFormsModule,
     CommentsViewComponent,
+    MatBottomSheetModule
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
@@ -50,6 +52,7 @@ export class PostComponent {
     private keyService: KeyService,
     private postService: PostService,
     private confirmationService: ConfirmationService,
+    private bottomSheet: MatBottomSheet
   ) {
     this.isOwn = this.isOwnEval();
     this.isLiked = this.isLikedByUser();
@@ -82,4 +85,11 @@ export class PostComponent {
     }
   }
 
+  openComments() {
+    const bottomSheetRef = this.bottomSheet.open(CommentsViewComponent, {
+      data: {post: this.post},
+      ariaLabel: 'Comments',
+      panelClass: 'bottomsheet-comments',
+    });
+  }
 }

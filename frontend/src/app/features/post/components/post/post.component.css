@@ -42,12 +42,11 @@
   overflow-wrap: anywhere;
   justify-content: start;
   align-items: start;
+  margin-bottom: 8px;
 }
 
 .post-message > div {
-  flex: 1 1 auto;
   max-width: 100%;
-  overflow: hidden;
   text-wrap: auto;
 }
 
@@ -55,3 +54,15 @@
   cursor: pointer;
 }
 
+.post-message-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 100%;
+}
+
+.post-message-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}

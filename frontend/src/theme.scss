@@ -94,3 +94,10 @@ router-outlet + * {
     opacity: 1;
   }
 }
+
+
+.bottomsheet-comments .comments {
+  padding: 1rem !important;
+  max-width: 600px !important;
+  margin: auto;
+}

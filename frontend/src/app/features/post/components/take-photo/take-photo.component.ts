@@ -3,7 +3,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {CameraPreview, CameraPreviewPictureOptions} from '@capacitor-community/camera-preview';
 import {UploadPostJourneyService} from '../../services/upload-post-journey.service';
-import {Camera, CameraResultType} from '@capacitor/camera';
+import {Camera, CameraResultType, CameraSource} from '@capacitor/camera';
 
 @Component({
   selector: 'app-take-photo',
@@ -53,7 +53,7 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
   }
 
   uploadPhoto(): void {
-    Camera.getPhoto({resultType: CameraResultType.DataUrl}).then((photo) => {
+    Camera.getPhoto({resultType: CameraResultType.DataUrl, source: CameraSource.Photos}).then((photo) => {
       if(!photo || !photo.dataUrl) return;
       this.postJourney.setPhoto(photo.dataUrl)
     })

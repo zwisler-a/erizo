@@ -1,13 +1,18 @@
 <div class="comments">
-  <div class="info" (click)="showNewComment = !showNewComment" *ngIf="(post.comments?.length ?? 0) == 0">Comment ...</div>
-  <div (click)="showNewComment = !showNewComment" *ngFor="let comment of post.decryptedComments" class="comment">
-    <span class="user">{{ comment.author.fingerprint | alias }}</span>
-    <span class="content">{{ comment.content }}</span>
-  </div>
-  <div *ngIf="showNewComment" class="new">
-    <input #commentInput>
-    <button mat-icon-button (click)="commentPost(commentInput.value); commentInput.value = ''">
-      <mat-icon>send</mat-icon>
-    </button>
-  </div>
+    <div *ngIf="data?.post && post.decryptedMessage?.length" class="message">
+        <b>{{ post.sender_fingerprint | alias }}</b> {{post.decryptedMessage}}
+    </div>
+    <div *ngFor="let comment of getLimitedComments(post.decryptedComments)" class="comment">
+        <span class="user">{{ comment.author.fingerprint | alias }}</span>
+        <span class="content">{{ comment.content }}</span>
+    </div>
+    <div (click)="openBottomSheet()" class="more-comments"
+         *ngIf="limit != 0 && ((post.decryptedComments?.length ?? 0) > limit)">More ...
+    </div>
+    <div *ngIf="showNewComment" class="new">
+        <input #commentInput>
+        <button mat-icon-button (click)="commentPost(commentInput.value); commentInput.value = ''">
+            <mat-icon>send</mat-icon>
+        </button>
+    </div>
 </div>
