@@ -21,7 +21,7 @@ import {LoadingInterceptor} from './core/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    importProvidersFrom(ApiModule.forRoot({rootUrl: localStorage.getItem('url') || 'https://192.168.178.179:4200'})),
+    importProvidersFrom(ApiModule.forRoot({rootUrl: localStorage.getItem('url') || 'https://erizo.zwisler.dev'})),
     provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
     provideAnimationsAsync(),
