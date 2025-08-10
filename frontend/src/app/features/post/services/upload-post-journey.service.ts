@@ -133,6 +133,10 @@ export class UploadPostJourneyService {
   }
 
   setVideo(path: string) {
+    if ((path.length * 3 / 4) / 1e6 > 15) {
+      console.log((path.length * 3 / 4) / 1e6)
+      throw new Error(`Video is too large!`);
+    }
     this.previewPhoto = path;
     this.isVideo = true;
     this.router.navigateByUrl(URLS.SEND_POST);
