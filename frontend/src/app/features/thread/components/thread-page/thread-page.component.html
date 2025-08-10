@@ -28,12 +28,20 @@
   <div class="images" *ngIf="(posts?.feed$ | async)?.length || (posts?.loading$|async); else noMessages">
     @for (post of posts?.feed$ | async; track post.id) {
       <div class="image">
-        <img [appBlur]="post.nsfw"
+        <img *ngIf="post.type == 'image'"
+             [appBlur]="post.nsfw"
              [appBlurAlways]="true"
              [appBlurOverlay]="blurry"
              [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
              [src]="post.imageUrl"
              alt="">
+        <video *ngIf="post.type == 'video'" [appBlur]="post.nsfw"
+               [appBlurAlways]="true"
+               autoplay loop
+               [appBlurOverlay]="blurry"
+               [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
+               [src]="post.imageUrl"
+        ></video>
       </div>
     }
   </div>

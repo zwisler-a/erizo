@@ -1,41 +1,42 @@
 <div class="post-container" *ngIf="post">
-    <div class="post-header">
-        <div class="user" [routerLink]="[URLS.THREAD_FN(post.thread?.id ?? 0)]">
-            <mat-icon>{{ post.days_to_live ? 'schedule' : 'account_circle' }}</mat-icon>
-            {{ postTitle$ | async }}
-        </div>
+  <div class="post-header">
+    <div class="user" [routerLink]="[URLS.THREAD_FN(post.thread?.id ?? 0)]">
+      <mat-icon>{{ post.days_to_live ? 'schedule' : 'account_circle' }}</mat-icon>
+      {{ postTitle$ | async }}
+    </div>
 
-        <mat-icon class="menu" *ngIf="isOwn | async" [matMenuTriggerFor]="menu">more_vert</mat-icon>
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="deletePost()">Delete</button>
-        </mat-menu>
+    <mat-icon class="menu" *ngIf="isOwn | async" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="deletePost()">Delete</button>
+    </mat-menu>
+  </div>
+  <div class="post-image-container">
+    <img class="post-image" *ngIf="post.type == 'image'" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.imageUrl" alt="">
+    <video autoplay loop class="post-image" *ngIf="post.type == 'video'" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.imageUrl" alt=""></video>
+  </div>
+  <div class="post-message">
+    <div class="post-message-container">
+      <div>
+        <b>{{ (post.sender_fingerprint | alias) }} </b> <span class="message" *ngIf="post.decryptedMessage"
+                                                              [innerHTML]="post.decryptedMessage | link "></span>
+      </div>
+      <span class="date">{{ post.created_at | date: "dd.MM HH:mm" }}</span>
     </div>
-    <div class="post-image-container">
-        <img class="post-image" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.imageUrl" alt="">
+    <div class="post-message-actions">
+      <button mat-icon-button (click)="openComments()">
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+      <button *ngIf="!(isOwn|async); else ownLikes" mat-icon-button (click)="likePost()">
+        <mat-icon>{{ (isLiked|async) ? 'favorite' : 'favorite_outline' }}</mat-icon>
+      </button>
     </div>
-    <div class="post-message">
-        <div class="post-message-container">
-            <div>
-                <b>{{ (post.sender_fingerprint | alias) }} </b> <span class="message" *ngIf="post.decryptedMessage"
-                                                                      [innerHTML]="post.decryptedMessage | link "></span>
-            </div>
-            <span class="date">{{ post.created_at | date: "dd.MM HH:mm" }}</span>
-        </div>
-        <div class="post-message-actions">
-            <button mat-icon-button (click)="openComments()">
-                <mat-icon>chat_bubble_outline</mat-icon>
-            </button>
-            <button *ngIf="!(isOwn|async); else ownLikes" mat-icon-button (click)="likePost()">
-                <mat-icon>{{ (isLiked|async) ? 'favorite' : 'favorite_outline' }}</mat-icon>
-            </button>
-        </div>
-    </div>
-    <app-comments-view [limit]="2" [post]="post"></app-comments-view>
+  </div>
+  <app-comments-view [limit]="2" [post]="post"></app-comments-view>
 </div>
 
 
 <ng-template #blurry>
-    <mat-icon>local_fire_department</mat-icon>
+  <mat-icon>local_fire_department</mat-icon>
 </ng-template>
 <ng-template #ownLikes>
   <button mat-icon-button>

@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from '../model/post.entity';
 import { In, Repository } from 'typeorm';
@@ -48,10 +48,11 @@ export class PostService {
       sender_fingerprint: user.fingerprint,
       file_path: file.relativePath,
       days_to_live: post.days_to_live,
+      type: post.type,
       nsfw: post.nsfw ?? false,
     });
     const savedEntity = await this.postRepo.save(postEntity);
-    for (let recipient of post.recipients) {
+    for (const recipient of post.recipients) {
       if (recipient.fingerprint !== user.fingerprint) {
         await this.notificationService.notify(
           { fingerprint: recipient.fingerprint },

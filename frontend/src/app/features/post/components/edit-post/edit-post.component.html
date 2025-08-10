@@ -32,7 +32,8 @@
   </button>
 </div>
 
-<img #image class="preview-image" *ngIf="uploadJourney.previewPhoto" [src]="uploadJourney.previewPhoto"/>
+<img #image class="preview-image" *ngIf="!uploadJourney.isVideo && uploadJourney.previewPhoto" [src]="uploadJourney.previewPhoto"/>
+<video class="preview-image" *ngIf="uploadJourney.isVideo && uploadJourney.previewPhoto" [src]="uploadJourney.previewPhoto" autoplay loop></video>
 <div class="manipulations">
   <button (click)="flipX()" mat-icon-button>
     <mat-icon>swap_horiz</mat-icon>

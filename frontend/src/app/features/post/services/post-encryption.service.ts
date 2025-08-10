@@ -52,7 +52,13 @@ export class PostEncryptionService {
     const uint8Array = new Uint8Array(imageData);
     const binary = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
     const base64String = window.btoa(binary);
-    const imageAsUrl = this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${base64String}`);
+    let imageAsUrl;
+    if(post.type == 'video') {
+      imageAsUrl = this.sanitizer.bypassSecurityTrustUrl(`data:video/mp4;base64,${base64String}`);
+    } else {
+       imageAsUrl = this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${base64String}`);
+    }
+
 
     const decryptedPost = {
       ...post,
