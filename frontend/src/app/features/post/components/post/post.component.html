@@ -39,11 +39,11 @@
 </ng-template>
 <ng-template #ownLikes>
   <button mat-icon-button>
-    <mat-icon [matBadgeHidden]="post.likes?.length == 0" [matBadge]="post.likes.length" [matMenuTriggerFor]="menu">favorite</mat-icon>
+    <mat-icon [matBadgeHidden]="post.likes?.length == 0" [matBadge]="post.likes?.length" [matMenuTriggerFor]="menu">favorite</mat-icon>
   </button>
 </ng-template>
 <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngFor="let liker of post.likes">
+    <button mat-menu-item *ngFor="let liker of post?.likes">
         {{ liker.userFingerprint | alias }}
     </button>
 </mat-menu>
