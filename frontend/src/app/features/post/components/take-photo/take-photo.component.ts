@@ -19,6 +19,9 @@ import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 })
 export class TakePhotoComponent implements AfterViewInit, OnDestroy {
 
+  private W = window.innerWidth;
+  private H = Math.round(this.W * 4 / 3);
+
   constructor(private postJourney: UploadPostJourneyService, private snackbar: MatSnackBar) {
   }
 
@@ -26,9 +29,9 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
   async startCamera() {
     CameraPreview.start({
       parent: 'cameraPreview',
-      width: window.innerWidth,
-      height: window.innerHeight,
-      lockAndroidOrientation: true,
+      width: this.W, height: this.H,
+      x: 0,
+      y: Math.round((window.innerHeight - this.H)/2),
       enableZoom: true,
       toBack: true
     });
@@ -36,26 +39,12 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
 
   async takePhoto() {
     const cameraPreviewPictureOptions: CameraPreviewPictureOptions = {
-      quality: 90,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      quality: 90, width: this.W, height: this.H,
     };
 
     const result = await CameraPreview.capture(cameraPreviewPictureOptions);
 
     this.postJourney.setPhoto(`data:image/jpeg;base64,${result.value}`);
-  }
-
-  async startVideo() {
-    await CameraPreview.startRecordVideo({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      disableAudio: true,
-    })
-  }
-
-  async stopVideo() {
-    const resultRecordVideo = await CameraPreview.stopRecordVideo();
   }
 
   stopCamera() {
@@ -72,7 +61,7 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
 
   async toggleCamera() {
     if (Capacitor.getPlatform() === 'web') {
-      this.snackbar.open("Sorry, implementing this on the web is too much of a headache ...", "", ERROR_SNACKBAR);
+      this.snackbar.open("Sorry, implementing this on the web is too much of a headache ...", "OK", ERROR_SNACKBAR);
     } else {
       await CameraPreview.flip();
     }

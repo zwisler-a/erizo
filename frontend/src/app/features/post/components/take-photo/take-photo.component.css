@@ -1,6 +1,6 @@
 :host {
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   position: fixed;
   display: block;
   width: 100vw;
@@ -8,13 +8,14 @@
   overflow: hidden;
 }
 
-.cameraPreview {
-  position: absolute;
-  top: 0;
+#cameraPreview {
+  position: fixed;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  right: 0;
+  width: 100vw;
+  height: calc(100vw * 0.75); /* 4:3 */
+  top: 50%;
+  transform: translateY(-50%); /* center; creates letterbox if needed */
 }
 
 .controls .switch {
@@ -32,24 +33,16 @@
   height: 80px;
   padding: 0;
 }
+
 .controls .trigger .mat-icon {
   font-size: 5rem;
   width: 80px;
   height: 80px;
 }
+
 .controls .upload {
   position: fixed;
   bottom: 40px;
   left: 30px;
 }
 
-.controls .record {
-  position: fixed;
-  right: 10px;
-  top: 50%;
-}
-
-video {
-  width: 100vw;
-  height: 100vh;
-}

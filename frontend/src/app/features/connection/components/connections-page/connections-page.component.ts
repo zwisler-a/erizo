@@ -37,6 +37,7 @@ export class ConnectionsPageComponent {
 
 
   navigateToThread(thread: ThreadEntity) {
+    if(!thread || !thread.id) return;
     this.router.navigateByUrl(URLS.THREAD_FN(thread.id));
   }
 
