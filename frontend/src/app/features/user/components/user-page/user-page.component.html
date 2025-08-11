@@ -11,6 +11,9 @@
 <button mat-stroked-button [routerLink]="'/'+ URLS.SET_APP_AUTH">Application Authentication</button>
 <button mat-stroked-button (click)="enableNotifications()">Enable Notifications</button>
 
+<button *ngIf="isPrivacyScreenEnable" mat-stroked-button (click)="togglePrivacyScreen()">Disable Privacy Screen</button>
+<button *ngIf="!isPrivacyScreenEnable" mat-stroked-button (click)="togglePrivacyScreen()">Enable Privacy Screen</button>
+
 <h3>Dev</h3>
 
 <button mat-stroked-button (click)="clearImageCache()">Clear Image Cache</button>

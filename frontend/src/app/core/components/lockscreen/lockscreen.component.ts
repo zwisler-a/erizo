@@ -41,7 +41,7 @@ export class LockscreenComponent {
     ) {
       this.locked = false;
       this.snackBar.open('Want to make the app a bit more secure?', 'Ok', {
-        duration: 10000,
+        duration: 3000,
         verticalPosition: 'bottom',
       })
         .onAction()

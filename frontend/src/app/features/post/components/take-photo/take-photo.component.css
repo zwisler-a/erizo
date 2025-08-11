@@ -42,3 +42,14 @@
   bottom: 40px;
   left: 30px;
 }
+
+.controls .record {
+  position: fixed;
+  right: 10px;
+  top: 50%;
+}
+
+video {
+  width: 100vw;
+  height: 100vh;
+}

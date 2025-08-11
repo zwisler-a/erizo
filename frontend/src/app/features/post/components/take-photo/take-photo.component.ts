@@ -3,8 +3,10 @@ import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {CameraPreview, CameraPreviewPictureOptions} from '@capacitor-community/camera-preview';
 import {UploadPostJourneyService} from '../../services/upload-post-journey.service';
-import {Camera, CameraResultType, CameraSource} from '@capacitor/camera';
 import {FilePicker} from '@capawesome/capacitor-file-picker';
+import {Capacitor} from '@capacitor/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 
 @Component({
   selector: 'app-take-photo',
@@ -16,10 +18,8 @@ import {FilePicker} from '@capawesome/capacitor-file-picker';
   styleUrl: './take-photo.component.css',
 })
 export class TakePhotoComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('video') video!: ElementRef<HTMLVideoElement>;
-  stream!: MediaStream;
 
-  constructor(private postJourney: UploadPostJourneyService) {
+  constructor(private postJourney: UploadPostJourneyService, private snackbar: MatSnackBar) {
   }
 
 
@@ -28,20 +28,34 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
       parent: 'cameraPreview',
       width: window.innerWidth,
       height: window.innerHeight,
-      disableAudio: true,
-      toBack: true,
-      lockAndroidOrientation: true
+      lockAndroidOrientation: true,
+      enableZoom: true,
+      toBack: true
     });
   }
 
   async takePhoto() {
     const cameraPreviewPictureOptions: CameraPreviewPictureOptions = {
       quality: 90,
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
 
     const result = await CameraPreview.capture(cameraPreviewPictureOptions);
 
     this.postJourney.setPhoto(`data:image/jpeg;base64,${result.value}`);
+  }
+
+  async startVideo() {
+    await CameraPreview.startRecordVideo({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      disableAudio: true,
+    })
+  }
+
+  async stopVideo() {
+    const resultRecordVideo = await CameraPreview.stopRecordVideo();
   }
 
   stopCamera() {
@@ -57,7 +71,11 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
   }
 
   async toggleCamera() {
-    CameraPreview.flip();
+    if (Capacitor.getPlatform() === 'web') {
+      this.snackbar.open("Sorry, implementing this on the web is too much of a headache ...", "", ERROR_SNACKBAR);
+    } else {
+      await CameraPreview.flip();
+    }
   }
 
   async uploadPhoto() {

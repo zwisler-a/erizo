@@ -10,6 +10,7 @@ import { LockscreenComponent } from '../lockscreen/lockscreen.component';
 import { URLS } from '../../../app.routes';
 import { NotificationService } from '../../../features/notification/services/notification.service';
 import { SplashScreen } from '@capacitor/splash-screen';
+import {PrivacyLockComponent} from '../privacy-lock/privacy-lock.component';
 
 @Component({
   selector: 'app-shell',
@@ -23,8 +24,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
     AsyncPipe,
     MatMenuModule,
     LockscreenComponent,
-
-
+    PrivacyLockComponent,
   ],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.css',
