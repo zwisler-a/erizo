@@ -16,6 +16,7 @@ export { CreatePostDto } from './models/create-post-dto';
 export { CreatePostResponseDto } from './models/create-post-response-dto';
 export { CreateThreadRequest } from './models/create-thread-request';
 export { DeleteConnectionRequestDto } from './models/delete-connection-request-dto';
+export { DeviceEntity } from './models/device-entity';
 export { Error } from './models/error';
 export { IdsPage } from './models/ids-page';
 export { LikeEntity } from './models/like-entity';

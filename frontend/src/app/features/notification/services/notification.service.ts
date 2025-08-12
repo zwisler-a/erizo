@@ -1,5 +1,5 @@
 import {ActionPerformed, PushNotifications, PushNotificationSchema, Token} from '@capacitor/push-notifications';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {ApiUserService} from '../../../api/services/api-user.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Injectable} from '@angular/core';
@@ -28,6 +28,7 @@ export interface NotificationPayload {
 @Injectable({providedIn: 'root'})
 export class NotificationService {
   private notifications$ = new BehaviorSubject<PushNotificationSchema[]>([]);
+  token!: Token;
 
   constructor(
     private userApi: ApiUserService,
@@ -65,7 +66,7 @@ export class NotificationService {
     });
 
     PushNotifications.addListener('registration', (token: Token) => {
-      this.snackBar.open('Push token retrieved', 'Ok', {duration: 1000});
+      this.token = token;
       this.userApi.registerDevice({body: {fcmToken: token.value}}).subscribe(() => {
       });
     });
@@ -98,4 +99,22 @@ export class NotificationService {
     );
     return true;
   }
+
+
+  async disableNotifications() {
+    await firstValueFrom(this.userApi.deleteDevice({token: this.token.value}));
+  }
+
+  isPushNotificationsEnabled() {
+    return new Promise<boolean>(resolve => {
+      this.userApi.getRegisterDevices().subscribe(devices => {
+        if (devices.length > 0 && this.token) {
+          const token = devices.find(device => device.fcmToken == this.token?.value);
+          resolve(!!token);
+        }
+        resolve(false);
+      })
+    })
+  }
+
 }

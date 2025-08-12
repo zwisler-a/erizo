@@ -8,19 +8,19 @@ const config: CapacitorConfig = {
   plugins: {
     PrivacyScreen: {
       enable: true,
-      imageName: "Splashscreen",
+      imageName: "icon512_maskable.png",
       contentMode: "scaleAspectFit",
-      preventScreenshots: false
+      preventScreenshots: true
     },
     Keyboard: {
       resize: KeyboardResize.Body,
       resizeOnFullScreen: true,
     },
   },
-  server: {
+  /*server: {
     url: "https://192.168.178.179:4200",
     cleartext: true
-  }
+  }*/
 };
 
 export default config;

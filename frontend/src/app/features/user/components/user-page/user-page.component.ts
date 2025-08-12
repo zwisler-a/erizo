@@ -12,8 +12,6 @@ import {UserService} from '../../../../core/services/user.service';
 import {PostService} from '../../../post/services/post.service';
 import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 import {URLS} from '../../../../app.routes';
-import {MatFormField, MatLabel} from '@angular/material/form-field';
-import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ApiConfiguration} from '../../../../api/api-configuration';
 import {Share} from '@capacitor/share';
@@ -29,9 +27,6 @@ import {NgIf} from '@angular/common';
     MatExpansionModule,
     MatIconModule,
     RouterLink,
-    MatFormField,
-    MatInput,
-    MatLabel,
     ReactiveFormsModule,
     FormsModule,
     NgIf,
@@ -44,6 +39,7 @@ export class UserPageComponent {
 
   ownFingerprint: string | null = '';
   isPrivacyScreenEnable: boolean = false;
+  isNotificationEnabled: boolean = false;
 
   constructor(
     private keyService: KeyService,
@@ -62,6 +58,9 @@ export class UserPageComponent {
     this.persistenceService.getItem<boolean>('privacy-lock').then(data => {
       this.isPrivacyScreenEnable = data ?? true;
     })
+    this.notificationService.isPushNotificationsEnabled().then(data => {
+      this.isNotificationEnabled = data;
+    });
   }
 
   async downloadIdentity() {
@@ -141,6 +140,9 @@ export class UserPageComponent {
       const success = await this.notificationService.enableNotifications();
       if (success) {
         this.snackBar.open('Notifications are enabled ', '', {duration: 2000});
+        this.notificationService.isPushNotificationsEnabled().then(data => {
+          this.isNotificationEnabled = data;
+        });
       } else {
         this.snackBar.open('Could not enable notifications', '', ERROR_SNACKBAR);
       }
@@ -148,6 +150,14 @@ export class UserPageComponent {
       console.log(e);
       this.snackBar.open('Could not enable notifications', '', ERROR_SNACKBAR);
     }
+  }
+
+
+  async disableNotifications() {
+    await this.notificationService.disableNotifications();
+    this.notificationService.isPushNotificationsEnabled().then(data => {
+      this.isNotificationEnabled = data;
+    });
   }
 
   async clearImageCache() {
@@ -173,4 +183,5 @@ export class UserPageComponent {
     this.isPrivacyScreenEnable = !this.isPrivacyScreenEnable;
     this.persistenceService.setItem('privacy-lock', this.isPrivacyScreenEnable)
   }
+
 }

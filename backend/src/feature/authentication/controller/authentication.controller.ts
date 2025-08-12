@@ -14,7 +14,6 @@ import { ChallengeVerifyDto } from '../dto/challenge-verify.dto';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthenticationController {
-
   private logger: Logger = new Logger(AuthenticationController.name);
 
   constructor(
@@ -28,6 +27,7 @@ export class AuthenticationController {
   @Post('/register')
   async registerUser(@Body() body: RegisterDto) {
     try {
+      this.logger.log(`Register user: ${JSON.stringify(body)}`);
       const { fingerprint, public_key } = body;
       await this.identityRepository.upsert({ fingerprint: fingerprint, public_key: public_key }, ['fingerprint']);
     } catch (error: any) {

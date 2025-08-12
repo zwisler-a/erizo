@@ -3,11 +3,11 @@ import { ConnectionRequestDto } from '../dto/connection-request.dto';
 import { ConnectionService } from '../service/connection.service';
 import { UserEntity } from '../../authentication/model/user.entity';
 import { AcceptConnectionRequestDto } from '../dto/connection-request-accept.dto';
-import { AuthGuard } from '../../authentication/guard/auth.guard';
+import { AuthGuard } from '../../authentication';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ConnectionEntity } from '../model/connection.entity';
 import { DeleteConnectionRequestDto } from '../dto/delete-connection-request.dto';
-import {SetConnectionAliasRequest} from "../dto/set-alias-request";
+import { SetConnectionAliasRequest } from '../dto/set-alias-request';
 
 @Controller('connection')
 export class ConnectionController {
@@ -72,7 +72,6 @@ export class ConnectionController {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 
   @Get('/request/open')
   @UseGuards(AuthGuard)

@@ -11,6 +11,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { deleteDevice } from '../fn/user/delete-device';
+import { DeleteDevice$Params } from '../fn/user/delete-device';
+import { DeviceEntity } from '../models/device-entity';
+import { getRegisterDevices } from '../fn/user/get-register-devices';
+import { GetRegisterDevices$Params } from '../fn/user/get-register-devices';
 import { registerDevice } from '../fn/user/register-device';
 import { RegisterDevice$Params } from '../fn/user/register-device';
 
@@ -18,6 +23,31 @@ import { RegisterDevice$Params } from '../fn/user/register-device';
 export class ApiUserService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `getRegisterDevices()` */
+  static readonly GetRegisterDevicesPath = '/api/user/device';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getRegisterDevices()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getRegisterDevices$Response(params?: GetRegisterDevices$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<DeviceEntity>>> {
+    return getRegisterDevices(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getRegisterDevices$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getRegisterDevices(params?: GetRegisterDevices$Params, context?: HttpContext): Observable<Array<DeviceEntity>> {
+    return this.getRegisterDevices$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<DeviceEntity>>): Array<DeviceEntity> => r.body)
+    );
   }
 
   /** Path part for operation `registerDevice()` */
@@ -41,6 +71,31 @@ export class ApiUserService extends BaseService {
    */
   registerDevice(params: RegisterDevice$Params, context?: HttpContext): Observable<void> {
     return this.registerDevice$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteDevice()` */
+  static readonly DeleteDevicePath = '/api/user/device';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteDevice()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteDevice$Response(params: DeleteDevice$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteDevice(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteDevice$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteDevice(params: DeleteDevice$Params, context?: HttpContext): Observable<void> {
+    return this.deleteDevice$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

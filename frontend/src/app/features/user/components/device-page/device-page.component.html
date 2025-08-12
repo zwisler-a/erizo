@@ -1,0 +1,17 @@
+<h3>Devices</h3>
+<p><b>Own Token:</b>{{token.value}}</p>
+
+<mat-nav-list *ngIf="devices$ | async as devices">
+  @for (device of devices; track device.fcmToken) {
+    <mat-list-item>
+      <div class="token">
+        <span>
+          {{ device.fcmToken }}
+        </span>
+        <button mat-icon-button (click)="deleteDevice(device.fcmToken)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+  }
+</mat-nav-list>

@@ -62,4 +62,9 @@ export class UserService {
     const userEntity = await this.userRepo.findOneOrFail({ where: user, relations: { devices: true } });
     return userEntity.devices;
   }
+
+  async removeDeviceForUser(user: Partial<UserEntity>, fcmToken: string) {
+    await this.deviceRepo.delete({ fcmToken: fcmToken, user: user });
+    return true;
+  }
 }

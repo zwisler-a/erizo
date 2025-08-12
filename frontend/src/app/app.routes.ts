@@ -13,6 +13,7 @@ export const URLS = {
   TAKE_PHOTO: 'photo/take',
   SEND_POST: 'photo/send',
   SET_APP_AUTH: 'appauth',
+  DEVICES: 'devices',
   ADD_CONNECTION: 'add-contact/:fingerprint',
   ADD_CONNECTION_FN: (fingerprint: string) => '/' + URLS.ADD_CONNECTION.replace(':fingerprint', fingerprint),
   ACCEPT_CONNECTION: 'accept-contact/:fingerprint',
@@ -90,6 +91,10 @@ export const routes: Routes = [
       {
         path: URLS.SEND_POST,
         loadComponent: () => import('./features/post/components/edit-post/edit-post.component').then(m => m.EditPostComponent),
+      },
+      {
+        path: URLS.DEVICES,
+        loadComponent: () => import('./features/user/components/device-page/device-page.component').then(m => m.DevicePageComponent),
       },
       {path: '**', redirectTo: URLS.HOME},
     ],
