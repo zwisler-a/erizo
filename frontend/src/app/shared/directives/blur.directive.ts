@@ -13,7 +13,23 @@ import {
   selector: '[appBlur]',
 })
 export class BlurDirective implements AfterViewInit {
-  @Input('appBlur') isEnabled: boolean | string = true;
+  @Input('appBlur') set isEnabled(value: boolean) {
+    if (!value) {
+      this.removeBlur();
+      this.removeOverlay();
+    }
+    this._appBlur = value;
+    if (value) {
+      this.addOverlay();
+      this.applyBlur();
+    }
+  }
+
+  get isEnabled(): boolean {
+    return this._appBlur;
+  }
+
+  private _appBlur: boolean = false;
   @Input('appBlurAlways') alwaysBlur: boolean | string = false;
   @Input('appBlurOverlay') overlayTemplate?: TemplateRef<any>;
 
@@ -35,7 +51,7 @@ export class BlurDirective implements AfterViewInit {
   }
 
   private applyBlur() {
-    if (this.isEnabled || this.isEnabled === '') {
+    if (this.isEnabled) {
       this.renderer.setStyle(this.el.nativeElement, 'filter', 'blur(35px) brightness(50%)');
       this.addOverlay();
     }
@@ -43,7 +59,7 @@ export class BlurDirective implements AfterViewInit {
 
   private removeBlur() {
     if (this.alwaysBlur) return;
-    if (this.isEnabled || this.isEnabled === '') {
+    if (this.isEnabled) {
       this.renderer.setStyle(this.el.nativeElement, 'filter', 'none');
       this.removeOverlay();
     }

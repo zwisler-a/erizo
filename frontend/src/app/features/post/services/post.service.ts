@@ -16,6 +16,7 @@ import {UserEntity} from '../../../api/models/user-entity';
 import {PostFeed} from './post-feed.dto';
 import {PostEncryptionService} from './post-encryption.service';
 import {DecryptedPost} from '../types/decrypted-post.interface';
+import {ThreadService} from '../../thread/services/thread.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,11 +32,13 @@ export class PostService {
     private postEncryptionService: PostEncryptionService,
     private postsApi: ApiPostService,
     private notificationService: NotificationService,
+    private threadService: ThreadService,
   ) {
     this.homeFeed = new PostFeed(
       (opts) => this.postsApi.getAllPostIds(opts),
       this.getPostsByIds(),
       this.postDecryptionPipe(),
+      this.threadService.filterPostsByHiddenThreads()
     );
     this.notificationService.getNotifications().subscribe(
       notifications => notifications.forEach(notification => this.handleNotification(notification)),
@@ -89,6 +92,7 @@ export class PostService {
       (opts) => this.postsApi.getPostIdsInThread({threadId, ...opts}),
       this.getPostsByIds(),
       this.postDecryptionPipe(),
+      undefined,
       9 * 2,
     );
     this.threadFeeds[threadId] = feed;
@@ -185,5 +189,12 @@ export class PostService {
       this.postEncryptionService.evictCache(id);
       this.reloadPosts();
     });
+  }
+
+  public update(postDto: Partial<PostDto>) {
+    this.postsApi.update({body: postDto as PostDto}).subscribe(async ()=>{
+      await this.clearImageCacheFor(postDto.id ?? 0);
+      this.reloadPosts();
+    })
   }
 }

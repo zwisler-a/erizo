@@ -28,6 +28,8 @@ import { Like$Params } from '../fn/post/like';
 import { PostDto } from '../models/post-dto';
 import { publish } from '../fn/post/publish';
 import { Publish$Params } from '../fn/post/publish';
+import { update } from '../fn/post/update';
+import { Update$Params } from '../fn/post/update';
 
 @Injectable({ providedIn: 'root' })
 export class ApiPostService extends BaseService {
@@ -107,6 +109,31 @@ export class ApiPostService extends BaseService {
   getPosts(params: GetPosts$Params, context?: HttpContext): Observable<Array<PostDto>> {
     return this.getPosts$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<PostDto>>): Array<PostDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `update()` */
+  static readonly UpdatePath = '/api/post';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `update()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  update$Response(params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<CreatePostResponseDto>> {
+    return update(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `update$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  update(params: Update$Params, context?: HttpContext): Observable<CreatePostResponseDto> {
+    return this.update$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CreatePostResponseDto>): CreatePostResponseDto => r.body)
     );
   }
 

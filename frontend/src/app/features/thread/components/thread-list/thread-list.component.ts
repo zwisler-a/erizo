@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, zip} from 'rxjs';
 
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
@@ -14,7 +14,8 @@ import {ConnectionEntity} from '../../../../api/models/connection-entity';
 import {ThreadService} from '../../services/thread.service';
 import {ConfirmationService} from '../../../../shared/services/confirmation.service';
 import {ContactService} from '../../../connection/services/contact.service';
-import { URLS } from '../../../../app.routes';
+import {URLS} from '../../../../app.routes';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-thread-list',
@@ -24,7 +25,7 @@ import { URLS } from '../../../../app.routes';
 })
 export class ThreadListComponent {
 
-  threads$: Observable<ThreadEntity[]>;
+  threads$: Observable<(ThreadEntity & { hiddenInThread: boolean })[]>;
   connections$: Observable<(ConnectionEntity & { alias: string })[]>;
 
   @Input("allowMenu") allowMenu: boolean = true;
@@ -36,8 +37,14 @@ export class ThreadListComponent {
     private confirmationService: ConfirmationService,
     private contactService: ContactService
   ) {
-    this.threads$ = this.threadService.getThreads();
+    this.threads$ = this.getThreads();
     this.connections$ = this.contactService.getContacts();
+  }
+
+  private getThreads() {
+    return zip(this.threadService.getThreads(), this.threadService.hiddenThreads$).pipe(map(([threads, hidden]) => {
+      return threads.map((thread: ThreadEntity) => ({...thread, hiddenInThread: hidden.includes(thread.id)}));
+    }))
   }
 
   deleteConnection(id: number) {
@@ -65,11 +72,21 @@ export class ThreadListComponent {
       result => {
         if (result) {
           this.threadService.deleteThread(id).subscribe(() => {
-            this.threads$ = this.threadService.getThreads();
+            this.threads$ = this.getThreads();
           });
         }
       },
     );
+  }
+
+  async hideInFeed(id: number) {
+    await this.threadService.hideThreadInFeed(id);
+    this.threadService.refresh();
+  }
+
+  async showInFeed(id: number) {
+    await this.threadService.showThreadInFeed(id);
+    this.threadService.refresh();
   }
 
   protected readonly URLS = URLS;

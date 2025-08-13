@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Logger,
   ParseArrayPipe,
-  Post,
+  Post, Put,
   Query,
   Request,
   UseGuards,
@@ -110,6 +110,24 @@ export class PostController {
       const user = req.user as UserEntity;
       this.logger.debug(`Creating post from user ${user.fingerprint} ${body.thread_id}`);
       const entity = await this.postService.create(body, user);
+      return { post_id: entity.id };
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Put('/')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ operationId: 'update' })
+  @ApiBody({ type: PostDto })
+  @ApiOkResponse({ type: CreatePostResponseDto })
+  async update(@Request() req: any): Promise<CreatePostResponseDto> {
+    try {
+      const body = req.body as PostDto;
+      const user = req.user as UserEntity;
+      this.logger.debug(`Updating post from user ${user.fingerprint}`);
+      const entity = await this.postService.update(body, user);
       return { post_id: entity.id };
     } catch (error) {
       this.logger.error(error);

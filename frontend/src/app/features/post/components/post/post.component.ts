@@ -136,4 +136,18 @@ export class PostComponent {
 
     this.postTitle$.next('');
   }
+
+
+  setNsfw() {
+    this.postService.update({
+      id: this.post.id,
+      nsfw: true
+    });
+  }
+  unsetNsfw() {
+    this.postService.update({
+      id: this.post.id,
+      nsfw: false
+    })
+  }
 }

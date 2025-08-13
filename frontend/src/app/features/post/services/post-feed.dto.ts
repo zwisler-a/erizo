@@ -14,12 +14,14 @@ export class PostFeed {
     private loadPage: (opts: { page: number, limit: number }) => Observable<IdsPage>,
     private idsToPostPipe: OperatorFunction<number[], PostDto[]>,
     private decryptionPipe: OperatorFunction<PostDto[], DecryptedPost[]>,
+    private filterPipe?: OperatorFunction<PostDto[], PostDto[]>,
     private pageSize = 3,
   ) {
     this.feed$ = this.feedIds$.pipe(
       tap(_ => this.loading$.next(true)),
       map(ids => [...new Set(ids)]),
       this.idsToPostPipe,
+      this.filterPipe ?? map(a => a),
       this.decryptionPipe,
       map(post => post.sort((a, b) => b.created_at - a.created_at)),
       tap(_ => this.loading$.next(false)),

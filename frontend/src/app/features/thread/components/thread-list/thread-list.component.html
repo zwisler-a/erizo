@@ -16,6 +16,8 @@
           </button>
           <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="deleteThread(thread.id)">Delete</button>
+            <button *ngIf="!thread.hiddenInThread" mat-menu-item (click)="hideInFeed(thread.id)">Hide in Feed</button>
+            <button *ngIf="thread.hiddenInThread" mat-menu-item (click)="showInFeed(thread.id)">Show in Feed</button>
           </mat-menu>
         </div>
       </mat-list-item>

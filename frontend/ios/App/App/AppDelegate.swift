@@ -4,6 +4,18 @@ import FirebaseCore
 import FirebaseMessaging
 
 
+final class NoContextMenuUIDelegate: NSObject, WKUIDelegate {
+  func webView(_ webView: WKWebView, shouldPreviewElement elementInfo: WKPreviewElementInfo) -> Bool { false }
+
+  @available(iOS 13.0, *)
+  func webView(_ webView: WKWebView,
+               contextMenuConfigurationFor elementInfo: WKContextMenuElementInfo,
+               completionHandler: @escaping (UIContextMenuConfiguration?) -> Void) {
+    completionHandler(nil) // no context menu -> no Share/Save
+  }
+}
+
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -12,6 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+      let vc = window?.rootViewController as? CAPBridgeViewController
+          vc?.bridge?.webView?.allowsLinkPreview = false
+          vc?.bridge?.webView?.uiDelegate = NoContextMenuUIDelegate()
         return true
     }
   

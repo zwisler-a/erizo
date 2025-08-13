@@ -8,6 +8,7 @@ import { NotificationService, NotificationType } from '../../notification/servic
 import { UserEntity } from '../../authentication/model/user.entity';
 import { PostDecryptionKeyEntity } from '../model/post-decryption-key.entity';
 import { Cron } from '@nestjs/schedule';
+import { PostDto } from '../dto/post/post.dto';
 
 @Injectable()
 export class PostService {
@@ -124,5 +125,18 @@ export class PostService {
     await this.decryptionKeyRepo.delete({ post: { id: postId } });
     await this.postRepo.delete({ id: postId, sender_fingerprint: user.fingerprint });
     this.fileService.delete(new FilePointer(post.file_path));
+  }
+
+  async update(body: PostDto, user: UserEntity): Promise<PostEntity> {
+    const post = await this.postRepo.findOneOrFail({ where: { id: body.id, sender_fingerprint: user.fingerprint } });
+    const updated = {
+      ...post,
+      ...body,
+      id: post.id,
+      sender_fingerprint: user.fingerprint,
+      comments: undefined,
+      likes: undefined,
+    };
+    return await this.postRepo.save(updated);
   }
 }

@@ -105,3 +105,6 @@ router-outlet + * {
   max-width: 600px !important;
   margin: auto;
 }
+
+img, body, html { -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
+
