@@ -1,0 +1,55 @@
+<!-- image-cropper.component.html -->
+<cropper-canvas background class="stage">
+  <cropper-image
+    initial-center-size="contain"
+    translatable
+    scalable
+    rotatable
+    #image
+    [attr.src]="srcDataUri">
+  </cropper-image>
+  <cropper-shade></cropper-shade>
+  <cropper-handle action="select" plain></cropper-handle>
+  <cropper-selection
+    #sel
+    initial-coverage="0.6"
+    movable
+    resizable
+    outlined>
+    <cropper-grid role="grid" covered></cropper-grid>
+    <cropper-crosshair centered></cropper-crosshair>
+    <cropper-handle action="move" theme-color="rgba(255, 255, 255, 0.0)"></cropper-handle>
+    <cropper-handle action="n-resize"></cropper-handle>
+    <cropper-handle action="e-resize"></cropper-handle>
+    <cropper-handle action="s-resize"></cropper-handle>
+    <cropper-handle action="w-resize"></cropper-handle>
+    <cropper-handle action="ne-resize"></cropper-handle>
+    <cropper-handle action="nw-resize"></cropper-handle>
+    <cropper-handle action="se-resize"></cropper-handle>
+    <cropper-handle action="sw-resize"></cropper-handle>
+  </cropper-selection>
+</cropper-canvas>
+
+<div class="manipulations">
+  <button mat-icon-button (click)="zoom(0.5)">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-icon-button (click)="zoom(-0.5)">
+    <mat-icon>remove</mat-icon>
+  </button>
+  <button mat-icon-button (click)="rotate(90)">
+    <mat-icon>rotate_left</mat-icon>
+  </button>
+  <button mat-icon-button (click)="rotate(-90)">
+    <mat-icon>rotate_right</mat-icon>
+  </button>
+  <br />
+  <button mat-icon-button (click)="reset()">
+    <mat-icon>replay</mat-icon>
+  </button>
+</div>
+
+<div class="toolbar">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-button (click)="crop()">Apply</button>
+</div>
