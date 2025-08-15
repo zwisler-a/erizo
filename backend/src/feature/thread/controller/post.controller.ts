@@ -23,6 +23,7 @@ import { CreatePostResponseDto } from '../dto/post/create-post-response.dto';
 import { LikeService } from '../service/like.service';
 import { CreateCommentDto } from '../dto/post/comment.dto';
 import { CommentService } from '../service/comment.service';
+import { isArray } from 'class-validator';
 
 @Controller('post')
 export class PostController {
@@ -47,10 +48,11 @@ export class PostController {
     @Request() req: any,
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('excludeThreads') exclude: number[] = [],
+    @Query('excludeThreads') exclude: number[] | number = [],
   ) {
     try {
       const user: UserEntity = req.user;
+      exclude = isArray(exclude) ? exclude : [exclude];
       this.logger.debug(
         `Getting all posts for user: ${user.fingerprint}, page ${page}, limit: ${limit}, exclude: ${exclude.join(',')}`,
       );
