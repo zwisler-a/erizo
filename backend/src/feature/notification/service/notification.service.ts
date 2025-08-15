@@ -28,9 +28,7 @@ export interface NotificationPayload {
 export class NotificationService {
   private logger: Logger = new Logger(NotificationService.name);
 
-  constructor(
-    private userService: UserService
-  ) {
+  constructor(private userService: UserService) {
     if (admin.apps.length === 0) {
       const serviceAccount = require(process.env.FCM_CRED_PATH ?? '../../../../erizo_fcm_cred.json');
       admin.initializeApp({
@@ -79,9 +77,7 @@ export class NotificationService {
   private getNotificationFromType(type: NotificationType): Partial<Notification> {
     if (type === NotificationType.NEW_POST) {
       return {
-        title: ['You got mail', 'There is something for you', 'Come, have a look', 'I got something'][
-          Math.floor(Math.random() * 4)
-        ],
+        title: 'You got mail',
         body: [
           'There is a new post waiting for you',
           'There is something interesting for you',
@@ -92,12 +88,10 @@ export class NotificationService {
     }
     if (type === NotificationType.LIKE_POST) {
       return {
-        title: ['Someone wants you', 'Someone thinks about you', 'Someone likes your post'][
-          Math.floor(Math.random() * 3)
-        ],
+        title: 'Someone likes your post',
         body: [
           'I think there was someone very excited to see what you have done',
-          'Someone liked what you posted. Really liked it!',
+          'Someone liked what you posted.',
           'Your post got liked ;)',
         ][Math.floor(Math.random() * 3)],
       };
