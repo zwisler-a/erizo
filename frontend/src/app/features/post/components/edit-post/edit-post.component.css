@@ -48,6 +48,15 @@
 
 .top-bar {
   display: flex;
+  position: absolute;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  gap: 1rem;
+}
+
+.top-bar [mat-icon-button] {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .hints {
@@ -55,9 +64,4 @@
 }
 
 .manipulations {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  width: 100%;
 }

@@ -14,6 +14,7 @@ import {ThreadEntity} from '../../../../api/models/thread-entity';
 import {UploadPostJourneyService} from '../../../post/services/upload-post-journey.service';
 import { URLS } from '../../../../app.routes';
 import {PostFeed} from '../../../post/services/post-feed.dto';
+import {VideoControlDirective} from '../../../../shared/directives/video-control.directive';
 
 @Component({
   selector: 'app-thread-page',
@@ -33,6 +34,7 @@ import {PostFeed} from '../../../post/services/post-feed.dto';
     MatMenuTrigger,
     MatMenuItem,
     PullToRefreshComponent,
+    VideoControlDirective,
   ],
   templateUrl: './thread-page.component.html',
   styleUrl: './thread-page.component.css',

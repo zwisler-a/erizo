@@ -27,7 +27,7 @@
 
 <ng-container *ngIf="connections$ | async as connections; else loading">
   <mat-nav-list *ngIf="connections.length; else noMessages">
-    @for (connection of connections; track connection) {
+    @for (connection of connections; track connection.id) {
       <mat-list-item
         *ngIf="connection.state != 'PENDING'"
         (click)="onClick.emit(connection.thread)">
@@ -44,6 +44,8 @@
           </button>
           <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="changeAlias(connection)">Rename</button>
+            <button *ngIf="!connection.hiddenInThread" mat-menu-item (click)="hideInFeed(connection.thread?.id ?? -1)">Hide in Feed</button>
+            <button *ngIf="connection.hiddenInThread" mat-menu-item (click)="showInFeed(connection.thread?.id ?? -1)">Show in Feed</button>
             <button mat-menu-item (click)="deleteConnection(connection.id)">Delete</button>
           </mat-menu>
         </div>

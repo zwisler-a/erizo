@@ -5,7 +5,7 @@
   <ng-container *ngIf="openRequests$ | async as openRequests">
     <h3 *ngIf="openRequests.length">Open requests</h3>
     <mat-nav-list>
-      @for (connection of openRequests; track connection) {
+      @for (connection of openRequests; track connection.id) {
         <mat-list-item
           [routerLink]="URLS.ACCEPT_CONNECTION_FN(connection.owner.fingerprint)">
           <div class="list-content">

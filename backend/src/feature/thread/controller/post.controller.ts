@@ -6,7 +6,8 @@ import {
   HttpStatus,
   Logger,
   ParseArrayPipe,
-  Post, Put,
+  Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -41,11 +42,17 @@ export class PostController {
   @ApiOperation({ operationId: 'get-all-post-ids' })
   @ApiQuery({ name: 'page' })
   @ApiQuery({ name: 'limit' })
-  async getAllPostIds(@Request() req: any, @Query('page') page: number, @Query('limit') limit: number) {
+  @ApiQuery({ name: 'excludeThreads', type: 'number', isArray: true, required: false })
+  async getAllPostIds(
+    @Request() req: any,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('excludeThreads') exclude: number[] = [],
+  ) {
     try {
       const user: UserEntity = req.user;
       this.logger.debug(`Getting all posts for user: ${user.fingerprint}, page ${page}, limit: ${limit}`);
-      const ids = await this.postService.fetchPostIdsFor(user.fingerprint, page, limit);
+      const ids = await this.postService.fetchPostIdsFor(user.fingerprint, page, limit, exclude);
       return new IdsPage(page, limit, ids);
     } catch (error) {
       this.logger.error(error);

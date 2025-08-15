@@ -40,6 +40,7 @@ export class UserPageComponent {
   ownFingerprint: string | null = '';
   isPrivacyScreenEnable: boolean = false;
   isNotificationEnabled: boolean = false;
+  isNsfwDisabled: boolean = false;
 
   constructor(
     private keyService: KeyService,
@@ -57,6 +58,9 @@ export class UserPageComponent {
     });
     this.persistenceService.getItem<boolean>('privacy-lock').then(data => {
       this.isPrivacyScreenEnable = data ?? true;
+    })
+    this.persistenceService.getItem<boolean>('disable-nsfw').then(data => {
+      this.isNsfwDisabled = data ?? true;
     })
     this.notificationService.isPushNotificationsEnabled().then(data => {
       this.isNotificationEnabled = data;
@@ -181,7 +185,11 @@ export class UserPageComponent {
 
   togglePrivacyScreen() {
     this.isPrivacyScreenEnable = !this.isPrivacyScreenEnable;
-    this.persistenceService.setItem('privacy-lock', this.isPrivacyScreenEnable)
+    this.persistenceService.setItem('privacy-lock', this.isPrivacyScreenEnable);
   }
 
+  toggleNsfw() {
+    this.isNsfwDisabled = !this.isNsfwDisabled;
+    this.persistenceService.setItem('disable-nsfw', this.isNsfwDisabled);
+  }
 }

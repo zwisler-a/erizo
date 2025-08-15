@@ -1,12 +1,10 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
-import {CameraPreview, CameraPreviewPictureOptions} from '@capacitor-community/camera-preview';
+import {CameraPreview, CameraPreviewFlashMode, CameraPreviewPictureOptions} from '@capacitor-community/camera-preview';
 import {UploadPostJourneyService} from '../../services/upload-post-journey.service';
 import {FilePicker} from '@capawesome/capacitor-file-picker';
-import {Capacitor} from '@capacitor/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {ERROR_SNACKBAR} from '../../../../util/snackbar-consts';
 
 @Component({
   selector: 'app-take-photo',
@@ -22,19 +20,25 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
   private W = window.innerWidth;
   private H = Math.round(this.W * 4 / 3);
 
+  flashModes: CameraPreviewFlashMode[] = [];
+
   constructor(private postJourney: UploadPostJourneyService, private snackbar: MatSnackBar) {
+
   }
 
 
   async startCamera() {
-    CameraPreview.start({
+    await CameraPreview.start({
       parent: 'cameraPreview',
       width: this.W, height: this.H,
       x: 0,
-      y: Math.round((window.innerHeight - this.H)/2),
+      y: Math.round((window.innerHeight - this.H) / 2),
       enableZoom: true,
       toBack: true
     });
+    CameraPreview.getSupportedFlashModes().then(modes => {
+      this.flashModes = modes.result;
+    })
   }
 
   async takePhoto() {
@@ -60,11 +64,7 @@ export class TakePhotoComponent implements AfterViewInit, OnDestroy {
   }
 
   async toggleCamera() {
-    if (Capacitor.getPlatform() === 'web') {
-      this.snackbar.open("Sorry, implementing this on the web is too much of a headache ...", "OK", ERROR_SNACKBAR);
-    } else {
-      await CameraPreview.flip();
-    }
+    await CameraPreview.flip();
   }
 
   async uploadPhoto() {

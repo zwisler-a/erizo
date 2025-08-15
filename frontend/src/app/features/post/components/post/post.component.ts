@@ -18,6 +18,7 @@ import {CommentsViewComponent} from '../comments-view/comments-view.component';
 import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import {ContactService} from '../../../connection/services/contact.service';
 import {BehaviorSubject, from, Observable} from 'rxjs';
+import {VideoControlDirective} from '../../../../shared/directives/video-control.directive';
 
 @Component({
   selector: 'app-post',
@@ -36,7 +37,8 @@ import {BehaviorSubject, from, Observable} from 'rxjs';
     MatBadge,
     ReactiveFormsModule,
     CommentsViewComponent,
-    MatBottomSheetModule
+    MatBottomSheetModule,
+    VideoControlDirective
   ],
   providers: [AliasPipePipe],
   templateUrl: './post.component.html',

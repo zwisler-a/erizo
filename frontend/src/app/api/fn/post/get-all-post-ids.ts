@@ -13,6 +13,7 @@ import { IdsPage } from '../../models/ids-page';
 export interface GetAllPostIds$Params {
   page: number;
   limit: number;
+  excludeThreads?: Array<number>;
 }
 
 export function getAllPostIds(http: HttpClient, rootUrl: string, params: GetAllPostIds$Params, context?: HttpContext): Observable<StrictHttpResponse<IdsPage>> {
@@ -20,6 +21,7 @@ export function getAllPostIds(http: HttpClient, rootUrl: string, params: GetAllP
   if (params) {
     rb.query('page', params.page, {});
     rb.query('limit', params.limit, {});
+    rb.query('excludeThreads', params.excludeThreads, {});
   }
 
   return http.request(

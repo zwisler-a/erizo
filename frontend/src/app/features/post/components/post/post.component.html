@@ -13,8 +13,9 @@
     </mat-menu>
   </div>
   <div class="post-image-container">
+    <div class="video-indicator" *ngIf="post.type == 'video'"><mat-icon>videocam</mat-icon></div>
     <img class="post-image" *ngIf="post.type == 'image'" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.imageUrl" alt="">
-    <video autoplay loop class="post-image" *ngIf="post.type == 'video'" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.imageUrl" alt=""></video>
+    <video appVideoControl muted autoplay loop class="post-image" *ngIf="post.type == 'video'" [appBlur]="post.nsfw" [appBlurOverlay]="blurry" [src]="post.imageUrl" alt=""></video>
   </div>
   <div class="post-message">
     <div class="post-message-container">

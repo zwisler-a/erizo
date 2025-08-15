@@ -26,7 +26,7 @@ import {map} from 'rxjs/operators';
 export class ThreadListComponent {
 
   threads$: Observable<(ThreadEntity & { hiddenInThread: boolean })[]>;
-  connections$: Observable<(ConnectionEntity & { alias: string })[]>;
+  connections$: Observable<(ConnectionEntity & { alias: string, hiddenInThread: boolean })[]>;
 
   @Input("allowMenu") allowMenu: boolean = true;
 
@@ -38,12 +38,18 @@ export class ThreadListComponent {
     private contactService: ContactService
   ) {
     this.threads$ = this.getThreads();
-    this.connections$ = this.contactService.getContacts();
+    this.connections$ = this.getConnections();
   }
 
   private getThreads() {
     return zip(this.threadService.getThreads(), this.threadService.hiddenThreads$).pipe(map(([threads, hidden]) => {
-      return threads.map((thread: ThreadEntity) => ({...thread, hiddenInThread: hidden.includes(thread.id)}));
+      return threads.map((thread: ThreadEntity) => ({...thread, hiddenInThread: hidden.has(thread.id)}));
+    }))
+  }
+
+  private getConnections() {
+    return zip(this.contactService.getContacts(), this.threadService.hiddenThreads$).pipe(map(([threads, hidden]) => {
+      return threads.map((connectionEntity: ConnectionEntity) => ({...connectionEntity, hiddenInThread: hidden.has(connectionEntity.thread?.id ?? -1)}));
     }))
   }
 
@@ -82,11 +88,13 @@ export class ThreadListComponent {
   async hideInFeed(id: number) {
     await this.threadService.hideThreadInFeed(id);
     this.threadService.refresh();
+    this.contactService.refresh();
   }
 
   async showInFeed(id: number) {
     await this.threadService.showThreadInFeed(id);
     this.threadService.refresh();
+    this.contactService.refresh();
   }
 
   protected readonly URLS = URLS;

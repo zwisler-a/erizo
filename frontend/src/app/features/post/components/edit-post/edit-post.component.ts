@@ -1,12 +1,15 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {MatIcon} from '@angular/material/icon';
-import {MatIconButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatFormField} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {NgIf} from '@angular/common';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {UploadPostJourneyService} from '../../services/upload-post-journey.service';
+import {MatMenu, MatMenuModule} from '@angular/material/menu';
+import {CapacitorCropper} from '@aalzehla/capacitor-cropper';
+import {ImageCropperComponent} from '../image-cropper/image-cropper.component';
 
 @Component({
   selector: 'app-edit-post',
@@ -17,7 +20,10 @@ import {UploadPostJourneyService} from '../../services/upload-post-journey.servi
     MatInputModule,
     FormsModule,
     NgIf,
-    MatProgressSpinner
+    MatProgressSpinner,
+    MatButton,
+    MatMenuModule,
+    ImageCropperComponent
   ],
   templateUrl: './edit-post.component.html',
   styleUrl: './edit-post.component.css'
@@ -27,6 +33,7 @@ export class EditPostComponent {
 
   @ViewChild('image') image!: ElementRef<HTMLImageElement>;
   loading: boolean = false;
+  shouldCrop = false;
 
   constructor(public uploadJourney: UploadPostJourneyService) {
   }
@@ -139,5 +146,16 @@ export class EditPostComponent {
     } finally {
       this.loading = false;
     }
+  }
+
+  crop() {
+    CapacitorCropper.crop({uri: this.imageSrc}).then(result => {
+      this.imageSrc = result.result;
+    })
+  }
+
+  updateImage(image: string) {
+    this.uploadJourney.previewPhoto = image;
+    this.shouldCrop = false;
   }
 }

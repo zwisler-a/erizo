@@ -1,16 +1,15 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatestWith, map, OperatorFunction, shareReplay, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, map, shareReplay, switchMap, tap} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ApiThreadService} from '../../../api/services/api-thread.service';
 import {PersistenceService} from '../../../core/services/persistence.service';
-import {PostDto} from '../../../api/models/post-dto';
 
 @Injectable({providedIn: 'root'})
 export class ThreadService {
 
   private threads$;
   private reloadThreads$ = new BehaviorSubject<void>(void 0);
-  hiddenThreads$ = new BehaviorSubject<number[]>([]);
+  hiddenThreads$ = new BehaviorSubject<Set<number>>(new Set());
 
   constructor(
     private snackBar: MatSnackBar,
@@ -22,8 +21,8 @@ export class ThreadService {
       map(threads => threads.filter(t => !!t.owner)),
       shareReplay(1)
     )
-    this.persistence.getItem<number[]>('hidden-threads').then((threads) => {
-      this.hiddenThreads$.next(threads ?? [])
+    this.persistence.getItem<Set<number>>('hidden-threads').then((threads) => {
+      this.hiddenThreads$.next(new Set(threads ?? []) ?? new Set())
     })
   }
 
@@ -52,30 +51,21 @@ export class ThreadService {
   }
 
   async hideThreadInFeed(id: number) {
-    let threads = await this.persistence.getItem<number[]>('hidden-threads')
+    let threads = new Set(await this.persistence.getItem<Set<number>>('hidden-threads'));
     if (threads === null) {
-      threads = []
+      threads = new Set<number>();
     }
-    threads.push(id);
+    threads.add(id);
     this.hiddenThreads$.next(threads);
     await this.persistence.setItem('hidden-threads', threads);
   }
 
   async showThreadInFeed(id: number) {
-    let threads = await this.persistence.getItem<number[]>('hidden-threads')
+    let threads = new Set(await this.persistence.getItem<Set<number>>('hidden-threads') ?? [])
     if (threads === null) return;
-    const i = threads.indexOf(id);
-    if (i !== -1) threads.splice(i, 1);
+    threads.delete(id);
     this.hiddenThreads$.next(threads);
     await this.persistence.setItem('hidden-threads', threads);
   }
 
-  filterPostsByHiddenThreads(): OperatorFunction<PostDto[], PostDto[]> {
-    return source => {
-      return source.pipe(
-        combineLatestWith(this.hiddenThreads$),
-        map(([posts, hidden]) => posts.filter(post => !hidden.includes(post.thread.id)))
-      )
-    }
-  }
 }

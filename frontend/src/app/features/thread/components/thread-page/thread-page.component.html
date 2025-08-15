@@ -35,9 +35,9 @@
              [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
              [src]="post.imageUrl"
              alt="">
-        <video *ngIf="post.type == 'video'" [appBlur]="post.nsfw"
+        <video muted *ngIf="post.type == 'video'" [appBlur]="post.nsfw"
+               appVideoControl
                [appBlurAlways]="true"
-               autoplay loop
                [appBlurOverlay]="blurry"
                [routerLink]="[URLS.VIEW_POST_FN(post.id)]"
                [src]="post.imageUrl"

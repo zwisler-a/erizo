@@ -18,6 +18,9 @@
 <button *ngIf="isPrivacyScreenEnable" mat-stroked-button (click)="togglePrivacyScreen()">Disable Privacy Screen</button>
 <button *ngIf="!isPrivacyScreenEnable" mat-stroked-button (click)="togglePrivacyScreen()">Enable Privacy Screen</button>
 
+<button *ngIf="isNsfwDisabled" mat-stroked-button (click)="toggleNsfw()">Enable NSFW</button>
+<button *ngIf="!isNsfwDisabled" mat-stroked-button (click)="toggleNsfw()">Disable NSFW</button>
+
 <h3>Dev</h3>
 
 <button mat-stroked-button (click)="clearImageCache()">Clear Image Cache</button>

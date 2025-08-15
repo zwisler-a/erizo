@@ -1,7 +1,7 @@
 <div class="top-bar">
 
   <button mat-icon-button (click)="retakePhoto()">
-    <mat-icon>repeat</mat-icon>
+    <mat-icon>arrow_back</mat-icon>
   </button>
   <span class="spacer"></span>
   <button mat-icon-button (click)="uploadJourney.isNsfw = !uploadJourney.isNsfw">
@@ -13,42 +13,34 @@
   </button>
 
   <button mat-icon-button (click)="nextCounter()">
-    <mat-icon>
-      @switch (uploadJourney.deleteAfter) {
-        @case (undefined) {
-          timer_off
-        }
-        @case (1) {
-          looks_one
-        }
-        @case (2) {
-          looks_two
-        }
-        @case (3) {
-          looks_3
-        }
+    @switch (uploadJourney.deleteAfter) {
+      @case (undefined) {
+        <mat-icon>timer_off</mat-icon>
       }
-    </mat-icon>
+      @case (1) {
+        <mat-icon>looks_one</mat-icon>
+      }
+      @case (2) {
+        <mat-icon>looks_two</mat-icon>
+      }
+      @case (3) {
+        <mat-icon>looks_3</mat-icon>
+      }
+    }
+  </button>
+
+  <button mat-icon-button (click)="shouldCrop = true">
+    <mat-icon>crop_rotate</mat-icon>
   </button>
 </div>
 
-<img #image class="preview-image" *ngIf="!uploadJourney.isVideo && uploadJourney.previewPhoto" [src]="uploadJourney.previewPhoto"/>
-<video class="preview-image" *ngIf="uploadJourney.isVideo && uploadJourney.previewPhoto" [src]="uploadJourney.previewPhoto" autoplay loop></video>
-<div class="manipulations">
-  <button (click)="flipX()" mat-icon-button>
-    <mat-icon>swap_horiz</mat-icon>
-  </button>
-  <button (click)="flipY()" mat-icon-button>
-    <mat-icon>swap_vert</mat-icon>
-  </button>
-  <button (click)="rotateLeft()" mat-icon-button>
-    <mat-icon>rotate_90_degrees_ccw</mat-icon>
-  </button>
-  <button (click)="rotateRight()" mat-icon-button>
-    <mat-icon>rotate_90_degrees_cw</mat-icon>
-  </button>
-</div>
+<img #image class="preview-image" *ngIf="!uploadJourney.isVideo && uploadJourney.previewPhoto"
+     [src]="uploadJourney.previewPhoto"/>
+<video muted class="preview-image" *ngIf="uploadJourney.isVideo && uploadJourney.previewPhoto"
+       [src]="uploadJourney.previewPhoto" autoplay loop></video>
 
+
+<app-image-cropper *ngIf="shouldCrop" [srcDataUri]="uploadJourney.previewPhoto" (croppedDataUri)="updateImage($event)"></app-image-cropper>
 <div class="hints">
 
   <div *ngIf="uploadJourney.isNsfw" class="info-text">

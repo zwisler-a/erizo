@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from '../model/post.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { FilePointer, FileService } from './file.service';
 import { CreatePostDto } from '../dto/post/create-post.dto';
 import { NotificationService, NotificationType } from '../../notification/service/notification.service';
@@ -9,6 +9,7 @@ import { UserEntity } from '../../authentication/model/user.entity';
 import { PostDecryptionKeyEntity } from '../model/post-decryption-key.entity';
 import { Cron } from '@nestjs/schedule';
 import { PostDto } from '../dto/post/post.dto';
+import { isNotIn } from 'class-validator';
 
 @Injectable()
 export class PostService {
@@ -68,9 +69,17 @@ export class PostService {
     return savedEntity;
   }
 
-  public async fetchPostIdsFor(fingerprint: string, page: number, limit: number) {
+  public async fetchPostIdsFor(
+    fingerprint: string,
+    page: number,
+    limit: number,
+    excludeThreads: number[] = [],
+  ): Promise<number[]> {
     const posts = await this.postRepo.find({
-      where: { decryptionKeys: { recipient_fingerprint: fingerprint } },
+      where: {
+        decryptionKeys: { recipient_fingerprint: fingerprint },
+        thread: { id: Not(In(excludeThreads)) },
+      },
       skip: page * limit,
       take: limit,
       order: { id: 'DESC' },

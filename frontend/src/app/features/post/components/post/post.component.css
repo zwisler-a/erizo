@@ -6,6 +6,11 @@
   margin-top: 4px;
 }
 
+.post-container {
+  border-bottom: solid 1px rgba(126, 125, 125, 0.18);
+  margin-bottom: 1rem;
+}
+
 .post-image-container {
   overflow: hidden;
   position: relative;
@@ -65,4 +70,19 @@
   flex-direction: row;
   align-items: center;
   gap: 6px;
+}
+.video-indicator mat-icon {
+  transform: scale(0.7);
+}
+.video-indicator {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  background: rgba(0, 0, 0, 0.47);
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

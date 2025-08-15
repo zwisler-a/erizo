@@ -1,3 +1,8 @@
 mat-divider {
-  margin:  0.875rem 0;
+  margin: 0.875rem 0;
+}
+
+:host {
+  padding-bottom: var(--safe-area-inset-bottom);
+  display: block;
 }

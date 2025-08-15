@@ -35,10 +35,13 @@ export class PostService {
     private threadService: ThreadService,
   ) {
     this.homeFeed = new PostFeed(
-      (opts) => this.postsApi.getAllPostIds(opts),
+      (opts) =>
+        this.threadService.hiddenThreads$.pipe(
+          switchMap(hiddenThreads => this.postsApi.getAllPostIds({...opts, excludeThreads: [...hiddenThreads]})),
+          tap(console.log)
+        ),
       this.getPostsByIds(),
       this.postDecryptionPipe(),
-      this.threadService.filterPostsByHiddenThreads()
     );
     this.notificationService.getNotifications().subscribe(
       notifications => notifications.forEach(notification => this.handleNotification(notification)),
@@ -123,7 +126,7 @@ export class PostService {
 
   async publishPost(file: File, threadId: number, contacts: UserEntity[], textMessage?: string, daysToLive?: number, nsfw?: boolean, isVideo?: boolean) {
     let compressedFile;
-    if(!isVideo) {
+    if (!isVideo) {
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
@@ -192,7 +195,7 @@ export class PostService {
   }
 
   public update(postDto: Partial<PostDto>) {
-    this.postsApi.update({body: postDto as PostDto}).subscribe(async ()=>{
+    this.postsApi.update({body: postDto as PostDto}).subscribe(async () => {
       await this.clearImageCacheFor(postDto.id ?? 0);
       this.reloadPosts();
     })

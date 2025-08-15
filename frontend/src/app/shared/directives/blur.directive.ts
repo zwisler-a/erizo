@@ -8,27 +8,28 @@ import {
   TemplateRef,
   EmbeddedViewRef, AfterViewInit,
 } from '@angular/core';
+import {PersistenceService} from '../../core/services/persistence.service';
 
 @Directive({
   selector: '[appBlur]',
 })
 export class BlurDirective implements AfterViewInit {
+  private disabled = false;
+
   @Input('appBlur') set isEnabled(value: boolean) {
-    if (!value) {
+    if (!value && !this.disabled) {
       this.removeBlur();
       this.removeOverlay();
     }
     this._appBlur = value;
-    if (value) {
+    if (value && !this.disabled) {
       this.addOverlay();
       this.applyBlur();
     }
   }
-
   get isEnabled(): boolean {
     return this._appBlur;
   }
-
   private _appBlur: boolean = false;
   @Input('appBlurAlways') alwaysBlur: boolean | string = false;
   @Input('appBlurOverlay') overlayTemplate?: TemplateRef<any>;
@@ -40,8 +41,15 @@ export class BlurDirective implements AfterViewInit {
     private el: ElementRef,
     private renderer: Renderer2,
     private viewContainer: ViewContainerRef,
+    private persistenceService: PersistenceService,
   ) {
-
+    persistenceService.getItem<boolean>('disable-nsfw').then(disableNsfw => {
+      if (disableNsfw ?? false) {
+        this.disabled = true;
+        this.removeBlur();
+        this.removeOverlay();
+      }
+    })
   }
 
   ngAfterViewInit(): void {
@@ -58,7 +66,7 @@ export class BlurDirective implements AfterViewInit {
   }
 
   private removeBlur() {
-    if (this.alwaysBlur) return;
+    if (this.alwaysBlur && !this.disabled) return;
     if (this.isEnabled) {
       this.renderer.setStyle(this.el.nativeElement, 'filter', 'none');
       this.removeOverlay();
@@ -117,6 +125,7 @@ export class BlurDirective implements AfterViewInit {
   @HostListener('window:mouseup')
   @HostListener('window:touchend')
   onRelease() {
+    if (this.disabled) return;
     this.applyBlur();
   }
 
