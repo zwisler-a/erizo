@@ -51,7 +51,9 @@ export class PostController {
   ) {
     try {
       const user: UserEntity = req.user;
-      this.logger.debug(`Getting all posts for user: ${user.fingerprint}, page ${page}, limit: ${limit}`);
+      this.logger.debug(
+        `Getting all posts for user: ${user.fingerprint}, page ${page}, limit: ${limit}, exclude: ${exclude.join(',')}`,
+      );
       const ids = await this.postService.fetchPostIdsFor(user.fingerprint, page, limit, exclude);
       return new IdsPage(page, limit, ids);
     } catch (error) {
