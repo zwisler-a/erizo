@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Erizo</title>
+</head>
+<style>
+    body {
+        background: #0f0d11;
+        color: white;
+    }
+
+    main {
+        max-width: 800px;
+        width: fit-content;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    a {
+        padding: 8px 16px;
+        text-decoration: none;
+        border: solid 2px #4b197e;
+        color: white;
+        border-radius: 16px;
+        background: none;
+        text-align: center;
+    }
+</style>
+<body>
+<main>
+    <h1>Erizo is App Only Now 🥳</h1>
+    <a href="https://testflight.apple.com/join/8WY5Q2Wx">Get it for IOS</a>
+    <a href="./app.apk">Get it for Android</a>
+
+    <a js-download-identity>Download Identity</a>
+</main>
+
+<script>
+    const DB_NAME = "elerizo_v1";
+    const STORE_NAME = "store";
+    const KEY_KEY = "OWN_KEY";
+    const keyToBase64 = async (key) => {
+        const exportedKey = await crypto.subtle.exportKey(key.type === 'private' ? 'pkcs8' : 'spki', key);
+        return btoa(String.fromCharCode(...new Uint8Array(exportedKey)));
+    }
+
+    const openDB = () =>
+        new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME);
+            req.onupgradeneeded = () => {
+                const db = req.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME);
+                }
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+
+    const getFromStore = (db, key) =>
+        new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, "readonly");
+            const store = tx.objectStore(STORE_NAME);
+            const req = store.get(key);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const downloadIdentity = document.querySelector('[js-download-identity]');
+        if (!downloadIdentity) return;
+        downloadIdentity.addEventListener('click', async e => {
+            e.preventDefault();
+            const db = await openDB();
+            const pair = await getFromStore(db, KEY_KEY);
+
+            if (!pair) {
+                alert("Could not find an existing identity ...");
+                return;
+            }
+            const identityData = JSON.stringify({
+                publicKey: await keyToBase64(pair.publicKey),
+                privateKey: await keyToBase64(pair.privateKey),
+            });
+
+            const blob = new Blob([identityData], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'identity.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+        })
+    })
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <h3>Devices</h3>
-<p><b>Own Token:</b>{{token.value}}</p>
+<p><b>Own Token:</b>{{token?.value}}</p>
 
 <mat-nav-list *ngIf="devices$ | async as devices">
   @for (device of devices; track device.fcmToken) {
